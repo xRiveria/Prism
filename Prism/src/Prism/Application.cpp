@@ -8,6 +8,7 @@ namespace Prism
 
 	Application::~Application()
 	{
+		
 	}
 
 	void Application::Run()
