@@ -11,12 +11,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Prism\Log.h" />
     <ClInclude Include="Source\Prism.h" />
     <ClInclude Include="Source\Prism\Application.h" />
     <ClInclude Include="Source\Prism\Core.h" />
     <ClInclude Include="Source\Prism\EntryPoint.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Prism\Log.cpp" />
     <ClCompile Include="Source\Prism\Application.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -69,6 +71,7 @@
       <PreprocessorDefinitions>PRISM_PLATFORM_WINDOWS;PRISM_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Prism/Vendor/spdlog/include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -84,6 +87,7 @@
       <PreprocessorDefinitions>PRISM_PLATFORM_WINDOWS;PRISM_BUILD_DLL;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Prism/Vendor/spdlog/include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

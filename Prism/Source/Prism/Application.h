@@ -14,7 +14,7 @@ namespace Prism
 		void Run();
 	};
 
-	//To be defined in Client.
+	//To be defined in the Client application.
 	Application* CreateApplication();
 }
 

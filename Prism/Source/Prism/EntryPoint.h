@@ -7,8 +7,11 @@ extern Prism::Application* Prism::CreateApplication();
 
 int main(int argc, char** argv)
 {
-	std::cout << "Prism Engine\n";
-	auto app = Prism::CreateApplication();
+	Prism::Log::Initialize();
+	PRISM_ENGINE_INFO("Initialized Prism Logging Library");
+	PRISM_CLIENT_INFO("Initalized Application Logging Library");
+
+	Prism::Application* app = Prism::CreateApplication();
 	app->Run();
 	delete app;
 }

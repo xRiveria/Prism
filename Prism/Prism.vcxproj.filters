@@ -27,9 +27,15 @@
     <ClInclude Include="Source\Prism\EntryPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Prism\Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Prism\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Prism\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
