@@ -19,6 +19,10 @@
     <ClInclude Include="src\Prism\Log.h">
       <Filter>Prism</Filter>
     </ClInclude>
+    <ClInclude Include="src\Prism\Events\Event.h" />
+    <ClInclude Include="src\Prism\Events\ApplicationEvent.h" />
+    <ClInclude Include="src\Prism\Events\KeyEvent.h" />
+    <ClInclude Include="src\Prism\Events\MouseEvent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Prism\Application.cpp">

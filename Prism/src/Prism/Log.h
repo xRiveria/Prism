@@ -2,6 +2,7 @@
 #include <memory>
 #include "Core.h"
 #include "spdlog/spdlog.h"
+#include "spdlog/fmt/ostr.h"
 
 namespace Prism
 {
@@ -11,7 +12,7 @@ namespace Prism
 		static void Initialize();
 
 		inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }         //Engine Logger
-		inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }    //Application Logger
+		inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }     //Application Logger
 
 	private:
 		static std::shared_ptr<spdlog::logger> s_CoreLogger;
