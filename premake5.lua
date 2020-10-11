@@ -9,6 +9,12 @@ workspace "Prism"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+-- Include Directories Relative To Root Folder (Solution Directory)
+IncludeDir = {}
+IncludeDir["GLFW"] = "Prism/vendor/GLFW/include"
+
+include "Prism/vendor/GLFW"
+
 project "Prism"
 	location "Prism"
 	kind "SharedLib"
@@ -29,7 +35,14 @@ project "Prism"
 	includedirs
 	{
 		"%{prj.name}/src",
-		"%{prj.name}/vendor/spdlog/include"
+		"%{prj.name}/vendor/spdlog/include",
+		"%{IncludeDir.GLFW}"
+	}
+
+	links
+	{
+		"GLFW",
+		"opengl32.lib"
 	}
 
 	filter "system:windows"
