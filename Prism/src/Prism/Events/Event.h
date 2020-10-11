@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-#include <functional>
 #include "Core.h"
 
 namespace Prism
@@ -62,7 +60,7 @@ namespace Prism
 
 	public:
 		EventDispatcher(Event& event) : m_Event(event) {}
-		
+
 		template<typename T>
 		bool Dispatch(EventFunction<T> function) //Pass a function here that takes in an event type and returns a boolean. 
 		{

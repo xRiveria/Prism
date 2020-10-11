@@ -17,6 +17,9 @@ project "Prism"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+	pchheader "PrismPrecompiledHeader.h"
+	pchsource "Prism/src/PrismPrecompiledHeader.cpp"
+
 	files
 	{
 		"%{prj.name}/src/**.h",
