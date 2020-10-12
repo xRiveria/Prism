@@ -29,6 +29,13 @@ namespace Prism
 	{
 	public:
 		WindowCloseEvent() {}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "Window Close Event";
+			return ss.str();
+		}
 		
 		EVENT_CLASS_TYPE(WindowClose)
 		EVENT_CLASS_CATEGORY(EventCategoryApplication)

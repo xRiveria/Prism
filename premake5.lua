@@ -63,14 +63,17 @@ project "Prism"
 
 	filter "configurations:Debug"
 		defines "PRISM_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "PRISM_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 
 	filter "configurations:Distribution"
 		defines "PRISM_DISTRIBUTION"
+		buildoptions "/MD"
 		optimize "On"
 
 
@@ -111,12 +114,15 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "PRISM_DEBUG"
+		buildoptions "/MDd"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "PRISM_RELEASE"
+		buildoptions "/MD"
 		optimize "On"
 
 	filter "configurations:Distribution"
 		defines "PRISM_DISTRIBUTION"
+		buildoptions "/MD"
 		optimize "On"

@@ -39,6 +39,8 @@ namespace Prism
 		friend class EventDispatcher;
 
 	public:
+		bool IsEventHandled = false;
+
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
@@ -48,9 +50,6 @@ namespace Prism
 		{
 			return GetCategoryFlags() & category;
 		}
-
-	protected:
-		bool m_Handled = false; 	
 	};
 
 	class EventDispatcher
@@ -66,7 +65,7 @@ namespace Prism
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.m_Handled = function(*(T*)&m_Event);
+				m_Event.IsEventHandled = function(*(T*)&m_Event);
 				return true;
 			}
 			return false;
