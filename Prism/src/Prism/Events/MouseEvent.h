@@ -83,5 +83,7 @@ namespace Prism
 			ss << "Mouse Button Released Event: " << GetMouseButton();
 			return ss.str();
 		}
+
+		EVENT_CLASS_TYPE(MouseButtonReleased)
 	};
 }
