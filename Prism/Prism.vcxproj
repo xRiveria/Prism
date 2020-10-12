@@ -159,6 +159,8 @@
     <ClInclude Include="src\Prism\Events\MouseEvent.h" />
     <ClInclude Include="src\Prism\Log.h" />
     <ClInclude Include="src\PrismPrecompiledHeader.h" />
+    <ClInclude Include="src\Prism\Windows.h" />
+    <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Prism\Application.cpp" />
@@ -166,6 +168,7 @@
     <ClCompile Include="src\PrismPrecompiledHeader.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="vendor\GLFW\GLFW.vcxproj">

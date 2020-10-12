@@ -39,6 +39,7 @@ namespace Prism
 
 		//Because this is platform independant, this ConstructWindow function has to be created per platform.
 		//We leave the definition of ConstructWindow to whichever platform inherits and implements this in their .CPP file. 
+		//Note that this only constructs the Window's properties, not the actual window itself unless defined.
 		static Window* ConstructWindow(const WindowProperties& windowProperties = WindowProperties());
 	};
 }
