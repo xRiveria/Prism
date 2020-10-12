@@ -15,7 +15,7 @@ public:
 
 	void OnEvent(Prism::Event& event) override
 	{
-		PRISM_ENGINE_INFO("{0}", event);
+		//PRISM_ENGINE_INFO("{0}", event);
 	}
 };
 

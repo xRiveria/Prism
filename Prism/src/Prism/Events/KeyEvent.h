@@ -34,6 +34,21 @@ namespace Prism
 		int m_RepeatCount;
 	};
 
+	class PRISM_API KeyTypedEvent : public KeyEvent
+	{
+	public:
+		KeyTypedEvent(int keyCode) : KeyEvent(keyCode) {}
+
+		std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "Key Typed Event: " << GetKeyCode();
+			return ss.str();
+		}
+
+		EVENT_CLASS_TYPE(KeyTyped)
+	};
+
 	class PRISM_API KeyReleasedEvent : public KeyEvent
 	{
 	public:

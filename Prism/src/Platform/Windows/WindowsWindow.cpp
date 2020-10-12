@@ -100,6 +100,13 @@ namespace Prism
 			}
 		});
 
+		glfwSetCharCallback(m_Window, [](GLFWwindow* window, unsigned int character)
+		{
+			WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
+			KeyTypedEvent keyTypedEvent(character);
+			windowData.EventCallback(keyTypedEvent);
+		});
+
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int buttonPressed, int action, int mods)
 		{
 			WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
@@ -171,5 +178,4 @@ namespace Prism
 		//GLFWimage windowIcon = "Resources/WindowIcon.png";
 		glfwSetWindowIcon(m_Window, 0, NULL);
 	}
-
 }
