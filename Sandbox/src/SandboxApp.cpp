@@ -5,7 +5,7 @@ class ExampleLayer : public Prism::Layer
 public:
 	ExampleLayer():Layer("Example Layer")
 	{
-		PRISM_CLIENT_INFO("Created Example Layer");
+
 	}
 
 	void OnUpdate() override
@@ -26,6 +26,7 @@ public:
 	{
 		PRISM_CLIENT_WARN("Created Sandbox Application");
 		PushLayer(new ExampleLayer());
+		PushOverlay(new Prism::ImGuiLayer());
 	}
 
 	~Sandbox()

@@ -20,11 +20,13 @@ namespace Prism
 	{
 		//While layers will be pushed into the stack as the last layer, it will never be in front of an overlay.
 		m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer); //For layers, they get pushed into LayerInsert which changes whenever we add or remove a layer.
+		layer->OnAttach();
 	}
 
 	void LayerStack::PushOverlay(Layer* overlay) 
 	{
 		m_Layers.emplace_back(overlay); //As overlays are last, we will always push them to the very back of the list. 
+		overlay->OnAttach();
 	}
 
 	void LayerStack::PopLayer(Layer* layer)

@@ -21,11 +21,17 @@ namespace Prism
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
+		inline Window& GetWindow() const { return *m_Window; }
+		inline static Application& GetApplication() { return *s_Instance; }
+
 	private:
 		bool OnWindowClose(WindowCloseEvent& closeEvent);
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+
+	private:
+		static Application* s_Instance; 
 	};
 
 	//To be defined in the Client application.

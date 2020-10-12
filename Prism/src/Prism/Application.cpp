@@ -4,8 +4,12 @@
 
 namespace Prism
 {
+	Application* Application::s_Instance = nullptr;
+
 	Application::Application()
 	{
+		PRISM_ENGINE_ASSERT(s_Instance, "Application already exists.");
+		s_Instance = this;
 		m_Window = std::unique_ptr<Window>(Window::ConstructWindow()); //Explicit conversion here that converts the created Window's pointer from ConstructWindow() into a unique pointer that is returned here.
 		m_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));		
 	}
