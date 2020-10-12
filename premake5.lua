@@ -12,8 +12,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include Directories Relative To Root Folder (Solution Directory)
 IncludeDir = {}
 IncludeDir["GLFW"] = "Prism/vendor/GLFW/include"
+IncludeDir["Glad"] = "Prism/vendor/Glad/include"
 
 include "Prism/vendor/GLFW"
+include "Prism/vendor/Glad"
 
 project "Prism"
 	location "Prism"
@@ -36,12 +38,14 @@ project "Prism"
 	{
 		"%{prj.name}/src",
 		"%{prj.name}/vendor/spdlog/include",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}"
 	}
 
 	links
 	{
 		"GLFW",
+		"Glad",
 		"opengl32.lib"
 	}
 
@@ -53,7 +57,8 @@ project "Prism"
 		defines
 		{
 			"PRISM_PLATFORM_WINDOWS",
-			"PRISM_BUILD_DLL"
+			"PRISM_BUILD_DLL",
+			"GLFW_INCLUDE_NONE"
 		}
 
 		postbuildcommands

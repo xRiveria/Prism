@@ -1,13 +1,13 @@
 #include "PrismPrecompiledHeader.h"
 #include "Application.h"
-#include <GLFW/glfw3.h>
+#include "glad/glad.h"
 
 namespace Prism
 {
 	Application::Application()
 	{
 		m_Window = std::unique_ptr<Window>(Window::ConstructWindow()); //Explicit conversion here that converts the created Window's pointer from ConstructWindow() into a unique pointer that is returned here.
-		m_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+		m_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));		
 	}
 
 	Application::~Application()
