@@ -16,8 +16,8 @@
 #endif;
 
 #ifdef PRISM_ENABLE_ASSERTS //Zero is intepreted as false, while anything non-zero is true. 
-	#define PRISM_ASSERT(x, ...) {!(x)) { PRISM_CLIENT_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugBreak(); }}
-	#define PRISM_ENGINE_ASSERT(x, ...) {!(x)) { PRISM_ENGINE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugBreak(); }}
+#define PRISM_CLIENT_ASSERT(x, ...) { if(!(x)) { PRISM_CLIENT_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+#define PRISM_ENGINE_ASSERT(x, ...) { if(!(x)) { PRISM_ENGINE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 #else
 	#define PRISM_ASSERT(x, ...)
 	#define PRISM_ENGINE_ASSERT(x, ...)

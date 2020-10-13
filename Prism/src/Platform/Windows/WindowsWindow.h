@@ -15,7 +15,7 @@ namespace Prism
 
 		inline unsigned int GetWindowWidth() const override { return m_Data.windowWidth; }
 		inline unsigned int GetWindowHeight() const override { return m_Data.windowHeight; }
-		inline void* GetConstructedWindow() const override { return m_Window; }
+		inline virtual void* GetNativeWindow() const override { return m_Window; }
 
 		//Window Attributes
 		inline void SetEventCallback(const EventCallbackFunction& callback) override { m_Data.EventCallback = callback; }

@@ -1,6 +1,7 @@
 #include "PrismPrecompiledHeader.h"
 #include "Application.h"
 #include "glad/glad.h"
+#include "Platform/Windows/WindowsInput.h"
 
 namespace Prism
 {
@@ -8,7 +9,7 @@ namespace Prism
 
 	Application::Application()
 	{
-		PRISM_ENGINE_ASSERT(s_Instance, "Application already exists.");
+		PRISM_ENGINE_ASSERT(!s_Instance, "Application already exists.");
 		s_Instance = this;
 		m_Window = std::unique_ptr<Window>(Window::ConstructWindow()); //Explicit conversion here that converts the created Window's pointer from ConstructWindow() into a unique pointer that is returned here.
 		m_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));		
@@ -56,6 +57,9 @@ namespace Prism
 			{
 				layer->OnUpdate();
 			}
+
+			auto [x, y] = Input::GetMousePosition();
+			PRISM_ENGINE_TRACE("{0}, {1}", x, y);
 
 			m_Window->OnUpdate();
 		}

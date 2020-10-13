@@ -70,7 +70,7 @@ namespace Prism
 		io.GetClipboardTextFn = ImGui_ImplGlfw_GetClipboardText;
 		io.SetClipboardTextFn = ImGui_ImplGlfw_SetClipboardText;
 		Application& application = Application::GetApplication();
-		io.ClipboardUserData = application.GetWindow().GetConstructedWindow();
+		io.ClipboardUserData = application.GetWindow().GetNativeWindow();
 
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
