@@ -1,5 +1,7 @@
 workspace "Prism"
 	architecture "x64"
+	startproject = "Sandbox"
+
 	configurations
 	{
 		"Debug",
@@ -15,11 +17,11 @@ IncludeDir["GLFW"] = "Prism/vendor/GLFW/include"
 IncludeDir["Glad"] = "Prism/vendor/Glad/include"
 IncludeDir["ImGui"] = "Prism/vendor/imgui"
 
-include "Prism/vendor/GLFW"
-include "Prism/vendor/Glad"
-include "Prism/vendor/imgui"
-
-startproject = "Sandbox"
+group "Dependencies"
+	include "Prism/vendor/GLFW"
+	include "Prism/vendor/Glad"
+	include "Prism/vendor/imgui"
+group ""
 
 project "Prism"
 	location "Prism"
@@ -69,7 +71,7 @@ project "Prism"
 
 		postbuildcommands
 		{
-			("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
+			("{COPY} %{cfg.buildtarget.relpath} \"../bin/" .. outputdir .. "/Sandbox/\"")		
 		}
 
 	filter "configurations:Debug"

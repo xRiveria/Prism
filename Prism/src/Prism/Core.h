@@ -11,6 +11,10 @@
 	#error Prism Engine only supports Windows!
 #endif
 
+#ifdef PRISM_DEBUG
+	#define PRISM_ENABLE_ASSERTS
+#endif;
+
 #ifdef PRISM_ENABLE_ASSERTS //Zero is intepreted as false, while anything non-zero is true. 
 	#define PRISM_ASSERT(x, ...) {!(x)) { PRISM_CLIENT_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugBreak(); }}
 	#define PRISM_ENGINE_ASSERT(x, ...) {!(x)) { PRISM_ENGINE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugBreak(); }}
