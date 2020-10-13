@@ -31,6 +31,7 @@ namespace Prism
 		
 		virtual inline unsigned int GetWindowWidth() const = 0;
 		virtual inline unsigned int GetWindowHeight() const = 0;
+		virtual inline void* GetConstructedWindow() const = 0;
 
 		//Window Attributes
 		virtual inline void SetEventCallback(const EventCallbackFunction& callback) = 0;

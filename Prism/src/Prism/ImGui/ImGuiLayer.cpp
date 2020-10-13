@@ -6,6 +6,7 @@
 
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
+#include "Platform/Windows/WindowsWindow.h"
 
 namespace Prism
 {
@@ -19,14 +20,27 @@ namespace Prism
 
 	}
 
+	static const char* ImGui_ImplGlfw_GetClipboardText(void* user_data)
+	{
+		return glfwGetClipboardString((GLFWwindow*)user_data);
+	}
+
+	static void ImGui_ImplGlfw_SetClipboardText(void* user_data, const char* text)
+	{
+		glfwSetClipboardString((GLFWwindow*)user_data, text);
+	}
+
 	void ImGuiLayer::OnAttach()
 	{
 		ImGui::CreateContext();
+		ImGui::GetStyle().WindowRounding = 0.0f;
 		ImGui::StyleColorsDark();
 
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+
+
 		
 		ImFont* pFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
 		io.FontDefault = io.Fonts->Fonts.back();
@@ -55,6 +69,11 @@ namespace Prism
 		io.KeyMap[ImGuiKey_Y] = GLFW_KEY_Y;
 		io.KeyMap[ImGuiKey_Z] = GLFW_KEY_Z;
 
+		io.GetClipboardTextFn = ImGui_ImplGlfw_GetClipboardText;
+		io.SetClipboardTextFn = ImGui_ImplGlfw_SetClipboardText;
+		Application& application = Application::GetApplication();
+		io.ClipboardUserData = application.GetWindow().GetConstructedWindow();
+
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 
@@ -75,6 +94,103 @@ namespace Prism
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui::NewFrame();
+
+		//Menu
+	    // Menu Bar
+		bool show = true;
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("New Scene", "Ctrl+O")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Open Scene", "Ctrl+S")) { /* Do stuff */ }
+				ImGui::Separator();
+				if (ImGui::MenuItem("Save Current Scene", "Ctrl+S")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S")) { /* Do stuff */ }
+				ImGui::Separator();
+				if (ImGui::MenuItem("Exit Prism")) {  }
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Assets"))
+			{
+				if (ImGui::MenuItem("New Scene", "Ctrl+O")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Open Scene", "Ctrl+S")) { /* Do stuff */ }
+				ImGui::Separator();
+				if (ImGui::MenuItem("Save Current Scene", "Ctrl+S")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S")) { /* Do stuff */ }
+				ImGui::Separator();
+				if (ImGui::MenuItem("Exit Prism")) {}
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Objects"))
+			{
+				if (ImGui::MenuItem("New Scene", "Ctrl+O")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Open Scene", "Ctrl+S")) { /* Do stuff */ }
+				ImGui::Separator();
+				if (ImGui::MenuItem("Save Current Scene", "Ctrl+S")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S")) { /* Do stuff */ }
+				ImGui::Separator();
+				if (ImGui::MenuItem("Exit Prism")) {}
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Window"))
+			{
+				if (ImGui::MenuItem("New Scene", "Ctrl+O")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Open Scene", "Ctrl+S")) { /* Do stuff */ }
+				ImGui::Separator();
+				if (ImGui::MenuItem("Save Current Scene", "Ctrl+S")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Save Scene As...", "Ctrl+Shift+S")) { /* Do stuff */ }
+				ImGui::Separator();
+				if (ImGui::MenuItem("Exit Prism")) {}
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::BeginMenu("Help"))
+			{
+				if (ImGui::MenuItem("About Prism Engine")) { /* Do stuff */ }
+				ImGui::Separator();
+				if (ImGui::MenuItem("Prism Manual")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Scripting Reference")) { /* Do stuff */ }
+				ImGui::Separator();
+				if (ImGui::MenuItem("Release Notes")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Software Licenses")) {}
+				ImGui::Separator();
+				if (ImGui::MenuItem("Report A Bug")) {}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
+		}
+
+		ImGui::Begin("Debug Area");
+		ImGui::BeginTabBar("Debug Area Tabs");
+
+		ImGui::BeginTabItem("Console");
+		ImGui::EndTabItem();
+
+		ImGui::EndTabBar();
+		ImGui::End();
+
+		ImGui::SetWindowSize("Play Options", ImVec2(application.GetWindow().GetWindowWidth(), 40));	
+		ImGui::Begin("Play Options", false, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
+		ImGui::SameLine(application.GetWindow().GetWindowWidth() / 2);
+		ImGui::Button("Play");
+		//ImGui::SameLine(application.GetWindow().GetWindowWidth() / 2);
+		//ImGui::Button("Pause");
+		//ImGui::SameLine(application.GetWindow().GetWindowWidth() / 2, +50.0f);
+		//ImGui::Button("Stop");
+		ImGui::End();
+
+		static bool showGraphicalWindow = true;
+		//Render Info
+		ImGui::Begin("Graphical Information", &showGraphicalWindow);
+		ImGui::Text("FPS: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Text("Renderer: %s", (char*)glGetString(GL_RENDERER));
+		ImGui::Text("OpenGL Version: %s", (char*)glGetString(GL_VERSION));
+		ImGui::Text("Card Vendor: %s", (char*)glGetString(GL_VENDOR));
+		ImGui::End();
 
 		static bool showDemoWindow = true;
 		ImGui::ShowDemoWindow(&showDemoWindow);

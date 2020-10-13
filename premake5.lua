@@ -19,10 +19,13 @@ include "Prism/vendor/GLFW"
 include "Prism/vendor/Glad"
 include "Prism/vendor/imgui"
 
+startproject = "Sandbox"
+
 project "Prism"
 	location "Prism"
 	kind "SharedLib"
 	language "C++"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -55,7 +58,6 @@ project "Prism"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines
@@ -72,17 +74,17 @@ project "Prism"
 
 	filter "configurations:Debug"
 		defines "PRISM_DEBUG"
-		buildoptions "/MDd"
+		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "PRISM_RELEASE"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 
 	filter "configurations:Distribution"
 		defines "PRISM_DISTRIBUTION"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 
 
@@ -90,6 +92,7 @@ project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
 	language "C++"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -113,7 +116,6 @@ project "Sandbox"
 
 	filter "system:windows"
 		cppdialect "C++17"
-		staticruntime "On"
 		systemversion "latest"
 
 		defines
@@ -123,15 +125,15 @@ project "Sandbox"
 
 	filter "configurations:Debug"
 		defines "PRISM_DEBUG"
-		buildoptions "/MDd"
+		runtime "Debug"
 		symbols "On"
 
 	filter "configurations:Release"
 		defines "PRISM_RELEASE"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
 
 	filter "configurations:Distribution"
 		defines "PRISM_DISTRIBUTION"
-		buildoptions "/MD"
+		runtime "Release"
 		optimize "On"
