@@ -149,7 +149,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.h" />
     <ClInclude Include="src\Platform\Windows\WindowsInput.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Prism.h" />
@@ -579,10 +578,10 @@
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Platform\OpenGL\ImGuiOpenGLRenderer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Prism\Application.cpp" />
+    <ClCompile Include="src\Prism\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Prism\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Prism\Layer.cpp" />
     <ClCompile Include="src\Prism\LayerStack.cpp" />
@@ -605,4 +604,4 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-</Project>
+</Project> 

@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "glad/glad.h"
 #include "Platform/Windows/WindowsInput.h"
+#include "Prism/ImGui/ImGuiLayer.h"
 
 namespace Prism
 {
@@ -13,6 +14,9 @@ namespace Prism
 		s_Instance = this;
 		m_Window = std::unique_ptr<Window>(Window::ConstructWindow()); //Explicit conversion here that converts the created Window's pointer from ConstructWindow() into a unique pointer that is returned here.
 		m_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));		
+	
+		m_ImGuiLayer = new ImGuiLayer();
+		PushOverlay(m_ImGuiLayer);
 	}
 
 	Application::~Application()
@@ -57,6 +61,14 @@ namespace Prism
 			{
 				layer->OnUpdate();
 			}
+
+			m_ImGuiLayer->BeginImGuiRenderLoop();
+			for (Layer* layer : m_LayerStack)
+			{
+				layer->OnImGuiRender();
+			}
+
+			m_ImGuiLayer->EndImGuiRenderLoop();
 
 			m_Window->OnUpdate();
 		}

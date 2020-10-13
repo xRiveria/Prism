@@ -113,6 +113,7 @@ project "Sandbox"
 	{
 		"Prism/vendor/spdlog/include",
 		"Prism/src",
+		"Prism/vendor",
 		"%{IncludeDir.glm}"
 	}
 

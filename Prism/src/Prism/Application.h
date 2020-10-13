@@ -4,6 +4,7 @@
 #include "Events/Event.h"
 #include "Events/ApplicationEvent.h"
 #include "Prism/LayerStack.h"
+#include "Prism/ImGui/ImGuiLayer.h"
 
 //This class is meant to be inherited by all Prism applications.
 //In this case, our Sandbox application is the first to do this.
@@ -27,6 +28,7 @@ namespace Prism
 	private:
 		bool OnWindowClose(WindowCloseEvent& closeEvent);
 		std::unique_ptr<Window> m_Window;
+		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 

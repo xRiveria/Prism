@@ -5,7 +5,7 @@ namespace Prism
 {
 	LayerStack::LayerStack()
 	{
-		m_LayerInsert = m_Layers.begin();
+
 	}
 
 	LayerStack::~LayerStack()
@@ -19,7 +19,8 @@ namespace Prism
 	void LayerStack::PushLayer(Layer* layer) 
 	{
 		//While layers will be pushed into the stack as the last layer, it will never be in front of an overlay.
-		m_LayerInsert = m_Layers.emplace(m_LayerInsert, layer); //For layers, they get pushed into LayerInsert which changes whenever we add or remove a layer.
+		m_Layers.emplace(m_Layers.begin() + m_LayerInsertIndex, layer); //For layers, they get pushed through LayerIndex which changes whenever we add or remove a layer.
+		m_LayerInsertIndex++; //When we add a layer, this gets incremented. When we add an overlay, that gets pushed to the back of the layer, but this index still tracks Layers only and will keep pushing through this index always before overlay indexes. 
 		layer->OnAttach();
 	}
 
@@ -35,7 +36,7 @@ namespace Prism
 		if (it != m_Layers.end())
 		{
 			m_Layers.erase(it);
-			m_LayerInsert--;
+			m_LayerInsertIndex--;
 		}
 	}
 

@@ -1,4 +1,5 @@
 #include "Prism.h"
+#include "imgui/imgui.h"
 
 class ExampleLayer : public Prism::Layer
 {
@@ -26,6 +27,11 @@ public:
 		}
 		//PRISM_ENGINE_INFO("{0}", event);
 	}
+
+	void OnImGuiRender() override
+	{
+
+	}
 };
 
 class Sandbox : public Prism::Application
@@ -35,7 +41,6 @@ public:
 	{
 		PRISM_CLIENT_WARN("Created Sandbox Application");
 		PushLayer(new ExampleLayer());
-		PushOverlay(new Prism::ImGuiLayer());
 	}
 
 	~Sandbox()

@@ -13,20 +13,12 @@ namespace Prism
 		ImGuiLayer();
 		~ImGuiLayer();
 
-		void OnAttach() override;
-		void OnDetach() override;
-		void OnUpdate() override;
-		void OnEvent(Event& event) override;
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
 
-	private:
-		bool OnMouseButtonPressedEvent(MouseButtonPressedEvent& event);
-		bool OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& event);
-		bool OnMouseMovedEvent(MouseMovedEvent& event);
-		bool OnMouseScrolledEvent(MouseScrolledEvent& event);
-		bool OnKeyPressedEvent(KeyPressedEvent& event);
-		bool OnKeyReleasedEvent(KeyReleasedEvent& event);
-		bool OnKeyTypedEvent(KeyTypedEvent& event);
-		bool OnWindowResizedEvent(WindowResizeEvent& event);
+		void BeginImGuiRenderLoop();
+		virtual void OnImGuiRender() override; //This sits between Begin and End. All our ImGui render code goes here.
+		void EndImGuiRenderLoop();
 
 	private:
 		float m_Time = 0.0f;
