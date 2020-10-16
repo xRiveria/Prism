@@ -1,12 +1,15 @@
 #pragma once
 
 #ifdef PRISM_PLATFORM_WINDOWS
+#if PRISM_DYNAMIC_LINK
 	#ifdef PRISM_BUILD_DLL
 		#define PRISM_API __declspec(dllexport)
 	#else
 		#define PRISM_API __declspec(dllimport)
 	#endif
-
+#else
+	#define PRISM_API
+#endif
 #else
 	#error Prism Engine only supports Windows!
 #endif
@@ -25,4 +28,3 @@
 
 #define BIT(x) (1 << x)
 
-#define PRISM_BIND_EVENT_FUNCTION(function) std::bind(&function, this, std::placeholders::_1)

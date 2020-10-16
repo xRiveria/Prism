@@ -110,7 +110,7 @@ namespace Prism
 		glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int buttonPressed, int action, int mods)
 		{
 			WindowData& windowData = *(WindowData*)glfwGetWindowUserPointer(window);
-			
+
 			switch (action)
 			{
 				case GLFW_PRESS:
@@ -125,7 +125,7 @@ namespace Prism
 					windowData.EventCallback(mouseReleasedEvent);
 					break;
 				}
-			}		
+			}
 		});
 
 		glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)

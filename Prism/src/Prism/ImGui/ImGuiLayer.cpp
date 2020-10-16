@@ -1,21 +1,23 @@
 #pragma once
 
 #include "PrismPrecompiledHeader.h"
+#include "ImGuiLayer.h"
+
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD
 #include "examples/imgui_impl_opengl3.cpp"
 #include "examples/imgui_impl_glfw.cpp"
 
-#include "ImGuiLayer.h"
 #include "Prism/Application.h"
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
 #include "Platform/Windows/WindowsWindow.h"
+#include "Prism/Core.h"
 
 namespace Prism
 {
 	ImGuiLayer::ImGuiLayer() : Layer("ImGui Layer")
 	{
-
+		PRISM_ENGINE_WARN("Created {0}", GetName());
 	}
 
 	ImGuiLayer::~ImGuiLayer()
@@ -77,7 +79,7 @@ namespace Prism
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		Application& application = Application::GetApplication();
-		io.DisplaySize = ImVec2(application.GetWindow().GetWindowWidth(), application.GetWindow().GetWindowHeight());
+		io.DisplaySize = ImVec2((float)application.GetWindow().GetWindowWidth(), (float)application.GetWindow().GetWindowHeight());
 
 		float time = (float)glfwGetTime();
 		io.DeltaTime = m_Time > 0.0f ? (time - m_Time) : (1.0f / 60.0f);
@@ -85,7 +87,10 @@ namespace Prism
 
 		//Menu
 		// Menu Bar
-		bool show = true;
+
+		static bool showDemoWindow = true;
+		ImGui::ShowDemoWindow(&showDemoWindow);
+
 		if (ImGui::BeginMainMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
@@ -152,11 +157,6 @@ namespace Prism
 			ImGui::EndMainMenuBar();
 		}
 
-		//ImGui::BeginTabBar("Debug Area Tabs");
-		//ImGui::BeginTabItem("Console");
-		//ImGui::EndTabItem();
-		//ImGui::EndTabBar();
-
 		//ImGui::SetWindowSize("Play Options", ImVec2(application.GetWindow().GetWindowWidth(), 40));
 		//ImGui::Begin("Play Options", &showGraphicalWindow, ImGuiWindowFlags_NoTitleBar);
 		//ImGui::SameLine(application.GetWindow().GetWindowWidth() / 2);
@@ -167,24 +167,28 @@ namespace Prism
 		//ImGui::Button("Stop");
 		//ImGui::End();
 
+
 		static bool showGraphicalWindow = true;
 		//Render Info
-		ImGui::Begin("Graphical Information", &showGraphicalWindow, ImGuiWindowFlags_NoDocking);
+		ImGui::Begin("Graphical Information", &showGraphicalWindow);
 		ImGui::Text("FPS: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::Text("Renderer: %s", (char*)glGetString(GL_RENDERER));
 		ImGui::Text("OpenGL Version: %s", (char*)glGetString(GL_VERSION));
 		ImGui::Text("Card Vendor: %s", (char*)glGetString(GL_VENDOR));
 		ImGui::End();
 
-		static bool showDemoWindow = true;
-		ImGui::ShowDemoWindow(&showDemoWindow);
+		ImGui::Begin("Console");
+		ImGui::End();
+
+		ImGui::Begin("Profiler");
+		ImGui::End();
 	}
 
 	void ImGuiLayer::EndImGuiRenderLoop()
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		Application& application = Application::GetApplication();
-		io.DisplaySize = ImVec2(application.GetWindow().GetWindowWidth(), application.GetWindow().GetWindowHeight()); //For default viewport.
+		io.DisplaySize = ImVec2((float)application.GetWindow().GetWindowWidth(), (float)application.GetWindow().GetWindowHeight()); //For default viewport.
 		
 		//Rendering
 		ImGui::Render();

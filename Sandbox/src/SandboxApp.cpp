@@ -6,7 +6,7 @@ class ExampleLayer : public Prism::Layer
 public:
 	ExampleLayer():Layer("Example Layer")
 	{
-
+		PRISM_CLIENT_WARN("Created {0}", GetName());
 	}
 
 	void OnUpdate() override
@@ -30,7 +30,7 @@ public:
 
 	void OnImGuiRender() override
 	{
-
+		
 	}
 };
 

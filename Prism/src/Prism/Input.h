@@ -25,6 +25,4 @@ namespace Prism
 	private:
 		static Input* s_Instance;
 	};
-
-
 }
