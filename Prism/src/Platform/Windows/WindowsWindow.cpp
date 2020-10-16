@@ -3,7 +3,7 @@
 #include "Prism/Events/ApplicationEvent.h"
 #include "Prism/Events/KeyEvent.h"
 #include "Prism/Events/MouseEvent.h"
-#include "glad/glad.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Prism
 {
@@ -36,7 +36,7 @@ namespace Prism
 		m_Data.windowHeight = windowProperties.windowHeight;
 
 		PRISM_ENGINE_INFO("Creating a {0}x{1} Window for {2}.", windowProperties.windowWidth, windowProperties.windowHeight, windowProperties.windowTitle);
-		
+
 		//We might want to create multiple windows, but we only want to initialize GLFW once, hence the static boolean. 
 		if (!s_IsGLFWInitialized)
 		{
@@ -47,11 +47,9 @@ namespace Prism
 		}
 
 		m_Window = glfwCreateWindow((int)windowProperties.windowWidth, (int)windowProperties.windowHeight, windowProperties.windowTitle.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_Window);
-		
-		int gladInitializationStatus = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress); //Returns the current OpenGL context.
-		PRISM_ENGINE_ASSERT(gladInitializationStatus, "Failed to Initialize Glad.");
-
+		m_GraphicsContext = new OpenGLContext(m_Window);
+		m_GraphicsContext->Initialize();
+	
 		glfwSetWindowUserPointer(m_Window, &m_Data); //Our defined pointer for events. 
 		SetVSync(true);
 
@@ -151,7 +149,7 @@ namespace Prism
 	void WindowsWindow::OnUpdate()
 	{
 		glfwPollEvents();
-		glfwSwapBuffers(m_Window);
+		m_GraphicsContext->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)

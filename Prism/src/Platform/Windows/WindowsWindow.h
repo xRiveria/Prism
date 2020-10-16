@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Prism/Windows.h"
+#include "Renderer/GraphicsContext.h"
 #include "GLFW/glfw3.h"
 
 namespace Prism
@@ -31,6 +32,7 @@ namespace Prism
 
 	private:
 		GLFWwindow* m_Window;
+		GraphicsContext* m_GraphicsContext;
 
 		struct WindowData
 		{
