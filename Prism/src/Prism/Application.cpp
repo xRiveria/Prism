@@ -48,7 +48,35 @@ namespace Prism
 
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	
+		//Some graphic cards have default shaders created. Thus, we do not have to create them to start rendering.
+		//However, in more contexts, we will have to create shaders if we want to do anything remotely interesting.
+		std::string vertexShaderSourceCode = R"(
+		#version 330 core
+		layout (location = 0) in vec3 attributePosition;
+
+		out vec3 outputPosition;
+
+		void main()
+		{
+			outputPosition = attributePosition;
+			gl_Position = vec4(attributePosition, 1.0f);
+		}
+		)";
+
+		std::string fragmentShaderSourceCode = R"(
+		#version 330 core
+		
+		in vec3 outputPosition;
+		out vec4 outputColor;
+
+		void main()
+		{
+			outputColor = vec4(outputPosition * 0.5 + 0.5, 1.0f);
+		}
+		)";
+
 		//Shader
+		m_Shader.reset(new Shader(vertexShaderSourceCode, fragmentShaderSourceCode));
 	}
 
 	Application::~Application()
@@ -88,6 +116,8 @@ namespace Prism
 		{
 			glClearColor(0.1f, 0.1f, 0.1f, 0);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			m_Shader->BindShader(); //Good practice to bind shaders first. Other APIs does this. 
 			glBindVertexArray(m_VertexArray);
 			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 
