@@ -6,6 +6,7 @@
 #include "Prism/LayerStack.h"
 #include "Prism/ImGui/ImGuiLayer.h"
 
+#include "Renderer/Buffer.h"
 #include "Renderer/Shader.h"
 
 //This class is meant to be inherited by all Prism applications.
@@ -35,8 +36,8 @@ namespace Prism
 		LayerStack m_LayerStack;
 
 		unsigned int m_VertexArray;
-		unsigned int m_VertexBuffer;
-		unsigned int m_IndexBuffer;
+		std::unique_ptr<IndexBuffer> m_IndexBuffer;
+		std::unique_ptr<VertexBuffer> m_VertexBuffer;
 		std::unique_ptr<Shader> m_Shader;
 
 	private:
