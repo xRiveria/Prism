@@ -8,6 +8,27 @@ namespace Prism
 {
 	Application* Application::s_Instance = nullptr;
 
+	static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
+	{
+		switch (type)
+		{
+			case ShaderDataType::Float:		return GL_FLOAT;
+			case ShaderDataType::Float2:	return GL_FLOAT;
+			case ShaderDataType::Float3:	return GL_FLOAT;
+			case ShaderDataType::Float4:	return GL_FLOAT;
+			case ShaderDataType::Mat3:		return GL_FLOAT;
+			case ShaderDataType::Mat4:		return GL_FLOAT;
+			case ShaderDataType::Int:		return GL_FLOAT;
+			case ShaderDataType::Int2:		return GL_INT;
+			case ShaderDataType::Int3:		return GL_INT;
+			case ShaderDataType::Int4:		return GL_INT;
+			case ShaderDataType::Bool:		return GL_BOOL;
+		}
+
+		PRISM_ENGINE_ASSERT(false, "Unknown ShaderDataType!");
+		return 0;
+	}
+
 	Application::Application()
 	{
 		PRISM_ENGINE_ASSERT(!s_Instance, "Application already exists.");
@@ -22,19 +43,36 @@ namespace Prism
 		glGenVertexArrays(1, &m_VertexArray);
 		glBindVertexArray(m_VertexArray);
 
-		float vertices[3 * 3] = //Within clip space already - no MVP needed.
+		float vertices[3 * 7] = //Within clip space already - no MVP needed.
 		{
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.0f,  0.5f, 0.0f
+			-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
+			 0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
+			 0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
 		};
 
 		m_VertexBuffer.reset(VertexBuffer::CreateVertexBuffer(vertices, sizeof(vertices)));
+		
+		{
+			BufferLayout layout =
+			{
+				{ ShaderDataType::Float3, "a_Position", false },
+				{ ShaderDataType::Float4, "a_Color", false }
+			};
+
+			m_VertexBuffer->SetBufferLayout(layout);
+		}
+
+		uint32_t index = 0;
+		const auto& layout = m_VertexBuffer->GetLayout();
+		for (const auto& element : layout)
+		{
+			glEnableVertexAttribArray(index);
+			glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.elementType), element.elementNormalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)element.elementOffset);
+			index++;
+		}
+		
 		m_VertexBuffer->BindVertexBuffer();
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-		
 		uint32_t indices[3]
 		{
 			0, 1, 2
@@ -49,11 +87,14 @@ namespace Prism
 		std::string vertexShaderSourceCode = R"(
 		#version 330 core
 		layout (location = 0) in vec3 attributePosition;
+		layout (location = 1) in vec4 attributeColor;
 
 		out vec3 outputPosition;
+		out vec4 v_Color;
 
 		void main()
 		{
+			v_Color = attributeColor;
 			outputPosition = attributePosition;
 			gl_Position = vec4(attributePosition, 1.0f);
 		}
@@ -63,11 +104,12 @@ namespace Prism
 		#version 330 core
 		
 		in vec3 outputPosition;
+		in vec4 v_Color;
 		out vec4 outputColor;
 
 		void main()
 		{
-			outputColor = vec4(outputPosition * 0.5 + 0.5, 1.0f);
+			outputColor = v_Color;
 		}
 		)";
 

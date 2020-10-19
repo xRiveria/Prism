@@ -11,10 +11,14 @@ namespace Prism
 
 		virtual void BindVertexBuffer() const override;
 		virtual void UnbindVertexBuffer() const override;
+
+		virtual void SetBufferLayout(const BufferLayout& layout) override { m_Layout = layout; }
+		virtual const BufferLayout& GetLayout() const override { return m_Layout; }
 		
 	private:
 		//Don't store any data in the main classes. Store them in the derived classes.
 		uint32_t m_VertexBufferID;
+		BufferLayout m_Layout;
 	};
 
 	class OpenGLIndexBuffer : public IndexBuffer
