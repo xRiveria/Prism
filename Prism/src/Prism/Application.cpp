@@ -8,27 +8,6 @@ namespace Prism
 {
 	Application* Application::s_Instance = nullptr;
 
-	static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
-	{
-		switch (type)
-		{
-			case ShaderDataType::Float:		return GL_FLOAT;
-			case ShaderDataType::Float2:	return GL_FLOAT;
-			case ShaderDataType::Float3:	return GL_FLOAT;
-			case ShaderDataType::Float4:	return GL_FLOAT;
-			case ShaderDataType::Mat3:		return GL_FLOAT;
-			case ShaderDataType::Mat4:		return GL_FLOAT;
-			case ShaderDataType::Int:		return GL_FLOAT;
-			case ShaderDataType::Int2:		return GL_INT;
-			case ShaderDataType::Int3:		return GL_INT;
-			case ShaderDataType::Int4:		return GL_INT;
-			case ShaderDataType::Bool:		return GL_BOOL;
-		}
-
-		PRISM_ENGINE_ASSERT(false, "Unknown ShaderDataType!");
-		return 0;
-	}
-
 	Application::Application()
 	{
 		PRISM_ENGINE_ASSERT(!s_Instance, "Application already exists.");
@@ -39,9 +18,13 @@ namespace Prism
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
 
+		//=================================================================
+		// Triangle
+		//=================================================================
+
 		//Vertex Array
-		glGenVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);
+		m_VertexArray.reset(VertexArray::CreateVertexArray());
+		m_VertexArray->BindVertexArray();
 
 		float vertices[3 * 7] = //Within clip space already - no MVP needed.
 		{
@@ -50,28 +33,17 @@ namespace Prism
 			 0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
 		};
 
+		std::shared_ptr<VertexBuffer> m_VertexBuffer;
 		m_VertexBuffer.reset(VertexBuffer::CreateVertexBuffer(vertices, sizeof(vertices)));
-		
+			
+		BufferLayout layout =
 		{
-			BufferLayout layout =
-			{
-				{ ShaderDataType::Float3, "a_Position", false },
-				{ ShaderDataType::Float4, "a_Color", false }
-			};
+			{ ShaderDataType::Float3, "a_Position", false },
+			{ ShaderDataType::Float4, "a_Color", false }
+		};
 
-			m_VertexBuffer->SetBufferLayout(layout);
-		}
-
-		uint32_t index = 0;
-		const auto& layout = m_VertexBuffer->GetLayout();
-		for (const auto& element : layout)
-		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.elementType), element.elementNormalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)element.elementOffset);
-			index++;
-		}
-		
-		m_VertexBuffer->BindVertexBuffer();
+		m_VertexBuffer->SetBufferLayout(layout);	
+		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
 		uint32_t indices[3]
 		{
@@ -79,11 +51,13 @@ namespace Prism
 		};
 
 		//Index Buffer
+		std::shared_ptr<IndexBuffer> m_IndexBuffer;
 		m_IndexBuffer.reset(IndexBuffer::CreateIndexBuffer(indices, sizeof(indices) / sizeof(uint32_t)));
 		m_IndexBuffer->BindIndexBuffer();
-		
-		//Some graphic cards have default shaders created. Thus, we do not have to create them to start rendering.
-		//However, in more contexts, we will have to create shaders if we want to do anything remotely interesting.
+
+		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
+
+		//Shader
 		std::string vertexShaderSourceCode = R"(
 		#version 330 core
 		layout (location = 0) in vec3 attributePosition;
@@ -113,8 +87,74 @@ namespace Prism
 		}
 		)";
 
-		//Shader
 		m_Shader.reset(new Shader(vertexShaderSourceCode, fragmentShaderSourceCode));
+
+		//=================================================================
+		// Square
+		//=================================================================
+
+		m_SquareVertexArray.reset(VertexArray::CreateVertexArray());
+		m_SquareVertexArray->BindVertexArray();
+
+		float squareVertices[3 * 4] =
+		{
+			-70.5f, -70.5f, 0.0f,
+			 70.5f, -70.5f, 0.0f,
+			 70.5f,  70.5f, 0.0f,
+			-70.5f,  70.5f, 0.0f
+		};
+
+		std::shared_ptr<VertexBuffer> squareVertexBuffer;
+		squareVertexBuffer.reset(VertexBuffer::CreateVertexBuffer(squareVertices, sizeof(squareVertices)));
+		BufferLayout blueLayout =
+		{
+			{ ShaderDataType::Float3, "a_Position", false },
+		};
+
+		squareVertexBuffer->SetBufferLayout(blueLayout);
+		m_SquareVertexArray->AddVertexBuffer(squareVertexBuffer);
+
+		uint32_t squareIndices[6]
+		{
+			0, 1, 2, 2, 3, 0
+		};
+
+		//Index Buffer
+		std::shared_ptr<IndexBuffer> squareIndexBuffer;
+		squareIndexBuffer.reset(IndexBuffer::CreateIndexBuffer(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		squareIndexBuffer->BindIndexBuffer();
+
+		m_SquareVertexArray->SetIndexBuffer(squareIndexBuffer);
+
+		//Some graphic cards have default shaders created. Thus, we do not have to create them to start rendering.
+		//However, in more contexts, we will have to create shaders if we want to do anything remotely interesting.
+		std::string blueVertexShaderSourceCode = R"(
+		#version 330 core
+		layout (location = 0) in vec3 attributePosition;
+
+		out vec3 outputPosition;
+
+		void main()
+		{
+			outputPosition = attributePosition;
+			gl_Position = vec4(attributePosition, 1.0f);
+		}
+		)";
+
+		std::string blueFragmentShaderSourceCode = R"(
+		#version 330 core
+		
+		in vec3 outputPosition;
+		out vec4 outputColor;
+
+		void main()
+		{
+			outputColor = vec4(outputPosition, 1.0f);
+		}
+		)";
+
+		//Shader
+		m_BlueShader.reset(new Shader(blueVertexShaderSourceCode, blueFragmentShaderSourceCode));
 	}
 
 	Application::~Application()
@@ -155,9 +195,13 @@ namespace Prism
 			glClearColor(0.1f, 0.1f, 0.1f, 0);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			m_BlueShader->BindShader();
+			m_SquareVertexArray->BindVertexArray();
+			glDrawElements(GL_TRIANGLES, m_SquareVertexArray->GetIndexBuffer()->GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
+
 			m_Shader->BindShader(); //Good practice to bind shaders first. Other APIs does this. 
-			glBindVertexArray(m_VertexArray);
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
+			m_VertexArray->BindVertexArray();
+			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack)
 			{
@@ -165,6 +209,7 @@ namespace Prism
 			}
 
 			m_ImGuiLayer->BeginImGuiRenderLoop();
+
 			for (Layer* layer : m_LayerStack)
 			{
 				layer->OnImGuiRender();
