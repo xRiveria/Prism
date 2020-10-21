@@ -9,13 +9,13 @@ namespace Prism
 	{
 		switch (Renderer::GetCurrentRenderAPI())
 		{
-			case RendererAPI::None:
+			case RendererAPI::RenderAPI::None:
 			{
 				PRISM_ENGINE_ASSERT(false, "RendererAPI::None is currently not supported.");
 				return nullptr;
 			}
 
-			case RendererAPI::OpenGL:
+			case RendererAPI::RenderAPI::OpenGL:
 			{
 				return new OpenGLVertexBuffer(vertices, size);
 			}
@@ -29,13 +29,13 @@ namespace Prism
 	{
 		switch (Renderer::GetCurrentRenderAPI())
 		{
-			case RendererAPI::None:
+			case RendererAPI::RenderAPI::None:
 			{
 				PRISM_ENGINE_ASSERT(false, "RendererAPI::None is currently not supported.");
 				return nullptr;
 			}
 
-			case RendererAPI::OpenGL:
+			case RendererAPI::RenderAPI::OpenGL:
 			{
 				return new OpenGLIndexBuffer(indices, size);
 			}

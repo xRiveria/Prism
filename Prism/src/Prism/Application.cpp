@@ -1,8 +1,8 @@
 #include "PrismPrecompiledHeader.h"
 #include "Application.h"
-#include "glad/glad.h"
 #include "Platform/Windows/WindowsInput.h"
 #include "Prism/ImGui/ImGuiLayer.h"
+#include "Renderer/Renderer.h"
 
 namespace Prism
 {
@@ -191,17 +191,22 @@ namespace Prism
 	void Application::Run()
 	{
 		while (m_Running)
-		{
-			glClearColor(0.1f, 0.1f, 0.1f, 0);
-			glClear(GL_COLOR_BUFFER_BIT);
+		{		
+			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0 });
+			RenderCommand::Clear();
+
+			//Renderer::BeginScene(camera, lights, environment);
+			Renderer::BeginScene();	
 
 			m_BlueShader->BindShader();
-			m_SquareVertexArray->BindVertexArray();
-			glDrawElements(GL_TRIANGLES, m_SquareVertexArray->GetIndexBuffer()->GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::SubmitToRenderQueue(m_SquareVertexArray);
 
-			m_Shader->BindShader(); //Good practice to bind shaders first. Other APIs does this. 
-			m_VertexArray->BindVertexArray();
-			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetIndicesCount(), GL_UNSIGNED_INT, nullptr);
+			m_Shader->BindShader();
+			Renderer::SubmitToRenderQueue(m_VertexArray);
+
+			Renderer::EndScene();
+
+			//Renderer::FlushRenderer();
 
 			for (Layer* layer : m_LayerStack)
 			{

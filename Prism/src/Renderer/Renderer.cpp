@@ -3,5 +3,19 @@
 
 namespace Prism
 {
-	RendererAPI Renderer::s_RendererAPI = RendererAPI::OpenGL;
+	void Renderer::BeginScene()
+	{
+
+	}
+
+	void Renderer::EndScene()
+	{
+
+	}
+
+	void Renderer::SubmitToRenderQueue(const std::shared_ptr<VertexArray>& vertexArray)
+	{
+		vertexArray->BindVertexArray();
+		RenderCommand::DrawIndexed(vertexArray);
+	}
 }
