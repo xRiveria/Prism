@@ -8,7 +8,7 @@ namespace Prism
 {
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application()
+	Application::Application() : m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
 	{
 		PRISM_ENGINE_ASSERT(!s_Instance, "Application already exists.");
 		s_Instance = this;
@@ -63,6 +63,7 @@ namespace Prism
 		layout (location = 0) in vec3 attributePosition;
 		layout (location = 1) in vec4 attributeColor;
 
+		uniform mat4 u_ViewProjection;
 		out vec3 outputPosition;
 		out vec4 v_Color;
 
@@ -70,7 +71,7 @@ namespace Prism
 		{
 			v_Color = attributeColor;
 			outputPosition = attributePosition;
-			gl_Position = vec4(attributePosition, 1.0f);
+			gl_Position = u_ViewProjection * vec4(attributePosition, 1.0f);
 		}
 		)";
 
@@ -98,10 +99,10 @@ namespace Prism
 
 		float squareVertices[3 * 4] =
 		{
-			-70.5f, -70.5f, 0.0f,
-			 70.5f, -70.5f, 0.0f,
-			 70.5f,  70.5f, 0.0f,
-			-70.5f,  70.5f, 0.0f
+			-0.75f, -0.75f, 0.0f,
+			 0.75f, -0.75f, 0.0f,
+			 0.75f,  0.75f, 0.0f,
+			-0.75f,  0.75f, 0.0f
 		};
 
 		std::shared_ptr<VertexBuffer> squareVertexBuffer;
@@ -132,12 +133,13 @@ namespace Prism
 		#version 330 core
 		layout (location = 0) in vec3 attributePosition;
 
+		uniform mat4 u_ViewProjection;
 		out vec3 outputPosition;
 
 		void main()
 		{
 			outputPosition = attributePosition;
-			gl_Position = vec4(attributePosition, 1.0f);
+			gl_Position = u_ViewProjection * vec4(attributePosition, 1.0f);
 		}
 		)";
 
@@ -195,14 +197,14 @@ namespace Prism
 			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0 });
 			RenderCommand::Clear();
 
+			m_Camera.SetCameraPosition({ -0.5f, 0.5f, 0.0f });
+			m_Camera.SetCameraRotation(45.0f);
+
 			//Renderer::BeginScene(camera, lights, environment);
-			Renderer::BeginScene();	
+			Renderer::BeginScene(m_Camera);	
 
-			m_BlueShader->BindShader();
-			Renderer::SubmitToRenderQueue(m_SquareVertexArray);
-
-			m_Shader->BindShader();
-			Renderer::SubmitToRenderQueue(m_VertexArray);
+			Renderer::SubmitToRenderQueue(m_BlueShader, m_SquareVertexArray);		
+			Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray);
 
 			Renderer::EndScene();
 

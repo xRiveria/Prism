@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "glm/glm.hpp"
 
 namespace Prism
 {
@@ -11,6 +12,8 @@ namespace Prism
 
 		void BindShader() const;
 		void UnbindShader() const; 
+
+		void UploadUniformMat4(const std::string& uniformName, const glm::mat4& matrix);
 
 	private:
 		uint32_t m_ShaderID;
