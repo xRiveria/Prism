@@ -2,6 +2,7 @@
 
 #include "Prism/Core.h"
 #include "Prism/Events/Event.h"
+#include "Prism/Core/Timestep.h"
 
 namespace Prism
 {
@@ -14,7 +15,7 @@ namespace Prism
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(Timestep timeStep) {}
 		virtual void OnImGuiRender() {}
 		virtual void OnEvent(Event& event) {}
 

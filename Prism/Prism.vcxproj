@@ -149,6 +149,7 @@
     <ClInclude Include="src\Prism.h" />
     <ClInclude Include="src\Prism\Application.h" />
     <ClInclude Include="src\Prism\Core.h" />
+    <ClInclude Include="src\Prism\Core\Timestep.h" />
     <ClInclude Include="src\Prism\EntryPoint.h" />
     <ClInclude Include="src\Prism\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Prism\Events\Event.h" />

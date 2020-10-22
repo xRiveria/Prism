@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "Platform/Windows/WindowsInput.h"
 #include "Prism/ImGui/ImGuiLayer.h"
+#include "GLFW/glfw3.h"
 
 namespace Prism
 {
@@ -13,7 +14,8 @@ namespace Prism
 		s_Instance = this;
 		m_Window = std::unique_ptr<Window>(Window::ConstructWindow()); //Explicit conversion here that converts the created Window's pointer from ConstructWindow() into a unique pointer that is returned here.
 		m_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));		
-	
+		m_Window->SetVSync(true); //Lock monitor refresh rate.
+
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
 	}
@@ -54,10 +56,13 @@ namespace Prism
 		while (m_Running)
 		{		
 			//Renderer::FlushRenderer();
+			float time = (float)glfwGetTime();  //Platform::GetTime() in the future. Gets the current time.
+			Timestep timestep = time - m_LastFrameTime; //The time it took from the previous frame to the current frame. 
+			m_LastFrameTime = time; //Sets the previous frame's time to the current time. Repeat.
 
 			for (Layer* layer : m_LayerStack)
 			{
-				layer->OnUpdate();
+				layer->OnUpdate(timestep);
 			}
 
 			m_ImGuiLayer->BeginImGuiRenderLoop();

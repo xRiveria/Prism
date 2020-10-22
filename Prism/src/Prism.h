@@ -4,6 +4,8 @@
 #include "Prism/Application.h"
 #include "Prism/Layer.h"
 #include "Prism/Log.h"
+#include "Prism/Core/Timestep.h"
+
 #include "Prism/ImGui/ImGuiLayer.h"
 
 #include "Prism/Input.h"

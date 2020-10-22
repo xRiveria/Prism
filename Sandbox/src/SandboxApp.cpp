@@ -149,35 +149,35 @@ public:
 		m_BlueShader.reset(new Prism::Shader(blueVertexShaderSourceCode, blueFragmentShaderSourceCode));
 	}
 
-	void OnUpdate() override
+	void OnUpdate(Prism::Timestep timestep) override
 	{
 		if (Prism::Input::IsKeyPressed(PRISM_KEY_LEFT))
 		{
-			m_CameraPosition.x -= m_CameraMoveSpeed;
+			m_CameraPosition.x -= m_CameraMoveSpeed * timestep;
 		}
 
 		else if (Prism::Input::IsKeyPressed(PRISM_KEY_RIGHT))
 		{
-			m_CameraPosition.x += m_CameraMoveSpeed;
+			m_CameraPosition.x += m_CameraMoveSpeed * timestep;
 		}
 
 		if (Prism::Input::IsKeyPressed(PRISM_KEY_UP))
 		{
-			m_CameraPosition.y += m_CameraMoveSpeed;
+			m_CameraPosition.y += m_CameraMoveSpeed * timestep;
 		}
 
 		else if (Prism::Input::IsKeyPressed(PRISM_KEY_DOWN))
 		{
-			m_CameraPosition.y -= m_CameraMoveSpeed;
+			m_CameraPosition.y -= m_CameraMoveSpeed * timestep;
 		}
 
 		if (Prism::Input::IsKeyPressed(PRISM_KEY_A))
 		{
-			m_CameraRotation += m_CameraRotationSpeed;
+			m_CameraRotation += m_CameraRotationSpeed * timestep;
 		}
 		else if (Prism::Input::IsKeyPressed(PRISM_KEY_D))
 		{
-			m_CameraRotation -= m_CameraRotationSpeed;
+			m_CameraRotation -= m_CameraRotationSpeed * timestep;
 		}
 
 		Prism::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0 });
@@ -216,8 +216,8 @@ private:
 	glm::vec3 m_CameraPosition;
 	float m_CameraRotation = 0.0f;
 
-	float m_CameraMoveSpeed = 0.1f;
-	float m_CameraRotationSpeed = 2.0f;
+	float m_CameraMoveSpeed = 5.0f;
+	float m_CameraRotationSpeed = 180.0f;
 };
 
 class Sandbox : public Prism::Application
