@@ -7,16 +7,11 @@ namespace Prism
 	class Shader
 	{
 	public:
-		Shader(const std::string& vertexSourceCode, const std::string& fragmentSourceCode);
-		~Shader();
+		~Shader() = default;
 
-		void BindShader() const;
-		void UnbindShader() const; 
+		virtual void BindShader() const = 0;
+		virtual void UnbindShader() const = 0;
 
-		void UploadUniformMat4(const std::string& uniformName, const glm::mat4& matrix);
-		void UploadUniformFloat4(const std::string& uniformName, const glm::vec4& values);
-
-	private:
-		uint32_t m_ShaderID;
+		static Shader* CreateShader(const std::string& vertexSourceCode, const std::string& fragmentSourceCode);
 	};
 }

@@ -1,6 +1,7 @@
 #include "PrismPrecompiledHeader.h"
 #include "Renderer/Renderer.h"
 #include "Renderer/Shader.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Prism
 {
@@ -16,11 +17,14 @@ namespace Prism
 
 	}
 
+	//We cast it to OpenGL Shader here for now as its the only render API we have.
+	//By the time we are ready for DirectX or Vulkan, we will be ready for that.
+	//Thus, we will do casting for now. This is temporary and the system will be rewritten by then.
 	void Renderer::SubmitToRenderQueue(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform)
 	{
 		shader->BindShader();
-		shader->UploadUniformMat4("u_ViewProjection", m_SceneData->viewProjectionMatrix); //Does this really have to be done per object?
-		shader->UploadUniformMat4("u_Transform", transform); //Must be done per object. 
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ViewProjection", m_SceneData->viewProjectionMatrix); //Does this really have to be done per object?
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_Transform", transform); //Must be done per object. 
 
 		vertexArray->BindVertexArray();
 

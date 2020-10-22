@@ -1,6 +1,8 @@
 #include "Prism.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 #include "imgui/imgui.h"
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 class ExampleLayer : public Prism::Layer
 {
@@ -80,7 +82,7 @@ public:
 		}
 		)";
 
-		m_Shader.reset(new Prism::Shader(vertexShaderSourceCode, fragmentShaderSourceCode));
+		m_Shader.reset(Prism::Shader::CreateShader(vertexShaderSourceCode, fragmentShaderSourceCode));
 
 		//=================================================================
 		// Square
@@ -139,18 +141,18 @@ public:
 		std::string flatColorFragmentShaderSourceCode = R"(
 		#version 330 core
 		
-		uniform vec4 u_Color;
+		uniform vec3 u_Color;
 		in vec3 outputPosition;
 		out vec4 outputColor;
 
 		void main()
 		{
-			outputColor = u_Color;
+			outputColor = vec4(u_Color, 1.0f);
 		}
 		)";
 
 		//Shader
-		m_FlatColorShader.reset(new Prism::Shader(flatColorVertexShaderSourceCode, flatColorFragmentShaderSourceCode));
+		m_FlatColorShader.reset(Prism::Shader::CreateShader(flatColorVertexShaderSourceCode, flatColorFragmentShaderSourceCode));
 	}
 
 	void OnUpdate(Prism::Timestep timestep) override
@@ -201,7 +203,7 @@ public:
 		else if (Prism::Input::IsKeyPressed(PRISM_KEY_J))
 		{
 			squareVectorPosition.x -= 1.0f * timestep;
-		}
+		} 
 
 		Prism::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0 });
 		Prism::RenderCommand::Clear();
@@ -213,9 +215,6 @@ public:
 		Prism::Renderer::BeginScene(m_Camera);
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
-		glm::vec4 redColor = { 0.8f ,0.2f, 0.3f, 1.0f }; 
-		glm::vec4 blueColor = { 0.2f, 0.3f, 0.8f, 1.0f };
-
 		/*Prism::MaterialReference material = new Prism::Material(m_FlatColorShader);
 		Prism::MaterialInstanceReference materialReference = new Prism::MaterialInstance(material);
 
@@ -223,20 +222,15 @@ public:
 		materialReference->SetTexture("u_AlbedoMap", texture);
 		squareMesh->SetMaterial(materialReference);*/
 		
+		std::dynamic_pointer_cast<Prism::OpenGLShader>(m_FlatColorShader)->BindShader();
+		std::dynamic_pointer_cast<Prism::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+
 		for (int y = 0; y < 20; y++)
 		{
 			for (int x = 0; x < 20; x++)
 			{
 				glm::vec3 position(x * 0.11f, y * 0.11f, 0.0f);
-				glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * scale;
-				if (x % 2 == 0)
-				{
-					m_FlatColorShader->UploadUniformFloat4("u_Color", redColor);
-				}
-				else
-				{
-					m_FlatColorShader->UploadUniformFloat4("u_Color", blueColor);
-				}
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * scale;			
 				Prism::Renderer::SubmitToRenderQueue(m_FlatColorShader, m_SquareVertexArray, transform);
 			}
 		}
@@ -252,7 +246,9 @@ public:
 
 	void OnImGuiRender() override
 	{
-
+		ImGui::Begin("Settings");
+		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
+		ImGui::End();
 	}
 
 	void OnEvent(Prism::Event& event) override
@@ -275,6 +271,8 @@ private:
 	float m_CameraRotationSpeed = 180.0f;
 
 	glm::vec3 squareVectorPosition;
+
+	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
 };
 
 class Sandbox : public Prism::Application
@@ -289,7 +287,7 @@ public:
 	~Sandbox()
 	{
 
-	}
+	} 
 };
 
 Prism::Application* Prism::CreateApplication()
