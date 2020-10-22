@@ -121,7 +121,7 @@ public:
 
 		//Some graphic cards have default shaders created. Thus, we do not have to create them to start rendering.
 		//However, in more contexts, we will have to create shaders if we want to do anything remotely interesting.
-		std::string blueVertexShaderSourceCode = R"(
+		std::string flatColorVertexShaderSourceCode = R"(
 		#version 330 core
 		layout (location = 0) in vec3 attributePosition;
 
@@ -136,20 +136,21 @@ public:
 		}
 		)";
 
-		std::string blueFragmentShaderSourceCode = R"(
+		std::string flatColorFragmentShaderSourceCode = R"(
 		#version 330 core
 		
+		uniform vec4 u_Color;
 		in vec3 outputPosition;
 		out vec4 outputColor;
 
 		void main()
 		{
-			outputColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+			outputColor = u_Color;
 		}
 		)";
 
 		//Shader
-		m_BlueShader.reset(new Prism::Shader(blueVertexShaderSourceCode, blueFragmentShaderSourceCode));
+		m_FlatColorShader.reset(new Prism::Shader(flatColorVertexShaderSourceCode, flatColorFragmentShaderSourceCode));
 	}
 
 	void OnUpdate(Prism::Timestep timestep) override
@@ -210,8 +211,17 @@ public:
 
 		//Renderer::BeginScene(camera, lights, environment);
 		Prism::Renderer::BeginScene(m_Camera);
-
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
+		glm::vec4 redColor = { 0.8f ,0.2f, 0.3f, 1.0f }; 
+		glm::vec4 blueColor = { 0.2f, 0.3f, 0.8f, 1.0f };
+
+		/*Prism::MaterialReference material = new Prism::Material(m_FlatColorShader);
+		Prism::MaterialInstanceReference materialReference = new Prism::MaterialInstance(material);
+
+		materialReference->SetColorValue("u_Color", redColor);
+		materialReference->SetTexture("u_AlbedoMap", texture);
+		squareMesh->SetMaterial(materialReference);*/
 		
 		for (int y = 0; y < 20; y++)
 		{
@@ -219,7 +229,15 @@ public:
 			{
 				glm::vec3 position(x * 0.11f, y * 0.11f, 0.0f);
 				glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * scale;
-				Prism::Renderer::SubmitToRenderQueue(m_BlueShader, m_SquareVertexArray, transform);
+				if (x % 2 == 0)
+				{
+					m_FlatColorShader->UploadUniformFloat4("u_Color", redColor);
+				}
+				else
+				{
+					m_FlatColorShader->UploadUniformFloat4("u_Color", blueColor);
+				}
+				Prism::Renderer::SubmitToRenderQueue(m_FlatColorShader, m_SquareVertexArray, transform);
 			}
 		}
 
@@ -246,7 +264,7 @@ private:
 	std::shared_ptr<Prism::Shader> m_Shader;
 	std::shared_ptr<Prism::VertexArray> m_VertexArray;
 
-	std::shared_ptr<Prism::Shader> m_BlueShader;
+	std::shared_ptr<Prism::Shader> m_FlatColorShader;
 	std::shared_ptr<Prism::VertexArray> m_SquareVertexArray;
 
 	Prism::OrthographicCamera m_Camera;
@@ -278,6 +296,7 @@ Prism::Application* Prism::CreateApplication()
 {
 	return new Sandbox();
 }
+
 
 
 

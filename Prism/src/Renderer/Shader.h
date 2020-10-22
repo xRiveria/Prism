@@ -14,6 +14,7 @@ namespace Prism
 		void UnbindShader() const; 
 
 		void UploadUniformMat4(const std::string& uniformName, const glm::mat4& matrix);
+		void UploadUniformFloat4(const std::string& uniformName, const glm::vec4& values);
 
 	private:
 		uint32_t m_ShaderID;
