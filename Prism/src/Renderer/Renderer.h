@@ -11,7 +11,7 @@ namespace Prism
 		static void BeginScene(OrthographicCamera& camera); //To Do: Take in scene parameters.
 		static void EndScene();
 
-		static void SubmitToRenderQueue(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray);
+		static void SubmitToRenderQueue(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform = glm::mat4(1.0f)); //Stick identity matrix here so we can choose not to add a transform component if we want = default origin. 
 		
 		inline static RendererAPI::RenderAPI GetCurrentRenderAPI() { return RendererAPI::GetCurrentRenderAPI(); }
 	

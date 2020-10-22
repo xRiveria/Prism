@@ -1,10 +1,11 @@
 #include "Prism.h"
 #include "imgui/imgui.h"
+#include "glm/gtc/matrix_transform.hpp"
 
 class ExampleLayer : public Prism::Layer
 {
 public:
-	ExampleLayer():Layer("Example Layer"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f)
+	ExampleLayer():Layer("Example Layer"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f), squareVectorPosition(0.0f)
 	{
 		PRISM_CLIENT_WARN("Created {0}", GetName());
 
@@ -54,6 +55,7 @@ public:
 		layout (location = 1) in vec4 attributeColor;
 
 		uniform mat4 u_ViewProjection;
+		uniform mat4 u_Transform;
 		out vec3 outputPosition;
 		out vec4 v_Color;
 
@@ -61,7 +63,7 @@ public:
 		{
 			v_Color = attributeColor;
 			outputPosition = attributePosition;
-			gl_Position = u_ViewProjection * vec4(attributePosition, 1.0f);
+			gl_Position = u_ViewProjection * u_Transform * vec4(attributePosition, 1.0f);
 		}
 		)";
 
@@ -89,10 +91,10 @@ public:
 
 		float squareVertices[3 * 4] =
 		{
-			-0.75f, -0.75f, 0.0f,
-			 0.75f, -0.75f, 0.0f,
-			 0.75f,  0.75f, 0.0f,
-			-0.75f,  0.75f, 0.0f
+			-0.5f, -0.5f, 0.0f,
+			 0.5f, -0.5f, 0.0f,
+			 0.5f,  0.5f, 0.0f,
+			-0.5f,  0.5f, 0.0f
 		};
 
 		std::shared_ptr<Prism::VertexBuffer> squareVertexBuffer;
@@ -124,12 +126,13 @@ public:
 		layout (location = 0) in vec3 attributePosition;
 
 		uniform mat4 u_ViewProjection;
+		uniform mat4 u_Transform;
 		out vec3 outputPosition;
 
 		void main()
 		{
 			outputPosition = attributePosition;
-			gl_Position = u_ViewProjection * vec4(attributePosition, 1.0f);
+			gl_Position = u_ViewProjection * u_Transform * vec4(attributePosition, 1.0f);
 		}
 		)";
 
@@ -141,7 +144,7 @@ public:
 
 		void main()
 		{
-			outputColor = vec4(outputPosition, 1.0f);
+			outputColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		}
 		)";
 
@@ -180,6 +183,25 @@ public:
 			m_CameraRotation -= m_CameraRotationSpeed * timestep;
 		}
 
+		if (Prism::Input::IsKeyPressed(PRISM_KEY_I))
+		{
+			squareVectorPosition.y += 1.0f * timestep;
+		}
+
+		else if (Prism::Input::IsKeyPressed(PRISM_KEY_K))
+		{
+			squareVectorPosition.y -= 1.0f * timestep;
+		}
+
+		if (Prism::Input::IsKeyPressed(PRISM_KEY_L))
+		{
+			squareVectorPosition.x += 1.0f * timestep;
+		}
+		else if (Prism::Input::IsKeyPressed(PRISM_KEY_J))
+		{
+			squareVectorPosition.x -= 1.0f * timestep;
+		}
+
 		Prism::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0 });
 		Prism::RenderCommand::Clear();
 
@@ -189,8 +211,23 @@ public:
 		//Renderer::BeginScene(camera, lights, environment);
 		Prism::Renderer::BeginScene(m_Camera);
 
-		Prism::Renderer::SubmitToRenderQueue(m_BlueShader, m_SquareVertexArray);
-		Prism::Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray);
+		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+		
+		for (int y = 0; y < 20; y++)
+		{
+			for (int x = 0; x < 20; x++)
+			{
+				glm::vec3 position(x * 0.11f, y * 0.11f, 0.0f);
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * scale;
+				Prism::Renderer::SubmitToRenderQueue(m_BlueShader, m_SquareVertexArray, transform);
+			}
+		}
+
+		//=================
+
+		glm::mat4 squarePosition = glm::translate(glm::mat4(1.0f), squareVectorPosition);
+		Prism::Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray, squarePosition);
+		//Prism::Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray);
 
 		Prism::Renderer::EndScene();
 	}
@@ -218,6 +255,8 @@ private:
 
 	float m_CameraMoveSpeed = 5.0f;
 	float m_CameraRotationSpeed = 180.0f;
+
+	glm::vec3 squareVectorPosition;
 };
 
 class Sandbox : public Prism::Application
