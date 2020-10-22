@@ -2,13 +2,12 @@
 #include "Application.h"
 #include "Platform/Windows/WindowsInput.h"
 #include "Prism/ImGui/ImGuiLayer.h"
-#include "Renderer/Renderer.h"
 
 namespace Prism
 {
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application() : m_Camera(-1.6f, 1.6f, -0.9f, 0.9f)
+	Application::Application() 
 	{
 		PRISM_ENGINE_ASSERT(!s_Instance, "Application already exists.");
 		s_Instance = this;
@@ -17,146 +16,6 @@ namespace Prism
 	
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
-
-		//=================================================================
-		// Triangle
-		//=================================================================
-
-		//Vertex Array
-		m_VertexArray.reset(VertexArray::CreateVertexArray());
-		m_VertexArray->BindVertexArray();
-
-		float vertices[3 * 7] = //Within clip space already - no MVP needed.
-		{
-			-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
-			 0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
-			 0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
-		};
-
-		std::shared_ptr<VertexBuffer> m_VertexBuffer;
-		m_VertexBuffer.reset(VertexBuffer::CreateVertexBuffer(vertices, sizeof(vertices)));
-			
-		BufferLayout layout =
-		{
-			{ ShaderDataType::Float3, "a_Position", false },
-			{ ShaderDataType::Float4, "a_Color", false }
-		};
-
-		m_VertexBuffer->SetBufferLayout(layout);	
-		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
-
-		uint32_t indices[3]
-		{
-			0, 1, 2
-		};
-
-		//Index Buffer
-		std::shared_ptr<IndexBuffer> m_IndexBuffer;
-		m_IndexBuffer.reset(IndexBuffer::CreateIndexBuffer(indices, sizeof(indices) / sizeof(uint32_t)));
-		m_IndexBuffer->BindIndexBuffer();
-
-		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
-
-		//Shader
-		std::string vertexShaderSourceCode = R"(
-		#version 330 core
-		layout (location = 0) in vec3 attributePosition;
-		layout (location = 1) in vec4 attributeColor;
-
-		uniform mat4 u_ViewProjection;
-		out vec3 outputPosition;
-		out vec4 v_Color;
-
-		void main()
-		{
-			v_Color = attributeColor;
-			outputPosition = attributePosition;
-			gl_Position = u_ViewProjection * vec4(attributePosition, 1.0f);
-		}
-		)";
-
-		std::string fragmentShaderSourceCode = R"(
-		#version 330 core
-		
-		in vec3 outputPosition;
-		in vec4 v_Color;
-		out vec4 outputColor;
-
-		void main()
-		{
-			outputColor = v_Color;
-		}
-		)";
-
-		m_Shader.reset(new Shader(vertexShaderSourceCode, fragmentShaderSourceCode));
-
-		//=================================================================
-		// Square
-		//=================================================================
-
-		m_SquareVertexArray.reset(VertexArray::CreateVertexArray());
-		m_SquareVertexArray->BindVertexArray();
-
-		float squareVertices[3 * 4] =
-		{
-			-0.75f, -0.75f, 0.0f,
-			 0.75f, -0.75f, 0.0f,
-			 0.75f,  0.75f, 0.0f,
-			-0.75f,  0.75f, 0.0f
-		};
-
-		std::shared_ptr<VertexBuffer> squareVertexBuffer;
-		squareVertexBuffer.reset(VertexBuffer::CreateVertexBuffer(squareVertices, sizeof(squareVertices)));
-		BufferLayout blueLayout =
-		{
-			{ ShaderDataType::Float3, "a_Position", false },
-		};
-
-		squareVertexBuffer->SetBufferLayout(blueLayout);
-		m_SquareVertexArray->AddVertexBuffer(squareVertexBuffer);
-
-		uint32_t squareIndices[6]
-		{
-			0, 1, 2, 2, 3, 0
-		};
-
-		//Index Buffer
-		std::shared_ptr<IndexBuffer> squareIndexBuffer;
-		squareIndexBuffer.reset(IndexBuffer::CreateIndexBuffer(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
-		squareIndexBuffer->BindIndexBuffer();
-
-		m_SquareVertexArray->SetIndexBuffer(squareIndexBuffer);
-
-		//Some graphic cards have default shaders created. Thus, we do not have to create them to start rendering.
-		//However, in more contexts, we will have to create shaders if we want to do anything remotely interesting.
-		std::string blueVertexShaderSourceCode = R"(
-		#version 330 core
-		layout (location = 0) in vec3 attributePosition;
-
-		uniform mat4 u_ViewProjection;
-		out vec3 outputPosition;
-
-		void main()
-		{
-			outputPosition = attributePosition;
-			gl_Position = u_ViewProjection * vec4(attributePosition, 1.0f);
-		}
-		)";
-
-		std::string blueFragmentShaderSourceCode = R"(
-		#version 330 core
-		
-		in vec3 outputPosition;
-		out vec4 outputColor;
-
-		void main()
-		{
-			outputColor = vec4(outputPosition, 1.0f);
-		}
-		)";
-
-		//Shader
-		m_BlueShader.reset(new Shader(blueVertexShaderSourceCode, blueFragmentShaderSourceCode));
 	}
 
 	Application::~Application()
@@ -194,20 +53,6 @@ namespace Prism
 	{
 		while (m_Running)
 		{		
-			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0 });
-			RenderCommand::Clear();
-
-			m_Camera.SetCameraPosition({ -0.5f, 0.5f, 0.0f });
-			m_Camera.SetCameraRotation(45.0f);
-
-			//Renderer::BeginScene(camera, lights, environment);
-			Renderer::BeginScene(m_Camera);	
-
-			Renderer::SubmitToRenderQueue(m_BlueShader, m_SquareVertexArray);		
-			Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray);
-
-			Renderer::EndScene();
-
 			//Renderer::FlushRenderer();
 
 			for (Layer* layer : m_LayerStack)

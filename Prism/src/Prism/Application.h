@@ -6,11 +6,6 @@
 #include "Prism/LayerStack.h"
 #include "Prism/ImGui/ImGuiLayer.h"
 
-#include "Renderer/Buffer.h"
-#include "Renderer/Shader.h"
-#include "Renderer/VertexArray.h"
-#include "Renderer/OrthographicCamera.h"
-
 //This class is meant to be inherited by all Prism applications.
 //In this case, our Sandbox application is the first to do this.
 namespace Prism
@@ -36,14 +31,6 @@ namespace Prism
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
-
-		std::shared_ptr<Shader> m_Shader;
-		std::shared_ptr<VertexArray> m_VertexArray;
-
-		std::shared_ptr<Shader> m_BlueShader;
-		std::shared_ptr<VertexArray> m_SquareVertexArray;
-
-		OrthographicCamera m_Camera;
 
 	private:
 		static Application* s_Instance; 
