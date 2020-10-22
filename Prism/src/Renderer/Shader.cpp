@@ -12,7 +12,9 @@ namespace Prism
 			case RendererAPI::RenderAPI::None:
 			{
 				PRISM_ENGINE_ASSERT(false, "RendererAPI::None is currently not supported.");
+				return nullptr;
 			}
+
 			case RendererAPI::RenderAPI::OpenGL:
 			{
 				return new OpenGLShader(vertexSourceCode, fragmentSourceCode);
