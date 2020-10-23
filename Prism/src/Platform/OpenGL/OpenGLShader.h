@@ -1,11 +1,15 @@
 #pragma once
 #include "Renderer/Shader.h"
 
+
+typedef unsigned int GLenum;
+
 namespace Prism
 {
 	class OpenGLShader : public Shader
 	{
 	public:
+		OpenGLShader(const std::string& filePath);
 		OpenGLShader(const std::string& vertexSourceCode, const std::string& fragmentSourceCode);
 		~OpenGLShader();
 
@@ -19,6 +23,11 @@ namespace Prism
 		void UploadUniformFloat4(const std::string& uniformName, const glm::vec4& values);
 		void UploadUniformMat3(const std::string& uniformName, const glm::mat3& matrix);
 		void UploadUniformMat4(const std::string& uniformName, const glm::mat4& matrix);
+
+	private:
+		std::string ReadFile(const std::string& filePath);
+		std::unordered_map<GLenum, std::string> PreProcessFile(const std::string& sourceFile);
+		void CompileShader(std::unordered_map<GLenum, std::string>& shaderSources);
 
 	private:
 		uint32_t m_ShaderID;

@@ -152,44 +152,9 @@ public:
 		}
 		)";
 
-		//Shader
 		m_FlatColorShader.reset(Prism::Shader::CreateShader(flatColorVertexShaderSourceCode, flatColorFragmentShaderSourceCode));
-	
-		//=====================================================
-		//Texture
-		std::string textureVertexShaderSourceCode = R"(
-		#version 330 core
-		layout (location = 0) in vec3 a_Position;
-		layout (location = 1) in vec2 a_TexCoord;
-
-		uniform mat4 u_ViewProjection;
-		uniform mat4 u_Transform;
-
-		out vec2 v_TexCoord;
-
-		void main()
-		{
-			v_TexCoord = a_TexCoord;
-			gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0f);
-		}
-		)";
-
-		std::string textureFragmentShaderSourceCode = R"(
-		#version 330 core
-		
-		uniform sampler2D u_Texture;
-
-		in vec2 v_TexCoord;
-		out vec4 outputColor;
-
-		void main()
-		{
-			outputColor = texture(u_Texture, v_TexCoord);
-		}
-		)";
-
 		//Shader
-		m_TextureShader.reset(Prism::Shader::CreateShader(textureVertexShaderSourceCode, textureFragmentShaderSourceCode));
+		m_TextureShader.reset(Prism::Shader::CreateShader("assets/shaders/Texture.glsl"));
 		
 		m_PrismTexture = Prism::Texture2D::CreateTexture("assets/textures/PrismLogo.png");
 		m_Texture = Prism::Texture2D::CreateTexture("assets/textures/Checkerboard.png");

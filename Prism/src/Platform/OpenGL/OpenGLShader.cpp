@@ -1,81 +1,145 @@
 #include "PrismPrecompiledHeader.h"
 #include "OpenGLShader.h"
-#include "glad/glad.h"
 #include "glm/gtc/type_ptr.hpp"
+#include <fstream>
+#include "glad/glad.h"
 
 namespace Prism
 {
-	OpenGLShader::OpenGLShader(const std::string& vertexSourceCode, const std::string& fragmentSourceCode)
+	static GLenum ShaderTypeFromString(const std::string& typeString)
 	{
-		//Vertex Shader
-		unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		const char* vertexSource = vertexSourceCode.c_str();
-		glShaderSource(vertexShader, 1, &vertexSource, 0);
-		glCompileShader(vertexShader);
-
-		int isShaderCompiled = 0;
-		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &isShaderCompiled);
-		if (isShaderCompiled == GL_FALSE)
+		if (typeString == "VertexShader")
 		{
-			int maxDebugLength = 64;
-			glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &maxDebugLength);
-			//The max length includes the null character.
-			std::vector<char> infoLog(maxDebugLength);
-			glGetShaderInfoLog(vertexShader, maxDebugLength, &maxDebugLength, &infoLog[0]);
-			glDeleteShader(vertexShader);
-
-			PRISM_ENGINE_ERROR("{0}", infoLog.data());
-			PRISM_ENGINE_ASSERT(0, "Vertex Shader Compilation Failure!");
-			return;
+			return GL_VERTEX_SHADER;
 		}
 
-		unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		const char* fragmentSource = fragmentSourceCode.c_str();
-		glShaderSource(fragmentShader, 1, &fragmentSource, 0);
-		glCompileShader(fragmentShader);
-
-		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &isShaderCompiled);
-		if (isShaderCompiled == GL_FALSE)
+		if (typeString == "FragmentShader" || typeString == "PixelShader")
 		{
-			int maxDebugLength = 64;
-			glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &maxDebugLength);
-			//The max length includes the null character.
-			std::vector<char> infoLog(maxDebugLength);
-			glGetShaderInfoLog(fragmentShader, maxDebugLength, &maxDebugLength, &infoLog[0]);
-			glDeleteShader(fragmentShader);
-			glDeleteShader(vertexShader); //Don't leak shaders.
-
-			PRISM_ENGINE_ERROR("{0}", infoLog.data());
-			PRISM_ENGINE_ASSERT(0, "Fragment Shader Compilation Failure!");
-			return;
+			return GL_FRAGMENT_SHADER;
 		}
 
-		m_ShaderID = glCreateProgram();
-		glAttachShader(m_ShaderID, vertexShader);
-		glAttachShader(m_ShaderID, fragmentShader);
-		glLinkProgram(m_ShaderID);
+		PRISM_ENGINE_ASSERT(false, "Unknown Shader Type.");
+		return 0;
+	}
+
+	OpenGLShader::OpenGLShader(const std::string& filePath)
+	{
+		std::string sourceFile = ReadFile(filePath);
+		auto shaderSources = PreProcessFile(sourceFile);
+		CompileShader(shaderSources);
+	}
+
+	std::string OpenGLShader::ReadFile(const std::string& filePath)
+	{
+		std::string fileResult;
+		std::ifstream inputFile(filePath, std::ios::in, std::ios::binary); //We read it as a binary because we don't want to do any form of processing to it. We don't C++ to intepret it as a string or whatsoever.
+		if (inputFile)
+		{
+			inputFile.seekg(0, std::ios::end); //Moves the file pointer to the end of the file.
+			fileResult.resize(inputFile.tellg()); //Tells us where the file pointer is. As its at the end, its the size of the file.
+			inputFile.seekg(0, std::ios::beg); //Brings the file pointer back to the top of the file.
+			inputFile.read(&fileResult[0], fileResult.size()); //Read from the beginning of the file and the size to read is the size of the file.
+			inputFile.close();
+		}
+		else
+		{
+			PRISM_ENGINE_ERROR("Could not open GLSL file at {0}", filePath);
+		}
+		return fileResult;
+	}
+
+	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcessFile(const std::string& sourceFile)
+	{
+		std::unordered_map<GLenum, std::string> shaderSources;
+		
+		const char* typeToken = "#type";
+		size_t typeTokenLength = strlen(typeToken);
+		size_t position = sourceFile.find(typeToken, 0); //Find the position of typeToken in the code.
+		while (position != std::string::npos) //While we're finding it...
+		{
+			size_t eol = sourceFile.find_first_of("\r\n", position); //Find the first instance of a new line or a carriage return.
+			PRISM_ENGINE_ASSERT(eol != std::string::npos, "Syntax Error."); //If the lines don't exist, error.
+			size_t begin = position + typeTokenLength + 1; //The position of that first typeToken. We +1 due to the space before "FragmentShader"/"VertexShader" = #typeToken FragmentShader. 
+			std::string type = sourceFile.substr(begin, eol - begin); //Extract that type. Take a substring from beginning to the end of the line minus the typeToken + 1 = just the type name.
+			PRISM_ENGINE_ASSERT(ShaderTypeFromString(type), "Invalid Shader Type Specified."); //If its not equal to any of these, invalid shader type.
+		
+			size_t nextLinePosition = sourceFile.find_first_not_of("\r\n", eol); //Find next line from the end of the line above.
+			position = sourceFile.find(typeToken, nextLinePosition); //Find next typeToken.
+			shaderSources[ShaderTypeFromString(type)] = sourceFile.substr(nextLinePosition, position - (nextLinePosition == std::string::npos ? sourceFile.size() - 1 : nextLinePosition));
+		}
+
+		return shaderSources;
+	}
+
+	void OpenGLShader::CompileShader(std::unordered_map<GLenum, std::string>& shaderSources)
+	{
+		GLuint shaderProgramID = glCreateProgram();
+		std::vector<GLenum> glShaderIDs(shaderSources.size());
+
+		for (auto& keyValue : shaderSources)
+		{
+			GLenum shaderType = keyValue.first;
+			const std::string& sourceFile = keyValue.second;
+
+			GLuint shader = glCreateShader(shaderType);
+			const char* vertexSourceChar = sourceFile.c_str();
+			glShaderSource(shader, 1, &vertexSourceChar, 0);
+			glCompileShader(shader);
+
+			int isShaderCompiled = 0;
+			glGetShaderiv(shader, GL_COMPILE_STATUS, &isShaderCompiled);
+			if (isShaderCompiled == GL_FALSE)
+			{
+				int maxDebugLength = 64;
+				glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxDebugLength);
+				//The max length includes the null character.
+				std::vector<char> infoLog(maxDebugLength);
+				glGetShaderInfoLog(shader, maxDebugLength, &maxDebugLength, &infoLog[0]);
+				glDeleteShader(shader);
+
+				PRISM_ENGINE_ERROR("{0}", infoLog.data());
+				PRISM_ENGINE_ASSERT(0, "Shader Compilation Failure!");
+				break;
+			}
+
+			glAttachShader(shaderProgramID, shader);
+			glShaderIDs.push_back(shader);
+		}
+
+		glLinkProgram(shaderProgramID);
 
 		int isShaderLinked;
-		glGetProgramiv(m_ShaderID, GL_LINK_STATUS, &isShaderLinked);
+		glGetProgramiv(shaderProgramID, GL_LINK_STATUS, &isShaderLinked);
 		if (isShaderLinked == GL_FALSE)
 		{
 			int maxDebugLength = 64;
-			glGetProgramiv(m_ShaderID, GL_INFO_LOG_LENGTH, &maxDebugLength);
+			glGetProgramiv(shaderProgramID, GL_INFO_LOG_LENGTH, &maxDebugLength);
 			//The max length includes the null character.
 			std::vector<char> infoLog(maxDebugLength);
-			glGetProgramInfoLog(m_ShaderID, maxDebugLength, &maxDebugLength, &infoLog[0]);
+			glGetProgramInfoLog(shaderProgramID, maxDebugLength, &maxDebugLength, &infoLog[0]);
 
-			glDeleteProgram(m_ShaderID);
-			glDeleteShader(vertexShader);
-			glDeleteShader(fragmentShader);
+			glDeleteProgram(shaderProgramID);
 
 			PRISM_ENGINE_ERROR("{0}", infoLog.data());
 			PRISM_ENGINE_ASSERT(0, "Shader Linking Failure!");
 			return;
 		}
+
 		//Always detach shaders after a successful link.
-		glDetachShader(m_ShaderID, vertexShader);
-		glDetachShader(m_ShaderID, fragmentShader);
+		for (auto shaderID : glShaderIDs)
+		{
+			glDetachShader(shaderProgramID, shaderID);
+		}
+
+		m_ShaderID = shaderProgramID;
+	}
+
+	OpenGLShader::OpenGLShader(const std::string& vertexSourceCode, const std::string& fragmentSourceCode)
+	{
+		std::unordered_map<GLenum, std::string> sources;
+		sources[GL_VERTEX_SHADER] = vertexSourceCode;
+		sources[GL_FRAGMENT_SHADER] = fragmentSourceCode;
+		CompileShader(sources);
 	}
 
 	OpenGLShader::~OpenGLShader()
