@@ -91,12 +91,12 @@ public:
 		m_SquareVertexArray.reset(Prism::VertexArray::CreateVertexArray());
 		m_SquareVertexArray->BindVertexArray();
 
-		float squareVertices[3 * 4] =
+		float squareVertices[5 * 4] =
 		{
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f,
-			-0.5f,  0.5f, 0.0f
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 		};
 
 		Prism::Reference<Prism::VertexBuffer> squareVertexBuffer;
@@ -104,6 +104,7 @@ public:
 		Prism::BufferLayout blueLayout =
 		{
 			{ Prism::ShaderDataType::Float3, "a_Position", false },
+			{ Prism::ShaderDataType::Float2, "a_TextCoord" }
 		};
 
 		squareVertexBuffer->SetBufferLayout(blueLayout);
@@ -153,7 +154,48 @@ public:
 
 		//Shader
 		m_FlatColorShader.reset(Prism::Shader::CreateShader(flatColorVertexShaderSourceCode, flatColorFragmentShaderSourceCode));
-	}
+	
+		//=====================================================
+		//Texture
+		std::string textureVertexShaderSourceCode = R"(
+		#version 330 core
+		layout (location = 0) in vec3 a_Position;
+		layout (location = 1) in vec2 a_TexCoord;
+
+		uniform mat4 u_ViewProjection;
+		uniform mat4 u_Transform;
+
+		out vec2 v_TexCoord;
+
+		void main()
+		{
+			v_TexCoord = a_TexCoord;
+			gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0f);
+		}
+		)";
+
+		std::string textureFragmentShaderSourceCode = R"(
+		#version 330 core
+		
+		uniform sampler2D u_Texture;
+
+		in vec2 v_TexCoord;
+		out vec4 outputColor;
+
+		void main()
+		{
+			outputColor = texture(u_Texture, v_TexCoord);
+		}
+		)";
+
+		//Shader
+		m_TextureShader.reset(Prism::Shader::CreateShader(textureVertexShaderSourceCode, textureFragmentShaderSourceCode));
+		
+		
+		m_Texture = Prism::Texture2D::CreateTexture("assets/textures/Checkerboard.png");
+		std::dynamic_pointer_cast<Prism::OpenGLShader>(m_TextureShader)->BindShader();
+		std::dynamic_pointer_cast<Prism::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+}
 
 	void OnUpdate(Prism::Timestep timestep) override
 	{
@@ -216,6 +258,10 @@ public:
 			}
 		}
 
+		//Texture
+		m_Texture->BindTexture();
+		Prism::Renderer::SubmitToRenderQueue(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+
 		//=================
 		//Prism::Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray, squarePosition);
 		//Prism::Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray);
@@ -236,11 +282,13 @@ public:
 	}
 
 private:
-	Prism::Reference<Prism::Shader> m_Shader;
+	Prism::Reference<Prism::Shader> m_Shader, m_TextureShader;
 	Prism::Reference<Prism::VertexArray> m_VertexArray;
 
 	Prism::Reference<Prism::Shader> m_FlatColorShader;
 	Prism::Reference<Prism::VertexArray> m_SquareVertexArray;
+
+	Prism::Reference<Prism::Texture2D> m_Texture;
 
 	Prism::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;

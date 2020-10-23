@@ -17,6 +17,7 @@ IncludeDir["GLFW"] = "Prism/vendor/GLFW/include"
 IncludeDir["Glad"] = "Prism/vendor/Glad/include"
 IncludeDir["ImGui"] = "Prism/vendor/imgui"
 IncludeDir["glm"] = "Prism/vendor/glm"
+IncludeDir["stb_image"] = "Prism/vendor/stb_image"
 
 group "Dependencies"
 	include "Prism/vendor/GLFW"
@@ -41,6 +42,8 @@ project "Prism"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/stb_image/**.h",
+		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/**.hpp",
 		"%{prj.name}/vendor/glm/**.inl"
 	}
@@ -57,7 +60,8 @@ project "Prism"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}"
 	}
 
 	links
