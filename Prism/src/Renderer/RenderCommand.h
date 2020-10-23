@@ -10,6 +10,11 @@ namespace Prism
 		//Dispatch render commands to the respective selected API.
 		//Render Commands don't do multiple things. They simply submit commands.
 		//The Renderer class is the one that is in charge of binding, sorting etc. Once done, we submit the corresponding commands here.
+		inline static void InitializeRenderer()
+		{
+			s_RendererAPI->InitializeRenderer();
+		}
+		
 		inline static void DrawIndexed(const Reference<VertexArray>& vertexArray)
 		{
 			s_RendererAPI->DrawIndexed(vertexArray);

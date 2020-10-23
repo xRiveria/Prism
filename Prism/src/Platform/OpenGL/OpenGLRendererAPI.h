@@ -6,6 +6,7 @@ namespace Prism
 	class OpenGLRendererAPI : public RendererAPI
 	{
 	public:
+		virtual void InitializeRenderer() override;
 		virtual void SetClearColor(const glm::vec4& color) override;
 		virtual void Clear() override;
 

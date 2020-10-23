@@ -7,6 +7,11 @@ namespace Prism
 {
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
 
+	void Renderer::InitializeRenderer()
+	{
+		RenderCommand::InitializeRenderer();
+	}
+
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
 		m_SceneData->viewProjectionMatrix = camera.GetViewProjectionMatrix();

@@ -8,6 +8,8 @@ namespace Prism
 	class Renderer
 	{
 	public:
+		static void InitializeRenderer();
+
 		static void BeginScene(OrthographicCamera& camera); //To Do: Take in scene parameters.
 		static void EndScene();
 
