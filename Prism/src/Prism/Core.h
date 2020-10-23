@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 #ifdef PRISM_PLATFORM_WINDOWS
 #if PRISM_DYNAMIC_LINK
@@ -28,4 +29,14 @@
 
 #define BIT(x) (1 << x)
 
-#define PRISM_BIND_EVENT_FUNCTION(function) std::bind(&function, this, std::placeholders::_1) 
+#define PRISM_BIND_EVENT_FUNCTION(function) std::bind(&function, this, std::placeholders::_1)
+
+namespace Prism
+{
+	template<typename T>
+	using Scope = std::unique_ptr<T>;
+
+	template<typename T>
+	using Reference = std::shared_ptr<T>;
+	//Reference<Shader>
+}

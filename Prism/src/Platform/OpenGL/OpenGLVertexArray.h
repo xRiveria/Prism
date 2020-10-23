@@ -12,15 +12,15 @@ namespace Prism
 		virtual void BindVertexArray() const override;
 		virtual void UnbindVertexArray() const override; 
 
-		virtual void AddVertexBuffer(std::shared_ptr<VertexBuffer>& vertexBuffer) override;
-		virtual void SetIndexBuffer(std::shared_ptr<IndexBuffer>& indexBuffer) override;
+		virtual void AddVertexBuffer(Reference<VertexBuffer>& vertexBuffer) override;
+		virtual void SetIndexBuffer(Reference<IndexBuffer>& indexBuffer) override;
 
-		virtual const std::vector<std::shared_ptr<VertexBuffer>>& GetVertexBuffers() const override { return m_VertexBuffers; }
-		virtual const std::shared_ptr<IndexBuffer>& GetIndexBuffer() const override { return m_IndexBuffer; }
+		virtual const std::vector<Reference<VertexBuffer>>& GetVertexBuffers() const override { return m_VertexBuffers; }
+		virtual const Reference<IndexBuffer>& GetIndexBuffer() const override { return m_IndexBuffer; }
 
 	private:
-		std::vector<std::shared_ptr<VertexBuffer>> m_VertexBuffers;
-		std::shared_ptr<IndexBuffer> m_IndexBuffer;
+		std::vector<Reference<VertexBuffer>> m_VertexBuffers;
+		Reference<IndexBuffer> m_IndexBuffer;
 		unsigned int m_VertexArrayID;
 	};
 }

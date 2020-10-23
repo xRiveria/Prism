@@ -7,7 +7,7 @@
 class ExampleLayer : public Prism::Layer
 {
 public:
-	ExampleLayer():Layer("Example Layer"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f), squareVectorPosition(0.0f)
+	ExampleLayer():Layer("Example Layer"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f)
 	{
 		PRISM_CLIENT_WARN("Created {0}", GetName());
 
@@ -26,7 +26,7 @@ public:
 			 0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
 		};
 
-		std::shared_ptr<Prism::VertexBuffer> m_VertexBuffer;
+		Prism::Reference<Prism::VertexBuffer> m_VertexBuffer;
 		m_VertexBuffer.reset(Prism::VertexBuffer::CreateVertexBuffer(vertices, sizeof(vertices)));
 
 		Prism::BufferLayout layout =
@@ -44,7 +44,7 @@ public:
 		};
 
 		//Index Buffer
-		std::shared_ptr<Prism::IndexBuffer> m_IndexBuffer;
+		Prism::Reference<Prism::IndexBuffer> m_IndexBuffer;
 		m_IndexBuffer.reset(Prism::IndexBuffer::CreateIndexBuffer(indices, sizeof(indices) / sizeof(uint32_t)));
 		m_IndexBuffer->BindIndexBuffer();
 
@@ -99,7 +99,7 @@ public:
 			-0.5f,  0.5f, 0.0f
 		};
 
-		std::shared_ptr<Prism::VertexBuffer> squareVertexBuffer;
+		Prism::Reference<Prism::VertexBuffer> squareVertexBuffer;
 		squareVertexBuffer.reset(Prism::VertexBuffer::CreateVertexBuffer(squareVertices, sizeof(squareVertices)));
 		Prism::BufferLayout blueLayout =
 		{
@@ -115,7 +115,7 @@ public:
 		};
 
 		//Index Buffer
-		std::shared_ptr<Prism::IndexBuffer> squareIndexBuffer;
+		Prism::Reference<Prism::IndexBuffer> squareIndexBuffer;
 		squareIndexBuffer.reset(Prism::IndexBuffer::CreateIndexBuffer(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		squareIndexBuffer->BindIndexBuffer();
 
@@ -186,25 +186,6 @@ public:
 			m_CameraRotation -= m_CameraRotationSpeed * timestep;
 		}
 
-		if (Prism::Input::IsKeyPressed(PRISM_KEY_I))
-		{
-			squareVectorPosition.y += 1.0f * timestep;
-		}
-
-		else if (Prism::Input::IsKeyPressed(PRISM_KEY_K))
-		{
-			squareVectorPosition.y -= 1.0f * timestep;
-		}
-
-		if (Prism::Input::IsKeyPressed(PRISM_KEY_L))
-		{
-			squareVectorPosition.x += 1.0f * timestep;
-		}
-		else if (Prism::Input::IsKeyPressed(PRISM_KEY_J))
-		{
-			squareVectorPosition.x -= 1.0f * timestep;
-		} 
-
 		Prism::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0 });
 		Prism::RenderCommand::Clear();
 
@@ -230,15 +211,13 @@ public:
 			for (int x = 0; x < 20; x++)
 			{
 				glm::vec3 position(x * 0.11f, y * 0.11f, 0.0f);
-				glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * scale;			
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * scale;
 				Prism::Renderer::SubmitToRenderQueue(m_FlatColorShader, m_SquareVertexArray, transform);
 			}
 		}
 
 		//=================
-
-		glm::mat4 squarePosition = glm::translate(glm::mat4(1.0f), squareVectorPosition);
-		Prism::Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray, squarePosition);
+		//Prism::Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray, squarePosition);
 		//Prism::Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray);
 
 		Prism::Renderer::EndScene();
@@ -257,11 +236,11 @@ public:
 	}
 
 private:
-	std::shared_ptr<Prism::Shader> m_Shader;
-	std::shared_ptr<Prism::VertexArray> m_VertexArray;
+	Prism::Reference<Prism::Shader> m_Shader;
+	Prism::Reference<Prism::VertexArray> m_VertexArray;
 
-	std::shared_ptr<Prism::Shader> m_FlatColorShader;
-	std::shared_ptr<Prism::VertexArray> m_SquareVertexArray;
+	Prism::Reference<Prism::Shader> m_FlatColorShader;
+	Prism::Reference<Prism::VertexArray> m_SquareVertexArray;
 
 	Prism::OrthographicCamera m_Camera;
 	glm::vec3 m_CameraPosition;
@@ -269,8 +248,6 @@ private:
 
 	float m_CameraMoveSpeed = 5.0f;
 	float m_CameraRotationSpeed = 180.0f;
-
-	glm::vec3 squareVectorPosition;
 
 	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
 };

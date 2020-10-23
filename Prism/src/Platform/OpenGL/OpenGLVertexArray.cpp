@@ -45,7 +45,7 @@ namespace Prism
 		glBindVertexArray(0);
 	}
 
-	void OpenGLVertexArray::AddVertexBuffer(std::shared_ptr<VertexBuffer>& vertexBuffer)
+	void OpenGLVertexArray::AddVertexBuffer(Reference<VertexBuffer>& vertexBuffer)
 	{
 		PRISM_ENGINE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 
@@ -64,7 +64,7 @@ namespace Prism
 		m_VertexBuffers.push_back(vertexBuffer);
 	}
 
-	void OpenGLVertexArray::SetIndexBuffer(std::shared_ptr<IndexBuffer>& indexBuffer)
+	void OpenGLVertexArray::SetIndexBuffer(Reference<IndexBuffer>& indexBuffer)
 	{
 		glBindVertexArray(m_VertexArrayID);
 		indexBuffer->BindIndexBuffer();

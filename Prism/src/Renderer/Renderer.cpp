@@ -20,7 +20,7 @@ namespace Prism
 	//We cast it to OpenGL Shader here for now as its the only render API we have.
 	//By the time we are ready for DirectX or Vulkan, we will be ready for that.
 	//Thus, we will do casting for now. This is temporary and the system will be rewritten by then.
-	void Renderer::SubmitToRenderQueue(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform)
+	void Renderer::SubmitToRenderQueue(const Reference<Shader>& shader, const Reference<VertexArray>& vertexArray, const glm::mat4& transform)
 	{
 		shader->BindShader();
 		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ViewProjection", m_SceneData->viewProjectionMatrix); //Does this really have to be done per object?
