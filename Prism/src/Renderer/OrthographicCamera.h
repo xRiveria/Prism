@@ -9,6 +9,8 @@ namespace Prism
 	public:
 		OrthographicCamera(float leftBound, float rightBound, float bottomBound, float topBound);
 
+		void SetProjection(float leftBound, float rightBound, float bottomBound, float topBound);
+
 		const glm::vec3& GetCameraPosition() const { return m_Position; }
 		void SetCameraPosition(const glm::vec3& cameraPosition) { m_Position = cameraPosition; RecalculateViewMatrix(); }
 		
@@ -30,4 +32,7 @@ namespace Prism
 		glm::vec3 m_Position = { 0.0f, 0.0f, 0.0f };
 		float m_Rotation = 0.0f; //We can't really rotate orthographic cameras (2D) except its Z-axis, so we just store that as a single value. 
 	}; 
+
+	//Seperating data (OrthographicCamera) that is submitted to the renderer from user input data. Since this camera class is submitted to the renderer, we should keep it lightweight.
+	//Input Controllers should be nowhere near renderer code. Its just a user interaction module that manipulates data.
 }

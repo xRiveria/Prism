@@ -7,7 +7,7 @@
 class ExampleLayer : public Prism::Layer
 {
 public:
-	ExampleLayer():Layer("Example Layer"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f)
+	ExampleLayer():Layer("Example Layer"), m_CameraController(1280.0f / 720.0f)
 	{
 		PRISM_CLIENT_WARN("Created {0}", GetName());
 
@@ -162,45 +162,17 @@ public:
 		std::dynamic_pointer_cast<Prism::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
 }
 
-	void OnUpdate(Prism::Timestep timestep) override
-	{
-		if (Prism::Input::IsKeyPressed(PRISM_KEY_LEFT))
-		{
-			m_CameraPosition.x -= m_CameraMoveSpeed * timestep;
-		}
+	void OnUpdate(Prism::Timestep timestep) override //In any implementation, if we have OnRender, it typically happens after OnUpdate. 
+	{ 
+		//Update
+		m_CameraController.OnUpdate(timestep);
 
-		else if (Prism::Input::IsKeyPressed(PRISM_KEY_RIGHT))
-		{
-			m_CameraPosition.x += m_CameraMoveSpeed * timestep;
-		}
-
-		if (Prism::Input::IsKeyPressed(PRISM_KEY_UP))
-		{
-			m_CameraPosition.y += m_CameraMoveSpeed * timestep;
-		}
-
-		else if (Prism::Input::IsKeyPressed(PRISM_KEY_DOWN))
-		{
-			m_CameraPosition.y -= m_CameraMoveSpeed * timestep;
-		}
-
-		if (Prism::Input::IsKeyPressed(PRISM_KEY_A))
-		{
-			m_CameraRotation += m_CameraRotationSpeed * timestep;
-		}
-		else if (Prism::Input::IsKeyPressed(PRISM_KEY_D))
-		{
-			m_CameraRotation -= m_CameraRotationSpeed * timestep;
-		}
-
+		//Render
 		Prism::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0 });
 		Prism::RenderCommand::Clear();
 
-		m_Camera.SetCameraPosition(m_CameraPosition);
-		m_Camera.SetCameraRotation(m_CameraRotation);
-
 		//Renderer::BeginScene(camera, lights, environment);
-		Prism::Renderer::BeginScene(m_Camera);
+		Prism::Renderer::BeginScene(m_CameraController.GetCamera());
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
 		/*Prism::MaterialReference material = new Prism::Material(m_FlatColorShader);
@@ -245,7 +217,7 @@ public:
 
 	void OnEvent(Prism::Event& event) override
 	{
-		
+		m_CameraController.OnEvent(event);
 	}
 
 private:
@@ -259,12 +231,7 @@ private:
 	Prism::Reference<Prism::Texture2D> m_Texture;
 	Prism::Reference<Prism::Texture2D> m_PrismTexture; 
 
-	Prism::OrthographicCamera m_Camera;
-	glm::vec3 m_CameraPosition;
-
-	float m_CameraRotation = 0.0f;
-	float m_CameraMoveSpeed = 5.0f;
-	float m_CameraRotationSpeed = 180.0f;
+	Prism::OrthographicCameraController m_CameraController;
 
 	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
 };
@@ -288,6 +255,7 @@ Prism::Application* Prism::CreateApplication()
 {
 	return new Sandbox();
 }
+
 
 
 

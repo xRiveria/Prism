@@ -5,6 +5,7 @@
 #include "Prism/Layer.h"
 #include "Prism/Log.h"
 #include "Prism/Core/Timestep.h"
+#include "Prism/OrthographicCameraController.h"
 
 #include "Prism/ImGui/ImGuiLayer.h"
 

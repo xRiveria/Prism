@@ -164,6 +164,7 @@
     <ClInclude Include="src\Prism\LayerStack.h" />
     <ClInclude Include="src\Prism\Log.h" />
     <ClInclude Include="src\Prism\MouseButtonCodes.h" />
+    <ClInclude Include="src\Prism\OrthographicCameraController.h" />
     <ClInclude Include="src\Prism\Windows.h" />
     <ClInclude Include="src\PrismPrecompiledHeader.h" />
     <ClInclude Include="src\Renderer\Buffer.h" />
@@ -603,6 +604,7 @@
     <ClCompile Include="src\PrismPrecompiledHeader.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Prism\OrthographicCameraController.cpp" />
     <ClCompile Include="src\Renderer\Buffer.cpp" />
     <ClCompile Include="src\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Renderer\RenderCommand.cpp" />
