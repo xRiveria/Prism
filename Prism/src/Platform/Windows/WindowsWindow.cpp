@@ -62,6 +62,7 @@ namespace Prism
 			windowData.windowHeight = windowHeight;
 
 			WindowResizeEvent resizeEvent(windowWidth, windowHeight);
+			PRISM_ENGINE_WARN("{0} & {1}", windowWidth, windowHeight);
 			windowData.EventCallback(resizeEvent);
 		});
 

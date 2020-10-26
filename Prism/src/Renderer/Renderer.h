@@ -9,6 +9,7 @@ namespace Prism
 	{
 	public:
 		static void InitializeRenderer();
+		static void OnWindowResize(uint32_t windowWidth, uint32_t windowHeight);
 
 		static void BeginScene(OrthographicCamera& camera); //To Do: Take in scene parameters.
 		static void EndScene();

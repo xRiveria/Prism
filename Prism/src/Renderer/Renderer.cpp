@@ -12,6 +12,11 @@ namespace Prism
 		RenderCommand::InitializeRenderer();
 	}
 
+	void Renderer::OnWindowResize(uint32_t windowWidth, uint32_t windowHeight)
+	{
+		RenderCommand::SetViewport(0, 0, windowWidth, windowHeight);
+	}
+
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
 		m_SceneData->viewProjectionMatrix = camera.GetViewProjectionMatrix();

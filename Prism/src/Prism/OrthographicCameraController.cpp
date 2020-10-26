@@ -60,7 +60,7 @@ namespace Prism
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& event)
 	{
 		m_ZoomLevel -= event.GetYOffset() * 0.25f;
-		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f); 
+		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);  //Returns the greater value of a and b. If they are equivalent, returns a. Thus, m_ZoomLevel will never go below 0.25f.
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
 	}

@@ -14,6 +14,11 @@ namespace Prism
 		{
 			s_RendererAPI->InitializeRenderer();
 		}
+
+		inline static void SetViewport(uint32_t x, uint32_t y, uint32_t windowWidth, uint32_t windowHeight)
+		{
+			s_RendererAPI->SetViewport(x, y, windowWidth, windowHeight);
+		}
 		
 		inline static void DrawIndexed(const Reference<VertexArray>& vertexArray)
 		{
