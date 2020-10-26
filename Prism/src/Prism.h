@@ -16,6 +16,7 @@
 //----- Renderer -----
 
 #include "Prism/Renderer/Renderer.h"
+#include "Prism/Renderer/Renderer2D.h"
 #include "Prism/Renderer/RenderCommand.h"
 
 #include "Prism/Renderer/Buffer.h"

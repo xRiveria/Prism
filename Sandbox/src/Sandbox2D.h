@@ -17,9 +17,7 @@ public:
 
 private:
 	//Temporary
-	Prism::Reference<Prism::Shader> m_FlatColorShader;
-	Prism::Reference<Prism::VertexArray> m_SquareVertexArray;
+	glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 
 	Prism::OrthographicCameraController m_CameraController;
-	glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 };

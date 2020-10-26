@@ -2,7 +2,9 @@
 #include "Prism/Renderer/Renderer.h"
 #include "Prism/Renderer/Shader.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+#include "Prism/Renderer/Renderer2D.h"
 
+//This is the main renderer. We will spin off and create the 2D renderer when it is initialized.
 namespace Prism
 {
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
@@ -10,6 +12,7 @@ namespace Prism
 	void Renderer::InitializeRenderer()
 	{
 		RenderCommand::InitializeRenderer();
+		Renderer2D::Initialize2DRenderer();
 	}
 
 	void Renderer::OnWindowResize(uint32_t windowWidth, uint32_t windowHeight)
