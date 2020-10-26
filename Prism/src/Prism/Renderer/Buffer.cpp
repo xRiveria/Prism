@@ -1,6 +1,6 @@
 #include "PrismPrecompiledHeader.h"
 #include "Buffer.h"
-#include "Renderer/Renderer.h"
+#include "Prism/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"
 
 namespace Prism

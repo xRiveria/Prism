@@ -1,6 +1,6 @@
 workspace "Prism"
 	architecture "x64"
-	startproject = "Sandbox"
+	startproject "Sandbox"
 
 	configurations
 	{
@@ -8,10 +8,15 @@ workspace "Prism"
 		"Release",
 		"Distribution"
 	}
+	
+	flags
+	{
+		"MultiProcessorCompile"
+	}
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
--- Include Directories Relative To Root Folder (Solution Directory)
+-- Include directories relative to root folder (solution directory)
 IncludeDir = {}
 IncludeDir["GLFW"] = "Prism/vendor/GLFW/include"
 IncludeDir["Glad"] = "Prism/vendor/Glad/include"
@@ -23,6 +28,7 @@ group "Dependencies"
 	include "Prism/vendor/GLFW"
 	include "Prism/vendor/Glad"
 	include "Prism/vendor/imgui"
+
 group ""
 
 project "Prism"
@@ -44,8 +50,8 @@ project "Prism"
 		"%{prj.name}/src/**.cpp",
 		"%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/stb_image/**.cpp",
-		"%{prj.name}/vendor/glm/**.hpp",
-		"%{prj.name}/vendor/glm/**.inl"
+		"%{prj.name}/vendor/glm/glm/**.hpp",
+		"%{prj.name}/vendor/glm/glm/**.inl",
 	}
 
 	defines
@@ -64,8 +70,8 @@ project "Prism"
 		"%{IncludeDir.stb_image}"
 	}
 
-	links
-	{
+	links 
+	{ 
 		"GLFW",
 		"Glad",
 		"ImGui",
@@ -93,10 +99,9 @@ project "Prism"
 		optimize "on"
 
 	filter "configurations:Distribution"
-		defines "PRISM_DISTRIBUTION"
+		defines "PRISM_DIST"
 		runtime "Release"
 		optimize "on"
-
 
 project "Sandbox"
 	location "Sandbox"
@@ -132,7 +137,7 @@ project "Sandbox"
 
 		defines
 		{
-			"PRISM_PLATFORM_WINDOWS",
+			"PRISM_PLATFORM_WINDOWS"
 		}
 
 	filter "configurations:Debug"
@@ -146,6 +151,6 @@ project "Sandbox"
 		optimize "on"
 
 	filter "configurations:Distribution"
-		defines "PRISM_DISTRIBUTION"
+		defines "PRISM_DIST"
 		runtime "Release"
 		optimize "on"

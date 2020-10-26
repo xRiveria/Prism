@@ -1,6 +1,6 @@
 #pragma once
 #include "RenderCommand.h"
-#include "Renderer/Shader.h"
+#include "Prism/Renderer/Shader.h"
 #include "OrthographicCamera.h"
 
 namespace Prism

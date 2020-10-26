@@ -3,7 +3,7 @@
 #include "Platform/Windows/WindowsInput.h"
 #include "Prism/ImGui/ImGuiLayer.h"
 #include "GLFW/glfw3.h"
-#include "Renderer/Renderer.h"
+#include "Prism/Renderer/Renderer.h"
 
 namespace Prism
 {

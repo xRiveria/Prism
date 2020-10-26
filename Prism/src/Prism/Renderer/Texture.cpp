@@ -1,6 +1,6 @@
 #include "PrismPrecompiledHeader.h"
 #include "Texture.h"
-#include "Renderer/Renderer.h"
+#include "Prism/Renderer/Renderer.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace Prism

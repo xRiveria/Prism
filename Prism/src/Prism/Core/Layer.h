@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Prism/Core.h"
+#include "Prism/Core/Core.h"
 #include "Prism/Events/Event.h"
 #include "Prism/Core/Timestep.h"
 

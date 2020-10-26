@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/VertexArray.h"
+#include "Prism/Renderer/VertexArray.h"
 
 namespace Prism
 {

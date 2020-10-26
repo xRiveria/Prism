@@ -7,11 +7,11 @@
 #include "examples/imgui_impl_opengl3.cpp"
 #include "examples/imgui_impl_glfw.cpp"
 
-#include "Prism/Application.h"
+#include "Prism/Core/Application.h"
 #include "GLFW/glfw3.h"
 #include "glad/glad.h"
 #include "Platform/Windows/WindowsWindow.h"
-#include "Prism/Core.h"
+#include "Prism/Core/Core.h"
 
 namespace Prism
 {

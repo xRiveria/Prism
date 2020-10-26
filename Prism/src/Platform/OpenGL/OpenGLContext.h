@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/GraphicsContext.h"
+#include "Prism/Renderer/GraphicsContext.h"
 #include "GLFW/glfw3.h"
 
 struct GLFWwindow;

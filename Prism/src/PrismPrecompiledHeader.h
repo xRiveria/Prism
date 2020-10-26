@@ -16,7 +16,7 @@
 
 //Prism Libraries
 
-#include "Prism/Log.h"
+#include "Prism/Core/Log.h"
 
 #ifdef PRISM_PLATFORM_WINDOWS
 #include <Windows.h>

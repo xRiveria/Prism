@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Prism/Windows.h"
-#include "Renderer/GraphicsContext.h"
+#include "Prism/Core/Windows.h"
+#include "Prism/Renderer/GraphicsContext.h"
 #include "GLFW/glfw3.h"
 
 namespace Prism

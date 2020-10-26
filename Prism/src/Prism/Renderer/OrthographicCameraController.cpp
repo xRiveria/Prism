@@ -1,7 +1,7 @@
 #include "PrismPrecompiledHeader.h"
 #include "OrthographicCameraController.h"
-#include "Prism/Input.h"
-#include "Prism/KeyCodes.h"
+#include "Prism/Core/Input.h"
+#include "Prism/Core/KeyCodes.h"
 
 namespace Prism
 {

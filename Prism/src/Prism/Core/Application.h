@@ -1,9 +1,9 @@
 #pragma once
 #include "Core.h"
 #include "Windows.h"
-#include "Events/Event.h"
-#include "Events/ApplicationEvent.h"
-#include "Prism/LayerStack.h"
+#include "Prism/Events/Event.h"
+#include "Prism/Events/ApplicationEvent.h"
+#include "Prism/Core/LayerStack.h"
 #include "Prism/ImGui/ImGuiLayer.h"
 #include "Prism/Core/Timestep.h"
 

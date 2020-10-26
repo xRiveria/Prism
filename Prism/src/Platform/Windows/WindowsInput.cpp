@@ -1,7 +1,7 @@
 #include "PrismPrecompiledHeader.h"
 #include "WindowsInput.h"
 #include "GLFW/glfw3.h"
-#include "Prism/Application.h"
+#include "Prism/Core/Application.h"
 
 namespace Prism
 {

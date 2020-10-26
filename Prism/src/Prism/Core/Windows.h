@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PrismPrecompiledHeader.h"
-#include "Prism/Core.h"
+#include "Prism/Core/Core.h"
 #include "Prism/Events/Event.h"
 
 namespace Prism

@@ -1,5 +1,5 @@
 #pragma once
-#include "Prism/Input.h"
+#include "Prism/Core/Input.h"
 
 namespace Prism
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer/Texture.h"
+#include "Prism/Renderer/Texture.h"
 
 namespace Prism
 {
