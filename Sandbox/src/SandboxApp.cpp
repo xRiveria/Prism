@@ -82,7 +82,7 @@ public:
 		}
 		)";
 
-		m_Shader.reset(Prism::Shader::CreateShader(vertexShaderSourceCode, fragmentShaderSourceCode));
+		m_Shader = Prism::Shader::CreateShader("VertexColorTriangle", vertexShaderSourceCode, fragmentShaderSourceCode);
 
 		//=================================================================
 		// Square
@@ -152,14 +152,14 @@ public:
 		}
 		)";
 
-		m_FlatColorShader.reset(Prism::Shader::CreateShader(flatColorVertexShaderSourceCode, flatColorFragmentShaderSourceCode));
+		m_FlatColorShader = Prism::Shader::CreateShader("Flat Color", flatColorVertexShaderSourceCode, flatColorFragmentShaderSourceCode);
 		//Shader
-		m_TextureShader.reset(Prism::Shader::CreateShader("assets/shaders/Texture.glsl"));
+		Prism::Reference<Prism::Shader>& textureShader = m_ShaderLibrary.LoadShader("assets/shaders/Texture.glsl");
 		
 		m_PrismTexture = Prism::Texture2D::CreateTexture("assets/textures/PrismLogo.png");
 		m_Texture = Prism::Texture2D::CreateTexture("assets/textures/Checkerboard.png");
-		std::dynamic_pointer_cast<Prism::OpenGLShader>(m_TextureShader)->BindShader();
-		std::dynamic_pointer_cast<Prism::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+		std::dynamic_pointer_cast<Prism::OpenGLShader>(textureShader)->BindShader();
+		std::dynamic_pointer_cast<Prism::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
 }
 
 	void OnUpdate(Prism::Timestep timestep) override
@@ -223,11 +223,12 @@ public:
 			}
 		}
 
+		auto textureShader = m_ShaderLibrary.GetShader("Texture");
 		//Texture
 		m_Texture->BindTexture();
-		Prism::Renderer::SubmitToRenderQueue(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		Prism::Renderer::SubmitToRenderQueue(textureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 		m_PrismTexture->BindTexture();
-		Prism::Renderer::SubmitToRenderQueue(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		Prism::Renderer::SubmitToRenderQueue(textureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 		//=================
 		//Prism::Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray, squarePosition);
 		//Prism::Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray);
@@ -248,7 +249,8 @@ public:
 	}
 
 private:
-	Prism::Reference<Prism::Shader> m_Shader, m_TextureShader;
+	Prism::ShaderLibrary m_ShaderLibrary;
+	Prism::Reference<Prism::Shader> m_Shader;
 	Prism::Reference<Prism::VertexArray> m_VertexArray;
 
 	Prism::Reference<Prism::Shader> m_FlatColorShader;

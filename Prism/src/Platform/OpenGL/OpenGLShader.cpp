@@ -27,12 +27,29 @@ namespace Prism
 		std::string sourceFile = ReadFile(filePath);
 		auto shaderSources = PreProcessFile(sourceFile);
 		CompileShader(shaderSources);
+
+
+		//Extract name from file path. For C++17 and above, we can use std::filesystem::path::stem.
+		auto lastSlash = filePath.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		auto lastDot = filePath.rfind('.');
+		auto count = lastDot == std::string::npos ? filePath.size() - lastSlash : lastDot - lastSlash;
+
+		m_ShaderName = filePath.substr(lastSlash, count);
+	}
+
+	OpenGLShader::OpenGLShader(const std::string& shaderName, const std::string& vertexSourceCode, const std::string& fragmentSourceCode) : m_ShaderName(shaderName)
+	{
+		std::unordered_map<GLenum, std::string> sources;
+		sources[GL_VERTEX_SHADER] = vertexSourceCode;
+		sources[GL_FRAGMENT_SHADER] = fragmentSourceCode;
+		CompileShader(sources);
 	}
 
 	std::string OpenGLShader::ReadFile(const std::string& filePath)
 	{
 		std::string fileResult;
-		std::ifstream inputFile(filePath, std::ios::in, std::ios::binary); //We read it as a binary because we don't want to do any form of processing to it. We don't C++ to intepret it as a string or whatsoever.
+		std::ifstream inputFile(filePath, std::ios::in | std::ios::binary); //We read it as a binary because we don't want to do any form of processing to it. We don't C++ to intepret it as a string or whatsoever.
 		if (inputFile)
 		{
 			inputFile.seekg(0, std::ios::end); //Moves the file pointer to the end of the file.
@@ -74,7 +91,9 @@ namespace Prism
 	void OpenGLShader::CompileShader(std::unordered_map<GLenum, std::string>& shaderSources)
 	{
 		GLuint shaderProgramID = glCreateProgram();
-		std::vector<GLenum> glShaderIDs(shaderSources.size());
+		PRISM_ENGINE_ASSERT(shaderSources.size() <= 2, "We only support 2 shaders for now.");
+		std::array<GLenum, 2> glShaderIDs;
+		int glShaderIDIndex = 0;
 
 		for (auto& keyValue : shaderSources)
 		{
@@ -103,7 +122,7 @@ namespace Prism
 			}
 
 			glAttachShader(shaderProgramID, shader);
-			glShaderIDs.push_back(shader);
+			glShaderIDs[glShaderIDIndex++] = shader;
 		}
 
 		glLinkProgram(shaderProgramID);
@@ -132,14 +151,6 @@ namespace Prism
 		}
 
 		m_ShaderID = shaderProgramID;
-	}
-
-	OpenGLShader::OpenGLShader(const std::string& vertexSourceCode, const std::string& fragmentSourceCode)
-	{
-		std::unordered_map<GLenum, std::string> sources;
-		sources[GL_VERTEX_SHADER] = vertexSourceCode;
-		sources[GL_FRAGMENT_SHADER] = fragmentSourceCode;
-		CompileShader(sources);
 	}
 
 	OpenGLShader::~OpenGLShader()
@@ -199,3 +210,4 @@ namespace Prism
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 }
+
