@@ -18,7 +18,7 @@ namespace Prism
 		virtual const std::vector<Reference<VertexBuffer>>& GetVertexBuffers() const = 0;
 		virtual const Reference<IndexBuffer>& GetIndexBuffer() const = 0;
 
-		static VertexArray* CreateVertexArray();
+		static Reference<VertexArray> CreateVertexArray();
 	};
 
 }

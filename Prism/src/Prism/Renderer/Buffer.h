@@ -40,7 +40,7 @@ namespace Prism
 		bool elementNormalized;
 
 		BufferElement() {}
-		BufferElement(ShaderDataType type, const std::string& name, bool normalized = false) : elementType(type), elementName(name), elementSize(ShaderDataTypeSize(type)), elementOffset(0), elementNormalized(false)
+		BufferElement(ShaderDataType type, const std::string& name, bool normalized = false) : elementType(type), elementName(name), elementSize(ShaderDataTypeSize(type)), elementOffset(0), elementNormalized(normalized)
 		{			
 		}
 
@@ -68,7 +68,7 @@ namespace Prism
 
 	class BufferLayout
 	{
-	public:
+	public:  
 		BufferLayout() {}
 		BufferLayout(const std::initializer_list<BufferElement>& elements) : m_Elements(elements)
 		{
@@ -128,6 +128,6 @@ namespace Prism
 
 		virtual uint32_t GetIndicesCount() const = 0;
 
-		static IndexBuffer* CreateIndexBuffer(uint32_t* indices, uint32_t size);
+		static IndexBuffer* CreateIndexBuffer(uint32_t* indices, uint32_t count);
 	};
 }

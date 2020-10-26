@@ -19,10 +19,10 @@ namespace Prism
 			{
 				return std::make_shared<OpenGLShader>(filePath);
 			}
+		}
 
 		PRISM_ENGINE_ASSERT(false, "Unknown RendererAPI.");
 		return nullptr;
-		}
 	}
 
 	Reference<Shader> Shader::CreateShader(const std::string& shaderName, std::string& vertexSourceCode, const std::string& fragmentSourceCode)
@@ -39,10 +39,10 @@ namespace Prism
 			{
 				return std::make_shared<OpenGLShader>(shaderName, vertexSourceCode, fragmentSourceCode);
 			}
-
-			PRISM_ENGINE_ASSERT(false, "Unknown RendererAPI.");
-			return nullptr;
 		}
+
+		PRISM_ENGINE_ASSERT(false, "Unknown RendererAPI.");
+		return nullptr;
 	}
 
 	void ShaderLibrary::AddShader(const std::string& shaderName, const Reference<Shader>& shader)

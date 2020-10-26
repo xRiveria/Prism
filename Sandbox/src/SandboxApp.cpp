@@ -1,8 +1,10 @@
 #include "Prism.h"
+#include "Prism/Core/EntryPoint.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "imgui/imgui.h"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "Sandbox2D.h"
 
 class ExampleLayer : public Prism::Layer
 {
@@ -16,7 +18,7 @@ public:
 		//=================================================================
 
 		//Vertex Array
-		m_VertexArray.reset(Prism::VertexArray::CreateVertexArray());
+		m_VertexArray = Prism::VertexArray::CreateVertexArray();
 		m_VertexArray->BindVertexArray();
 
 		float vertices[3 * 7] = //Within clip space already - no MVP needed.
@@ -88,7 +90,7 @@ public:
 		// Square
 		//=================================================================
 
-		m_SquareVertexArray.reset(Prism::VertexArray::CreateVertexArray());
+		m_SquareVertexArray = Prism::VertexArray::CreateVertexArray();
 		m_SquareVertexArray->BindVertexArray();
 
 		float squareVertices[5 * 4] =
@@ -242,7 +244,8 @@ public:
 	Sandbox()
 	{
 		PRISM_CLIENT_WARN("Created Sandbox Application");
-		PushLayer(new ExampleLayer());
+		//PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
 	}
 
 	~Sandbox()

@@ -5,7 +5,7 @@
 
 namespace Prism
 {
-	VertexArray* VertexArray::CreateVertexArray()
+	Reference<VertexArray> VertexArray::CreateVertexArray()
 	{
 		switch (Renderer::GetCurrentRenderAPI())
 			{
@@ -17,7 +17,7 @@ namespace Prism
 
 			case RendererAPI::RenderAPI::OpenGL:
 			{
-				return new OpenGLVertexArray();
+				return std::make_shared<OpenGLVertexArray>();
 			}
 		}
 

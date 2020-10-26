@@ -25,7 +25,5 @@
 
 #include "Prism/Renderer/OrthographicCamera.h"
 
-//----- Entry Point -----
-#include "Prism/Core/EntryPoint.h"
 
 
