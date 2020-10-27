@@ -5,7 +5,7 @@
 
 namespace Prism
 {
-	VertexBuffer* VertexBuffer::CreateVertexBuffer(float* vertices, uint32_t size)
+	Reference<VertexBuffer> VertexBuffer::CreateVertexBuffer(uint32_t size)
 	{
 		switch (Renderer::GetCurrentRenderAPI())
 		{
@@ -17,7 +17,7 @@ namespace Prism
 
 			case RendererAPI::RenderAPI::OpenGL:
 			{
-				return new OpenGLVertexBuffer(vertices, size);
+				return CreateReference<OpenGLVertexBuffer>(size);
 			}
 		}
 
@@ -25,7 +25,7 @@ namespace Prism
 		return nullptr;
 	}
 
-	IndexBuffer* IndexBuffer::CreateIndexBuffer(uint32_t* indices, uint32_t size)
+	Reference<VertexBuffer> VertexBuffer::CreateVertexBuffer(float* vertices, uint32_t size)
 	{
 		switch (Renderer::GetCurrentRenderAPI())
 		{
@@ -37,7 +37,27 @@ namespace Prism
 
 			case RendererAPI::RenderAPI::OpenGL:
 			{
-				return new OpenGLIndexBuffer(indices, size);
+				return CreateReference<OpenGLVertexBuffer>(vertices, size);
+			}
+		}
+
+		PRISM_ENGINE_ASSERT(false, "Unknown Rendering API!");
+		return nullptr;
+	}
+
+	Reference<IndexBuffer> IndexBuffer::CreateIndexBuffer(uint32_t* indices, uint32_t size)
+	{
+		switch (Renderer::GetCurrentRenderAPI())
+		{
+			case RendererAPI::RenderAPI::None:
+			{
+				PRISM_ENGINE_ASSERT(false, "RendererAPI::None is currently not supported.");
+				return nullptr;
+			}
+
+			case RendererAPI::RenderAPI::OpenGL:
+			{
+				return CreateReference<OpenGLIndexBuffer>(indices, size);
 			}
 		}
 

@@ -114,10 +114,11 @@ namespace Prism
 
 		//We could create a constructor. However, if we do so, we can't actually choose which type of API we want.
 		//This create function will decide which API our renderer is using and thus which derived graphics class we instantiate and return.
-		static VertexBuffer* CreateVertexBuffer(float* vertices, uint32_t size);
-
+		static Reference<VertexBuffer> CreateVertexBuffer(uint32_t size);
+		static Reference<VertexBuffer> CreateVertexBuffer(float* vertices, uint32_t size);
 	};
 
+	//Currently, Prism only supports 32-bit Index Buffers.
 	class IndexBuffer
 	{
 	public:
@@ -128,6 +129,6 @@ namespace Prism
 
 		virtual uint32_t GetIndicesCount() const = 0;
 
-		static IndexBuffer* CreateIndexBuffer(uint32_t* indices, uint32_t count);
+		static Reference<IndexBuffer> CreateIndexBuffer(uint32_t* indices, uint32_t count);
 	};
 }

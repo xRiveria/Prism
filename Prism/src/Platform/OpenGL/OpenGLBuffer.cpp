@@ -7,6 +7,15 @@ namespace Prism
 {
 	//============== Vertex Buffer ==============
 
+	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size) //Batching.
+	{
+		PRISM_PROFILE_FUNCTION();
+
+		glCreateBuffers(1, &m_VertexBufferID);
+		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferID);
+		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW); //We tell OpenGL that data is going to be written to the buffer every frame. While StaticDraw works, its going to be slower as this is more of a hint than anything else.
+	}
+
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32_t size)
 	{
 		PRISM_PROFILE_FUNCTION();
