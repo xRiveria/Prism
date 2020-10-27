@@ -36,6 +36,7 @@ namespace Prism
 		//Window Attributes
 		virtual inline void SetEventCallback(const EventCallbackFunction& callback) = 0;
 		virtual void SetVSync(bool enabled) = 0;
+		virtual void SetWindowIcon(const std::string& filePath) const = 0;
 		virtual bool IsVSyncActive() const = 0;
 
 		//Because this is platform independant, this ConstructWindow function has to be created per platform.

@@ -24,7 +24,7 @@ namespace Prism
 		bool IsVSyncActive() const override;
 
 		//Windows Specific
-		void SetWindowsIcon(const std::string& iconPath) const;
+		virtual void SetWindowIcon(const std::string& filePath) const override;
 
 	private:
 		virtual void Initialize(const WindowProperties& windowProperties);

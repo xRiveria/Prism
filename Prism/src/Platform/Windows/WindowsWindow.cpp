@@ -4,6 +4,7 @@
 #include "Prism/Events/KeyEvent.h"
 #include "Prism/Events/MouseEvent.h"
 #include "Platform/OpenGL/OpenGLContext.h"
+#include "stb_image.h"
 
 namespace Prism
 {
@@ -60,6 +61,7 @@ namespace Prism
 			m_Window = glfwCreateWindow((int)windowProperties.windowWidth, (int)windowProperties.windowHeight, windowProperties.windowTitle.c_str(), nullptr, nullptr);
 		}
 
+		SetWindowIcon("assets/textures/PrismLogo.png");
 		m_GraphicsContext = new OpenGLContext(m_Window);
 		m_GraphicsContext->Initialize();
 	
@@ -191,9 +193,13 @@ namespace Prism
 		return m_Data.vSync;
 	}
 
-	void WindowsWindow::SetWindowsIcon(const std::string& iconPath) const
+	void WindowsWindow::SetWindowIcon(const std::string& filePath) const
 	{
-		//GLFWimage windowIcon = "Resources/WindowIcon.png";
-		glfwSetWindowIcon(m_Window, 0, NULL);
+		GLFWimage windowIcon;
+		windowIcon.pixels = stbi_load("assets/textures/PrismLogo.png", &windowIcon.width, &windowIcon.height, 0, 4); //The last argument is useful for example if we want to only load RGB channels from a 4 Channel image. You may ignore transparency with this.
+		PRISM_ENGINE_ASSERT(windowIcon.pixels, "Failed to retrieve Window Icon!");
+		glfwSetWindowIcon(m_Window, 1, &windowIcon);
+		
+		stbi_image_free(windowIcon.pixels);
 	}
 }
