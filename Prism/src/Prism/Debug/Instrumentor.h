@@ -31,6 +31,15 @@ namespace Prism
 
 	class Instrumentor
 	{
+	private:
+		std::string m_SessionName = "None";
+		std::ofstream m_OutputStream;
+		int m_ProfileCount = 0;
+		std::mutex m_Lock;
+		bool m_IsSessionActive = false;
+
+		Instrumentor() {}
+
 	public:
 		static Instrumentor& Get()
 		{
@@ -49,7 +58,6 @@ namespace Prism
 			{
 				EndSession();
 			}
-
 			m_IsSessionActive = true;
 			m_OutputStream.open(filePath);
 			WriteHeader();
@@ -104,16 +112,6 @@ namespace Prism
 			m_OutputStream << "]}";
 			m_OutputStream.flush();
 		}
-
-	private:
-		Instrumentor() {}
-
-	private:
-		std::string m_SessionName = "None";
-		std::ofstream m_OutputStream;
-		int m_ProfileCount = 0;
-		std::mutex m_Lock;
-		bool m_IsSessionActive = false;
 	};
 
 

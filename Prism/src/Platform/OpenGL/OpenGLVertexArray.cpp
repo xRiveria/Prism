@@ -27,26 +27,36 @@ namespace Prism
 
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		glCreateVertexArrays(1, &m_VertexArrayID);
 	}
 
 	OpenGLVertexArray::~OpenGLVertexArray()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		glDeleteVertexArrays(1, &m_VertexArrayID);
 	}
 
 	void OpenGLVertexArray::BindVertexArray() const
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		glBindVertexArray(m_VertexArrayID);
 	}
 
 	void OpenGLVertexArray::UnbindVertexArray() const
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		glBindVertexArray(0);
 	}
 
 	void OpenGLVertexArray::AddVertexBuffer(Reference<VertexBuffer>& vertexBuffer)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		PRISM_ENGINE_ASSERT(vertexBuffer->GetLayout().GetElements().size(), "Vertex Buffer has no layout!");
 
 		glBindVertexArray(m_VertexArrayID);
@@ -66,6 +76,8 @@ namespace Prism
 
 	void OpenGLVertexArray::SetIndexBuffer(Reference<IndexBuffer>& indexBuffer)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		glBindVertexArray(m_VertexArrayID);
 		indexBuffer->BindIndexBuffer();
 

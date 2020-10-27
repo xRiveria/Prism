@@ -24,6 +24,8 @@ namespace Prism
 
 	OpenGLShader::OpenGLShader(const std::string& filePath)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		std::string sourceFile = ReadFile(filePath);
 		auto shaderSources = PreProcessFile(sourceFile);
 		CompileShader(shaderSources);
@@ -40,6 +42,8 @@ namespace Prism
 
 	OpenGLShader::OpenGLShader(const std::string& shaderName, const std::string& vertexSourceCode, const std::string& fragmentSourceCode) : m_ShaderName(shaderName)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSourceCode;
 		sources[GL_FRAGMENT_SHADER] = fragmentSourceCode;
@@ -48,6 +52,8 @@ namespace Prism
 
 	std::string OpenGLShader::ReadFile(const std::string& filePath)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		std::string fileResult;
 		std::ifstream inputFile(filePath, std::ios::in | std::ios::binary); //We read it as a binary because we don't want to do any form of processing to it. We don't C++ to intepret it as a string or whatsoever.
 		if (inputFile)
@@ -67,6 +73,8 @@ namespace Prism
 
 	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcessFile(const std::string& sourceFile)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		std::unordered_map<GLenum, std::string> shaderSources;
 		
 		const char* typeToken = "#type";
@@ -90,6 +98,8 @@ namespace Prism
 
 	void OpenGLShader::CompileShader(std::unordered_map<GLenum, std::string>& shaderSources)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		GLuint shaderProgramID = glCreateProgram();
 		PRISM_ENGINE_ASSERT(shaderSources.size() <= 2, "We only support 2 shaders for now.");
 		std::array<GLenum, 2> glShaderIDs;
@@ -155,36 +165,50 @@ namespace Prism
 
 	OpenGLShader::~OpenGLShader()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		glDeleteProgram(m_ShaderID);
 	}
 
 	void OpenGLShader::BindShader() const
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		glUseProgram(m_ShaderID);
 	}
 
 	void OpenGLShader::UnbindShader() const
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		glUseProgram(0);
 	}
 
 	void OpenGLShader::SetShaderInteger(const std::string& name, int value)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		UploadUniformInt(name, value);
 	}
 
 	void OpenGLShader::SetShaderFloat3(const std::string& name, const glm::vec3& value)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		UploadUniformFloat3(name, value);
 	}
 
 	void OpenGLShader::SetShaderFloat4(const std::string& name, const glm::vec4& value)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		UploadUniformFloat4(name, value);
 	}
 
 	void OpenGLShader::SetShaderMat4(const std::string& name, const glm::mat4& value)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		UploadUniformMat4(name, value);
 	}
 

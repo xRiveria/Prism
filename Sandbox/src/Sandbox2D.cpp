@@ -5,6 +5,8 @@
 #include "Prism/Renderer/Renderer.h"
 #include <chrono>
 
+//To Do: ImGuii feature that essentially when button is clicked on, profile the next 10 seconds or until stop is pressed, and outputs to a .json file.
+
 Sandbox2D::Sandbox2D() : Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f)
 {
 
@@ -12,12 +14,14 @@ Sandbox2D::Sandbox2D() : Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f
 
 void Sandbox2D::OnAttach()
 {
+	PRISM_PROFILE_FUNCTION();
+
 	m_CheckboardTexture = Prism::Texture2D::CreateTexture("assets/textures/Checkerboard.png");
 }
 
 void Sandbox2D::OnDetach()
 {
-
+	PRISM_PROFILE_FUNCTION();
 }
 
 void Sandbox2D::OnUpdate(Prism::Timestep timeStep)
@@ -25,11 +29,9 @@ void Sandbox2D::OnUpdate(Prism::Timestep timeStep)
 	PRISM_PROFILE_FUNCTION();
 
 	//Update
-	{
-		PRISM_PROFILE_SCOPE("CameraController::OnUpdate");
-		m_CameraController.OnUpdate(timeStep);
-	}
 
+	m_CameraController.OnUpdate(timeStep);
+	
 	//Render
 	{
 		PRISM_PROFILE_SCOPE("Rendering Initialization");
@@ -52,6 +54,7 @@ void Sandbox2D::OnUpdate(Prism::Timestep timeStep)
 void Sandbox2D::OnImGuiRender()
 {
 	PRISM_PROFILE_FUNCTION();
+
 	ImGui::Begin("Settings");
 	ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));	
 	ImGui::End();

@@ -11,6 +11,8 @@ namespace Prism
 
 	Application::Application() 
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		PRISM_ENGINE_ASSERT(!s_Instance, "Application already exists.");
 		s_Instance = this;
 		m_Window = std::unique_ptr<Window>(Window::ConstructWindow()); //Explicit conversion here that converts the created Window's pointer from ConstructWindow() into a unique pointer that is returned here.
@@ -25,21 +27,29 @@ namespace Prism
 
 	Application::~Application()
 	{
-		
+		PRISM_PROFILE_FUNCTION();
 	}
 
 	void Application::PushLayer(Layer* layer)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		m_LayerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* layer)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		m_LayerStack.PushOverlay(layer);
+		layer->OnAttach();
 	}
 
 	void Application::OnEvent(Event& event)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		EventDispatcher eventDispatcher(event);
 		//If the event that comes through the dispatcher is a WindowCloseEvent, we will call the binded function.
 		eventDispatcher.Dispatch<WindowCloseEvent>(std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
@@ -58,8 +68,11 @@ namespace Prism
 
 	void Application::Run()
 	{
+		PRISM_PROFILE_FUNCTION();
 		while (m_Running)
 		{		
+			PRISM_PROFILE_SCOPE("Run Loop");
+
 			//Renderer::FlushRenderer();
 			float time = (float)glfwGetTime();  //Platform::GetTime() in the future. Gets the current time.
 			Timestep timestep = time - m_LastFrameTime; //The time it took from the previous frame to the current frame. 
@@ -67,6 +80,7 @@ namespace Prism
 
 			if (m_Minimized != true)
 			{
+				PRISM_PROFILE_SCOPE("LayerStack Updates");
 				for (Layer* layer : m_LayerStack)
 				{
 					layer->OnUpdate(timestep);
@@ -75,13 +89,16 @@ namespace Prism
 			
 			//Don't include ImGui inside the minimize loop as certain ImGui stuff might be undocked that you may still want to receive updates.
 			m_ImGuiLayer->BeginImGuiRenderLoop();
-
-			for (Layer* layer : m_LayerStack)
+			
 			{
-				layer->OnImGuiRender();
-			}
+				PRISM_PROFILE_SCOPE("LayerStack OnImGuiRender");
+				for (Layer* layer : m_LayerStack)
+				{
+					layer->OnImGuiRender();
+				}
 
-			m_ImGuiLayer->EndImGuiRenderLoop();
+				m_ImGuiLayer->EndImGuiRenderLoop();
+			}
 
 			m_Window->OnUpdate();
 		}
@@ -95,6 +112,7 @@ namespace Prism
 
 	bool Application::OnWindowResize(WindowResizeEvent& resizeEvent)
 	{
+		PRISM_PROFILE_FUNCTION();
 		//Stop rendering if window is minimized. 
 		if (resizeEvent.GetWidth() == 0 || resizeEvent.GetHeight() == 0)
 		{

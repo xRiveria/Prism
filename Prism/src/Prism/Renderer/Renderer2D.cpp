@@ -18,6 +18,8 @@ namespace Prism
 
 	void Renderer2D::Initialize2DRenderer()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		s_Data = new Renderer2DStorage();
 
 		s_Data->m_QuadVertexArray = VertexArray::CreateVertexArray();
@@ -56,18 +58,22 @@ namespace Prism
 
 	void Renderer2D::Shutdown2DRenderer()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		delete s_Data;
 	}
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		s_Data->m_TextureShader->BindShader();
 		s_Data->m_TextureShader->SetShaderMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene()
 	{
-
+		PRISM_PROFILE_FUNCTION();
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, const glm::vec4& quadColor)
@@ -77,6 +83,8 @@ namespace Prism
 	
 	void Renderer2D::DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const glm::vec4& quadColor)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		s_Data->m_TextureShader->SetShaderFloat4("u_Color", quadColor);
 		s_Data->m_WhiteTexture->BindTexture();
 
@@ -96,6 +104,8 @@ namespace Prism
 
 	void Renderer2D::DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const Reference<Texture2D>& quadTexture)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		s_Data->m_TextureShader->SetShaderFloat4("u_Color", glm::vec4(1.0f));
 		quadTexture->BindTexture();
 

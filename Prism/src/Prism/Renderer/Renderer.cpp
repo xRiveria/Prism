@@ -11,6 +11,8 @@ namespace Prism
 
 	void Renderer::InitializeRenderer()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		RenderCommand::InitializeRenderer();
 		Renderer2D::Initialize2DRenderer();
 	}

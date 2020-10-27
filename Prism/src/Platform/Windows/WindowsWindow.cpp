@@ -21,16 +21,22 @@ namespace Prism
 
 	WindowsWindow::WindowsWindow(const WindowProperties& windowProperties)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		Initialize(windowProperties);
 	}
 
 	WindowsWindow::~WindowsWindow()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		Shutdown();
 	}
 
 	void WindowsWindow::Initialize(const WindowProperties& windowProperties)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		m_Data.windowTitle = windowProperties.windowTitle;
 		m_Data.windowWidth = windowProperties.windowWidth;
 		m_Data.windowHeight = windowProperties.windowHeight;
@@ -40,13 +46,20 @@ namespace Prism
 		//We might want to create multiple windows, but we only want to initialize GLFW once, hence the static boolean. 
 		if (!s_IsGLFWInitialized)
 		{
+			PRISM_PROFILE_SCOPE("glfwInit");
+
 			int glfwInitializationStatus = glfwInit();
 			PRISM_ENGINE_ASSERT(glfwInitializationStatus, "Failed to Initialize GLFW.");
 			glfwSetErrorCallback(GLFWErrorCallback);
 			s_IsGLFWInitialized = true;
 		}
 
-		m_Window = glfwCreateWindow((int)windowProperties.windowWidth, (int)windowProperties.windowHeight, windowProperties.windowTitle.c_str(), nullptr, nullptr);
+		{
+			PRISM_PROFILE_SCOPE("glfwCreateWindow");
+
+			m_Window = glfwCreateWindow((int)windowProperties.windowWidth, (int)windowProperties.windowHeight, windowProperties.windowTitle.c_str(), nullptr, nullptr);
+		}
+
 		m_GraphicsContext = new OpenGLContext(m_Window);
 		m_GraphicsContext->Initialize();
 	
@@ -144,17 +157,23 @@ namespace Prism
 
 	void WindowsWindow::Shutdown()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		glfwDestroyWindow(m_Window);
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		glfwPollEvents();
 		m_GraphicsContext->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool enabled)
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		if (enabled)
 		{
 			glfwSwapInterval(1);

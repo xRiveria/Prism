@@ -11,6 +11,8 @@ namespace Prism
 
 	void OpenGLContext::Initialize()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		glfwMakeContextCurrent(m_WindowHandle);
 
 		int gladInitializationStatus = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress); //Returns the current OpenGL context.
@@ -19,6 +21,8 @@ namespace Prism
 
 	void OpenGLContext::SwapBuffers()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		glfwSwapBuffers(m_WindowHandle);
 	}
 }

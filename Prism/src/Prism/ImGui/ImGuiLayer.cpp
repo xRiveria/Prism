@@ -27,6 +27,8 @@ namespace Prism
 
 	void ImGuiLayer::OnAttach()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		//Setup ImGui Context
 		IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -63,6 +65,8 @@ namespace Prism
 
 	void ImGuiLayer::OnDetach()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		ImGui_ImplOpenGL3_Shutdown();
 		ImGui_ImplGlfw_Shutdown();
 		ImGui::DestroyContext();
@@ -70,6 +74,8 @@ namespace Prism
 
 	void ImGuiLayer::BeginImGuiRenderLoop()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
@@ -187,6 +193,8 @@ namespace Prism
 
 	void ImGuiLayer::EndImGuiRenderLoop()
 	{
+		PRISM_PROFILE_FUNCTION();
+
 		ImGuiIO& io = ImGui::GetIO();
 		Application& application = Application::GetApplication();
 		io.DisplaySize = ImVec2((float)application.GetWindow().GetWindowWidth(), (float)application.GetWindow().GetWindowHeight()); //For default viewport.
