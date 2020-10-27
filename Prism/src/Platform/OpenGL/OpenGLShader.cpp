@@ -168,6 +168,21 @@ namespace Prism
 		glUseProgram(0);
 	}
 
+	void OpenGLShader::SetShaderFloat3(const std::string& name, const glm::vec3& value)
+	{
+		UploadUniformFloat3(name, value);
+	}
+
+	void OpenGLShader::SetShaderFloat4(const std::string& name, const glm::vec4& value)
+	{
+		UploadUniformFloat4(name, value);
+	}
+
+	void OpenGLShader::SetShaderMat4(const std::string& name, const glm::mat4& value)
+	{
+		UploadUniformMat4(name, value);
+	}
+
 	void OpenGLShader::UploadUniformInt(const std::string& uniformName, const int& value)
 	{
 		GLint location = glGetUniformLocation(m_ShaderID, uniformName.c_str());

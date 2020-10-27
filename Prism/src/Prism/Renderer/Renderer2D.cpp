@@ -3,7 +3,7 @@
 #include "Shader.h"
 #include "VertexArray.h"
 #include "RenderCommand.h"
-#include "Platform/OpenGL/OpenGLShader.h"
+#include "glm/gtc/matrix_transform.hpp"
 
 namespace Prism
 {
@@ -53,9 +53,8 @@ namespace Prism
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->m_FlatColorShader)->BindShader();
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->m_FlatColorShader)->UploadUniformMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->m_FlatColorShader)->UploadUniformMat4("u_Transform", glm::mat4(1.0f));
+		s_Data->m_FlatColorShader->BindShader();
+		s_Data->m_FlatColorShader->SetShaderMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene()
@@ -70,8 +69,11 @@ namespace Prism
 
 	void Renderer2D::DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const glm::vec4& quadColor)
 	{
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->m_FlatColorShader)->BindShader();
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->m_FlatColorShader)->UploadUniformFloat4("u_Color", quadColor);
+		s_Data->m_FlatColorShader->BindShader();
+		s_Data->m_FlatColorShader->SetShaderFloat4("u_Color", quadColor);
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), quadPosition) * glm::scale(glm::mat4(1.0f), {quadSize.x, quadSize.y, 1.0f});
+		s_Data->m_FlatColorShader->SetShaderMat4("u_Transform", transform);
 
 		s_Data->m_QuadVertexArray->BindVertexArray();
 		RenderCommand::DrawIndexed(s_Data->m_QuadVertexArray);

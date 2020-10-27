@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include "glm/glm.hpp"
 
 namespace Prism
 {
@@ -12,6 +13,10 @@ namespace Prism
 		virtual void BindShader() const = 0;
 		virtual void UnbindShader() const = 0;
 
+		virtual void SetShaderFloat3(const std::string& name, const glm::vec3& value) = 0;
+		virtual void SetShaderFloat4(const std::string& name, const glm::vec4& value) = 0;
+		virtual void SetShaderMat4(const std::string& name, const glm::mat4& value) = 0;
+		
 		virtual const std::string& GetShaderName() const = 0;
 
 		static Reference<Shader> CreateShader(const std::string& filePath);
