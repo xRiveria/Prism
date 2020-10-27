@@ -9,9 +9,9 @@ namespace Prism
 {
 	struct Renderer2DStorage
 	{
-		Reference<Prism::Shader> m_FlatColorShader;
 		Reference<Prism::VertexArray> m_QuadVertexArray;
 		Reference<Prism::Shader> m_TextureShader;
+		Reference<Prism::Texture2D> m_WhiteTexture;
 	};
 
 	static Renderer2DStorage* s_Data; 
@@ -45,7 +45,10 @@ namespace Prism
 		squareIndexBuffer.reset(IndexBuffer::CreateIndexBuffer(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		s_Data->m_QuadVertexArray->SetIndexBuffer(squareIndexBuffer);
 
-		s_Data->m_FlatColorShader = Shader::CreateShader("assets/shaders/FlatColor.glsl");
+		s_Data->m_WhiteTexture = Texture2D::CreateTexture(1, 1);
+		uint32_t whiteTextureData = 0xffffffff;
+		s_Data->m_WhiteTexture->SetTextureData(&whiteTextureData, sizeof(whiteTextureData));
+
 		s_Data->m_TextureShader = Shader::CreateShader("assets/shaders/Texture.glsl");
 		s_Data->m_TextureShader->BindShader();
 		s_Data->m_TextureShader->SetShaderInteger("u_Texture", 0);
@@ -58,9 +61,6 @@ namespace Prism
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
-		s_Data->m_FlatColorShader->BindShader();
-		s_Data->m_FlatColorShader->SetShaderMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
-		
 		s_Data->m_TextureShader->BindShader();
 		s_Data->m_TextureShader->SetShaderMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 	}
@@ -77,11 +77,11 @@ namespace Prism
 	
 	void Renderer2D::DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const glm::vec4& quadColor)
 	{
-		s_Data->m_FlatColorShader->BindShader();
-		s_Data->m_FlatColorShader->SetShaderFloat4("u_Color", quadColor);
+		s_Data->m_TextureShader->SetShaderFloat4("u_Color", quadColor);
+		s_Data->m_WhiteTexture->BindTexture();
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), quadPosition) * glm::scale(glm::mat4(1.0f), {quadSize.x, quadSize.y, 1.0f});
-		s_Data->m_FlatColorShader->SetShaderMat4("u_Transform", transform);
+		s_Data->m_TextureShader->SetShaderMat4("u_Transform", transform);
 
 		s_Data->m_QuadVertexArray->BindVertexArray();
 		RenderCommand::DrawIndexed(s_Data->m_QuadVertexArray);
@@ -96,12 +96,11 @@ namespace Prism
 
 	void Renderer2D::DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const Reference<Texture2D>& quadTexture)
 	{
-		s_Data->m_TextureShader->BindShader();
+		s_Data->m_TextureShader->SetShaderFloat4("u_Color", glm::vec4(1.0f));
+		quadTexture->BindTexture();
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), quadPosition) * glm::scale(glm::mat4(1.0f), { quadSize.x, quadSize.y, 1.0f });
 		s_Data->m_TextureShader->SetShaderMat4("u_Transform", transform);
-
-		quadTexture->BindTexture();
 
 		s_Data->m_QuadVertexArray->BindVertexArray();
 		RenderCommand::DrawIndexed(s_Data->m_QuadVertexArray);

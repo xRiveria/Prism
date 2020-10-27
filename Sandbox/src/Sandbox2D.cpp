@@ -35,7 +35,7 @@ void Sandbox2D::OnUpdate(Prism::Timestep timeStep)
 	Prism::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, { m_SquareColor });
 	Prism::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, { 0.8f, 0.2f, 0.3f, 1.0f });
 	Prism::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.5f, 10.5f }, m_CheckboardTexture);
-
+	 
 	Prism::Renderer2D::EndScene();
 }
 
