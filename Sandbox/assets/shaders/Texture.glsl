@@ -18,6 +18,7 @@ void main()
 #version 330 core
 
 uniform vec4 u_Color;
+uniform float u_TilingFactor;
 uniform sampler2D u_Texture;
 
 in vec2 v_TexCoord;
@@ -25,5 +26,5 @@ out vec4 outputColor;
 
 void main()
 {
-	outputColor = texture(u_Texture, v_TexCoord * 10.0f) * u_Color;
+	outputColor = texture(u_Texture, v_TexCoord * u_TilingFactor) * u_Color;
 }

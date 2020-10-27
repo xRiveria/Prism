@@ -14,6 +14,7 @@ namespace Prism
 		virtual void UnbindShader() const = 0;
 
 		virtual void SetShaderInteger(const std::string& name, int value) = 0;
+		virtual void SetShaderFloat(const std::string& name, int value) = 0;
 		virtual void SetShaderFloat3(const std::string& name, const glm::vec3& value) = 0;
 		virtual void SetShaderFloat4(const std::string& name, const glm::vec4& value) = 0;
 		virtual void SetShaderMat4(const std::string& name, const glm::mat4& value) = 0;

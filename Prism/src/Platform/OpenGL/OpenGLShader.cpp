@@ -191,6 +191,13 @@ namespace Prism
 		UploadUniformInt(name, value);
 	}
 
+	void OpenGLShader::SetShaderFloat(const std::string& name, int value)
+	{
+		PRISM_PROFILE_FUNCTION();
+
+		UploadUniformFloat(name, value);
+	}
+
 	void OpenGLShader::SetShaderFloat3(const std::string& name, const glm::vec3& value)
 	{
 		PRISM_PROFILE_FUNCTION();

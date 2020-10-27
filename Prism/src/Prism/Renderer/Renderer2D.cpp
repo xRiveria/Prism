@@ -86,6 +86,7 @@ namespace Prism
 		PRISM_PROFILE_FUNCTION();
 
 		s_Data->m_TextureShader->SetShaderFloat4("u_Color", quadColor);
+		s_Data->m_TextureShader->SetShaderFloat("u_TilingFactor", 1.0f);
 		s_Data->m_WhiteTexture->BindTexture();
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), quadPosition) * glm::scale(glm::mat4(1.0f), {quadSize.x, quadSize.y, 1.0f});
@@ -97,19 +98,61 @@ namespace Prism
 
 	//======== Texture ========
 
-	void Renderer2D::DrawQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, const Reference<Texture2D>& quadTexture)
+	void Renderer2D::DrawQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, const Reference<Texture2D>& quadTexture, float quadTilingFactor, const glm::vec4& quadTintColor)
 	{
-		DrawQuad({ quadPosition.x, quadPosition.y, 0.0f }, quadSize, quadTexture);
+		DrawQuad({ quadPosition.x, quadPosition.y, 0.0f }, quadSize, quadTexture, quadTilingFactor, quadTintColor);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const Reference<Texture2D>& quadTexture)
+	//Would be easier to have a QuadProperties struct that has all the properties such as tiling factor filled out so we don't have to constantly set them while drawing - except position. 
+	void Renderer2D::DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const Reference<Texture2D>& quadTexture, float quadTilingFactor, const glm::vec4& quadTintColor)
 	{
 		PRISM_PROFILE_FUNCTION();
 
-		s_Data->m_TextureShader->SetShaderFloat4("u_Color", glm::vec4(1.0f));
+		s_Data->m_TextureShader->SetShaderFloat4("u_Color", quadTintColor);
+		s_Data->m_TextureShader->SetShaderFloat("u_TilingFactor", quadTilingFactor);
 		quadTexture->BindTexture();
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), quadPosition) * glm::scale(glm::mat4(1.0f), { quadSize.x, quadSize.y, 1.0f });
+		s_Data->m_TextureShader->SetShaderMat4("u_Transform", transform);
+
+		s_Data->m_QuadVertexArray->BindVertexArray();
+		RenderCommand::DrawIndexed(s_Data->m_QuadVertexArray);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, float quadRotation, const glm::vec4& quadColor)
+	{
+		DrawRotatedQuad({ quadPosition.x, quadPosition.y, 0.0f }, quadSize, quadRotation, quadColor);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, float quadRotation, const glm::vec4& quadColor)
+	{
+		PRISM_PROFILE_FUNCTION();
+
+		s_Data->m_TextureShader->SetShaderFloat4("u_Color", quadColor);
+		s_Data->m_TextureShader->SetShaderFloat("u_TilingFactor", 1.0f);
+		s_Data->m_WhiteTexture->BindTexture();
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), quadPosition) * glm::rotate(glm::mat4(1.0f), quadRotation, {0.0f, 0.0f, 1.0f}) * glm::scale(glm::mat4(1.0f), { quadSize.x, quadSize.y, 1.0f });
+		s_Data->m_TextureShader->SetShaderMat4("u_Transform", transform);
+
+		s_Data->m_QuadVertexArray->BindVertexArray();
+		RenderCommand::DrawIndexed(s_Data->m_QuadVertexArray);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, float quadRotation, const Reference<Texture2D>& quadTexture, float quadTilingFactor, const glm::vec4& quadTintColor)
+	{
+		DrawRotatedQuad({ quadPosition.x, quadPosition.y, 0.0f }, quadSize, quadRotation, quadTexture, quadTilingFactor, quadTintColor);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, float quadRotation, const Reference<Texture2D>& quadTexture, float quadTilingFactor, const glm::vec4& quadTintColor)
+	{
+		PRISM_PROFILE_FUNCTION();
+
+		s_Data->m_TextureShader->SetShaderFloat4("u_Color", quadTintColor);
+		s_Data->m_TextureShader->SetShaderFloat("u_TilingFactor", quadTilingFactor);
+		quadTexture->BindTexture();
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), quadPosition) * glm::rotate(glm::mat4(1.0f), quadRotation, { 0.0f, 0.0f, 1.0f }) * glm::scale(glm::mat4(1.0f), { quadSize.x, quadSize.y, 1.0f });
 		s_Data->m_TextureShader->SetShaderMat4("u_Transform", transform);
 
 		s_Data->m_QuadVertexArray->BindVertexArray();
