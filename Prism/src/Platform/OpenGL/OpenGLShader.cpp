@@ -168,6 +168,11 @@ namespace Prism
 		glUseProgram(0);
 	}
 
+	void OpenGLShader::SetShaderInteger(const std::string& name, int value)
+	{
+		UploadUniformInt(name, value);
+	}
+
 	void OpenGLShader::SetShaderFloat3(const std::string& name, const glm::vec3& value)
 	{
 		UploadUniformFloat3(name, value);

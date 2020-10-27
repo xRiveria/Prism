@@ -1,5 +1,6 @@
 #pragma once
 #include "OrthographicCamera.h"
+#include "Texture.h"
 
 namespace Prism
 {
@@ -15,5 +16,7 @@ namespace Prism
 		//Primitives
 		static void DrawQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, const glm::vec4& quadColor);
 		static void DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const glm::vec4& quadColor); //We use Vec3 here because we can possibly use the last Z value for sorting, such as rendering certain things at the back of the scene - almost layering of sorts.
+		static void DrawQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, const Reference<Texture2D>& quadTexture);
+		static void DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const Reference<Texture2D>& quadTexture);
 	};
 }
