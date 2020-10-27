@@ -11,8 +11,16 @@ int main(int argc, char** argv)
 	PRISM_ENGINE_INFO("Initialized Prism Logging Library");
 	PRISM_CLIENT_INFO("Initalized Application Logging Library");
 
+	PRISM_PROFILE_BEGIN_SESSION("Startup", "PrismProfile-Startup.json");
 	Prism::Application* app = Prism::CreateApplication();
+	PRISM_PROFILE_END_SESSION();
+
+	PRISM_PROFILE_BEGIN_SESSION("Runtime", "PrismProfile-Runtime.json");
 	app->Run();
-	delete app;
+	PRISM_PROFILE_END_SESSION();
+
+	PRISM_PROFILE_BEGIN_SESSION("Shutdown", "PrismProfile-Shutdown.json");
+	delete app;	
+	PRISM_PROFILE_END_SESSION();
 }
 #endif

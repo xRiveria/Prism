@@ -164,6 +164,7 @@
     <ClInclude Include="src\Prism\Core\MouseButtonCodes.h" />
     <ClInclude Include="src\Prism\Core\Timestep.h" />
     <ClInclude Include="src\Prism\Core\Windows.h" />
+    <ClInclude Include="src\Prism\Debug\Instrumentor.h" />
     <ClInclude Include="src\Prism\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Prism\Events\Event.h" />
     <ClInclude Include="src\Prism\Events\KeyEvent.h" />

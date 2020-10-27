@@ -21,12 +21,4 @@ private:
 	glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 	Prism::Reference<Prism::Texture2D> m_CheckboardTexture;
 	Prism::OrthographicCameraController m_CameraController;
-
-	struct ProfileResult
-	{
-		const char* m_ProfileName;
-		float m_ProfileTime;
-	};
-
-	std::vector<ProfileResult> m_ProfileResults;
 };
