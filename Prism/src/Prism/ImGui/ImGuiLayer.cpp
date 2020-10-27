@@ -77,6 +77,7 @@ namespace Prism
 
 	void ImGuiLayer::OnImGuiRender()
 	{
+		/*
 		ImGuiIO& io = ImGui::GetIO();
 		Application& application = Application::GetApplication();
 		io.DisplaySize = ImVec2((float)application.GetWindow().GetWindowWidth(), (float)application.GetWindow().GetWindowHeight());
@@ -166,8 +167,7 @@ namespace Prism
 		//ImGui::SameLine(application.GetWindow().GetWindowWidth() / 2, +50.0f);
 		//ImGui::Button("Stop");
 		//ImGui::End();
-
-
+		
 		static bool showGraphicalWindow = true;
 		//Render Info
 		ImGui::Begin("Graphical Information", &showGraphicalWindow);
@@ -182,6 +182,7 @@ namespace Prism
 
 		ImGui::Begin("Profiler");
 		ImGui::End();
+		*/
 	}
 
 	void ImGuiLayer::EndImGuiRenderLoop()
