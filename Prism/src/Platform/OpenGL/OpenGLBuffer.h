@@ -13,6 +13,8 @@ namespace Prism
 		virtual void BindVertexBuffer() const override;
 		virtual void UnbindVertexBuffer() const override;
 
+		virtual void SetData(const void* data, uint32_t size) override;
+
 		virtual void SetBufferLayout(const BufferLayout& layout) override { m_Layout = layout; }
 		virtual const BufferLayout& GetLayout() const override { return m_Layout; }
 		

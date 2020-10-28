@@ -46,6 +46,12 @@ namespace Prism
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
+	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
+	{
+		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferID);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+	}
+
 	//============== Index Buffer ==============
 
 	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count) : m_IndicesCount(count)

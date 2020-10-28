@@ -112,6 +112,8 @@ namespace Prism
 		virtual void SetBufferLayout(const BufferLayout& layout) = 0;
 		virtual const BufferLayout& GetLayout() const = 0;
 
+		virtual void SetData(const void* data, uint32_t size) = 0;
+
 		//We could create a constructor. However, if we do so, we can't actually choose which type of API we want.
 		//This create function will decide which API our renderer is using and thus which derived graphics class we instantiate and return.
 		static Reference<VertexBuffer> CreateVertexBuffer(uint32_t size);

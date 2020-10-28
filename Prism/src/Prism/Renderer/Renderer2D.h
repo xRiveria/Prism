@@ -12,6 +12,7 @@ namespace Prism
 
 		static void BeginScene(const OrthographicCamera& camera);
 		static void EndScene();
+		static void FlushRenderer();
 
 		//Primitives
 		static void DrawQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, const glm::vec4& quadColor);

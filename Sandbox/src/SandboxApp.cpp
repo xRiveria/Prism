@@ -29,7 +29,7 @@ public:
 		};
 
 		Prism::Reference<Prism::VertexBuffer> m_VertexBuffer;
-		m_VertexBuffer.reset(Prism::VertexBuffer::CreateVertexBuffer(vertices, sizeof(vertices)));
+		//m_VertexBuffer.reset(Prism::VertexBuffer::CreateVertexBuffer(vertices, sizeof(vertices)));
 
 		Prism::BufferLayout layout =
 		{
@@ -47,7 +47,7 @@ public:
 
 		//Index Buffer
 		Prism::Reference<Prism::IndexBuffer> m_IndexBuffer;
-		m_IndexBuffer.reset(Prism::IndexBuffer::CreateIndexBuffer(indices, sizeof(indices) / sizeof(uint32_t)));
+		//m_IndexBuffer.reset(Prism::IndexBuffer::CreateIndexBuffer(indices, sizeof(indices) / sizeof(uint32_t)));
 		m_IndexBuffer->BindIndexBuffer();
 
 		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
@@ -102,7 +102,7 @@ public:
 		};
 
 		Prism::Reference<Prism::VertexBuffer> squareVertexBuffer;
-		squareVertexBuffer.reset(Prism::VertexBuffer::CreateVertexBuffer(squareVertices, sizeof(squareVertices)));
+		//squareVertexBuffer.reset(Prism::VertexBuffer::CreateVertexBuffer(squareVertices, sizeof(squareVertices)));
 		Prism::BufferLayout blueLayout =
 		{
 			{ Prism::ShaderDataType::Float3, "a_Position", false },
@@ -119,7 +119,7 @@ public:
 
 		//Index Buffer
 		Prism::Reference<Prism::IndexBuffer> squareIndexBuffer;
-		squareIndexBuffer.reset(Prism::IndexBuffer::CreateIndexBuffer(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		//squareIndexBuffer.reset(Prism::IndexBuffer::CreateIndexBuffer(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
 		squareIndexBuffer->BindIndexBuffer();
 
 		m_SquareVertexArray->SetIndexBuffer(squareIndexBuffer);
