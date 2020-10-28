@@ -41,14 +41,19 @@ void Sandbox2D::OnUpdate(Prism::Timestep timeStep)
 
 	{
 		PRISM_PROFILE_SCOPE("Rendering Draw");
+
+		static float rotation = 0.0f;
+		rotation += timeStep * 50.0f;
+
 		Prism::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-		//Prism::Renderer2D::DrawRotatedQuad({ -1.0f, 0.0f }, { 0.8f, 0.8f }, glm::radians(-45.0f), { m_SquareColor });
+		Prism::Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f }, { 0.8f, 0.8f }, rotation, { m_SquareColor });
 		Prism::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.5f, 0.75f }, { 0.8f, 0.2f, 0.3f, 1.0f });
 		Prism::Renderer2D::DrawQuad({ 0.5f, -0.5f }, { 0.5f, 0.75f }, { 0.2f, 0.3f, 0.8f, 1.0f });
-		Prism::Renderer2D::DrawQuad({ -5.0f, -5.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckboardTexture, 10.0f);
+		Prism::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 10.0f, 10.0f }, m_CheckboardTexture, 10.0f);
+		Prism::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, rotation, m_CheckboardTexture, 20.0f);
 
-		Prism::Renderer2D::EndScene();
+		Prism::Renderer2D::EndScene(); 
 	}
 }
 
