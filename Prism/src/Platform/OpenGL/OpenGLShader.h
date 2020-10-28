@@ -17,6 +17,7 @@ namespace Prism
 		virtual void UnbindShader() const override;
 
 		virtual void SetShaderInteger(const std::string& name, int value) override;
+		virtual void SetShaderIntegerArray(const std::string& name, int* values, uint32_t count) override;
 		virtual void SetShaderFloat(const std::string& name, int value) override;
 		virtual void SetShaderFloat3(const std::string& name, const glm::vec3& value) override;
 		virtual void SetShaderFloat4(const std::string& name, const glm::vec4& value) override;
@@ -25,6 +26,7 @@ namespace Prism
 		virtual const std::string& GetShaderName() const override { return m_ShaderName; }
 
 		void UploadUniformInt(const std::string& uniformName, const int& value);
+		void UploadUniformIntArray(const std::string& uniformName, int* values, uint32_t count);
 		void UploadUniformFloat(const std::string& uniformName, const float& value);
 		void UploadUniformFloat2(const std::string& uniformName, const glm::vec2& values);
 		void UploadUniformFloat3(const std::string& uniformName, const glm::vec3& values);

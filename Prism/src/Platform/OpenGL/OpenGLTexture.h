@@ -18,6 +18,11 @@ namespace Prism
 
 		virtual void BindTexture(uint32_t textureSlot = 0) const override;
 
+		virtual bool operator==(const Texture& otherTexture) const override
+		{
+			return m_TextureID == ((OpenGLTexture2D&)otherTexture).m_TextureID;
+		}
+
 	private:
 		std::string m_FilePath; //We keep this here for hot reloading textures (recreating textures when the file is changed outside the engine).
 		uint32_t m_TextureWidth, m_TextureHeight;

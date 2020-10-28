@@ -7,20 +7,23 @@
 
 namespace Prism
 {
-	struct QuadVertex
+	//Information per Vertex. To add TexID, Masking etc.
+	struct QuadVertex 
 	{
 		glm::vec3 m_QuadPosition;
 		glm::vec4 m_QuadColor;
 		glm::vec2 m_TexCoord;
-		//To Do: Color, TexID, Masking
+		float m_TexIndex; //If it's 0, its white which means it will sample from the white texture and not draw anything.
+		float m_TilingFactor;
 	};
 
+	//Information per Draw Call. (Batching)
 	struct Renderer2DData
 	{
-		//Per Draw Call.
 		const uint32_t m_MaxQuadsToDraw = 10000;
 		const uint32_t m_MaxVertices = m_MaxQuadsToDraw * 4;
 		const uint32_t m_MaxIndices = m_MaxQuadsToDraw * 6;
+		static const uint32_t m_MaxTextureSlots = 32; //To Do: RenderCapabilities.
 
 		Reference<Prism::VertexArray> m_QuadVertexArray;
 		Reference<Prism::VertexBuffer> m_QuadVertexBuffer;
@@ -30,35 +33,27 @@ namespace Prism
 		uint32_t m_QuadIndexCount = 0; //Increments everytime a Quad is drawed.
 		QuadVertex* m_QuadVertexBufferBase = nullptr; //To keep track of our max base amount of vertices.
 		QuadVertex* m_QuadVertexBufferPointer = nullptr; //We need to create and push into the Vertex Buffer for new vertices.
+	
+		std::array<Reference<Texture2D>, m_MaxTextureSlots> m_TextureSlots; //Identifier for bound textures. In the future, all our assets will have a asset handle (UUID) that will point to the actual asset.
+		uint32_t m_CurrentTextureSlotIndex = 1; //0 is our white texture. //m_CurrentTextureSlotIndex will always be the next free texture slot we can assign to. 
 	};
 
 	static Renderer2DData s_Data; 
-
-
 
 	void Renderer2D::Initialize2DRenderer()
 	{
 		PRISM_PROFILE_FUNCTION();
 
 		s_Data.m_QuadVertexArray = VertexArray::CreateVertexArray();
-
-		//======== Vertex Buffer (Vertices) ========
-
-		/*float squareVertices[5 * 4]
-		{
-			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
-			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
-		};*/
-
 		s_Data.m_QuadVertexBuffer = VertexBuffer::CreateVertexBuffer(s_Data.m_MaxVertices * sizeof(QuadVertex));
 		
 		s_Data.m_QuadVertexBuffer->SetBufferLayout(
 			{
 				{ ShaderDataType::Float3, "a_Position" },
 				{ ShaderDataType::Float4, "a_Color" },
-			    { ShaderDataType::Float2, "a_TexCoord" }
+			    { ShaderDataType::Float2, "a_TexCoord" },
+				{ ShaderDataType::Float,  "a_TexIndex" },
+				{ ShaderDataType::Float,  "a_TilingFactor" }
 			});
 		s_Data.m_QuadVertexArray->AddVertexBuffer(s_Data.m_QuadVertexBuffer);
 
@@ -84,16 +79,23 @@ namespace Prism
 		Reference<IndexBuffer> quadIndexBuffer = IndexBuffer::CreateIndexBuffer(quadIndices, s_Data.m_MaxIndices);
 		s_Data.m_QuadVertexArray->SetIndexBuffer(quadIndexBuffer);
 		delete[] quadIndices;
-
-		//uint32_t squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
 		
 		s_Data.m_WhiteTexture = Texture2D::CreateTexture(1, 1);
 		uint32_t whiteTextureData = 0xffffffff;
 		s_Data.m_WhiteTexture->SetTextureData(&whiteTextureData, sizeof(whiteTextureData));
 
+		int32_t samplers[s_Data.m_MaxTextureSlots];
+		for (uint32_t i = 0; i < s_Data.m_MaxTextureSlots; i++)
+		{
+			samplers[i] = i; //Initialize sampler data to texture slot number.
+		}
+
 		s_Data.m_TextureShader = Shader::CreateShader("assets/shaders/Texture.glsl");
 		s_Data.m_TextureShader->BindShader();
-		s_Data.m_TextureShader->SetShaderInteger("u_Texture", 0);
+		s_Data.m_TextureShader->SetShaderIntegerArray("u_Textures", samplers, s_Data.m_MaxTextureSlots);
+
+		//Set white texture to index 0 for our texture slots.
+		s_Data.m_TextureSlots[0] = s_Data.m_WhiteTexture; //Sets Index 0 of our avaliable texture slots to the White Texture. 
 	}
 
 	void Renderer2D::Shutdown2DRenderer()
@@ -109,6 +111,8 @@ namespace Prism
 		s_Data.m_TextureShader->SetShaderMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 	
 		s_Data.m_QuadIndexCount = 0; //Reset amount of indexes currently drawn.
+		s_Data.m_CurrentTextureSlotIndex = 1;
+
 		s_Data.m_QuadVertexBufferPointer = s_Data.m_QuadVertexBufferBase; //Set the pointer to the base. Now, we can freely increment the pointer without losing track of the base. 
 	}
 
@@ -124,6 +128,12 @@ namespace Prism
 
 	void Renderer2D::FlushRenderer()
 	{
+		//Bind Texture 
+		for (uint32_t i = 0; i < s_Data.m_CurrentTextureSlotIndex; i++) //Essentially all texture slots up to the currently bound one. (1 - 24, for example)
+		{
+			//Bind the texture in each of the slots to corresponding texture slots.
+			s_Data.m_TextureSlots[i]->BindTexture(i); //BindTexture() takes in a texture slot. We pass in i because that is the index of our texture slot. 
+		}
 		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray, s_Data.m_QuadIndexCount);
 	}
 
@@ -136,24 +146,39 @@ namespace Prism
 	{
 		PRISM_PROFILE_FUNCTION();
 
+		const float textureIndex = 0.0f; //White Texture
+		const float tilingFactor = 1.0f;
+
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = quadPosition;
 		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
 		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 0.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TexIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = tilingFactor;
+
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = { quadPosition.x + quadSize.x, quadPosition.y, 0.0f };
 		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
 		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 1.0f, 0.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TexIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = tilingFactor;
+
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = { quadPosition.x + quadSize.x, quadPosition.y + quadSize.y, 0.0f };
 		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
 		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 1.0f, 0.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TexIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = tilingFactor;
+
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = { quadPosition.x, quadPosition.y + quadSize.y, 0.0f };
 		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
 		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 1.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TexIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = tilingFactor;
+
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadIndexCount += 6;
@@ -175,18 +200,70 @@ namespace Prism
 		DrawQuad({ quadPosition.x, quadPosition.y, 0.0f }, quadSize, quadTexture, quadTilingFactor, quadTintColor);
 	}
 
-	//Would be easier to have a QuadProperties struct that has all the properties such as tiling factor filled out so we don't have to constantly set them while drawing - except position. 
 	void Renderer2D::DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const Reference<Texture2D>& quadTexture, float quadTilingFactor, const glm::vec4& quadTintColor)
 	{
+		PRISM_PROFILE_FUNCTION();
 
-		/*s_Data.m_TextureShader->SetShaderFloat("u_TilingFactor", quadTilingFactor);
+		constexpr glm::vec4 quadColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+		float textureIndex = 0.0f;
+
+		for (uint32_t i = 1; i < s_Data.m_CurrentTextureSlotIndex; i++) //Check if texture already exists in our existing texture slots.
+		{
+			if (*s_Data.m_TextureSlots[i].get() == *quadTexture.get()) //.get() returns the stored pointer. By dereferencing it, we are comparing the data within the pointers.
+			{
+				textureIndex = (float)i;
+				break;
+			}
+		}
+
+		if (textureIndex == 0.0f) //If texture isn't bound to anything, we manually assign it a new slot. 
+		{
+			textureIndex = (float)s_Data.m_CurrentTextureSlotIndex; //m_CurrentTextureSlotIndex will always be the next free texture slot we can assign to. 
+			s_Data.m_TextureSlots[s_Data.m_CurrentTextureSlotIndex] = quadTexture;
+			s_Data.m_CurrentTextureSlotIndex++;
+		}
+
+		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = quadPosition;
+		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 0.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TexIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
+		s_Data.m_QuadVertexBufferPointer++;
+
+		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = { quadPosition.x + quadSize.x, quadPosition.y, 0.0f };
+		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 1.0f, 0.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TexIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
+		s_Data.m_QuadVertexBufferPointer++;
+
+		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = { quadPosition.x + quadSize.x, quadPosition.y + quadSize.y, 0.0f };
+		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 1.0f, 1.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TexIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
+		s_Data.m_QuadVertexBufferPointer++;
+
+		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = { quadPosition.x, quadPosition.y + quadSize.y, 0.0f };
+		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 1.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TexIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
+
+		s_Data.m_QuadVertexBufferPointer++;
+
+		s_Data.m_QuadIndexCount += 6;
+
+#if OLD_PATH
+		s_Data.m_TextureShader->SetShaderFloat("u_TilingFactor", quadTilingFactor);
 		quadTexture->BindTexture();
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), quadPosition) * glm::scale(glm::mat4(1.0f), { quadSize.x, quadSize.y, 1.0f });
 		s_Data.m_TextureShader->SetShaderMat4("u_Transform", transform);
 
 		s_Data.m_QuadVertexArray->BindVertexArray();
-		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray);*/
+		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray);
+#endif
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, float quadRotation, const glm::vec4& quadColor)

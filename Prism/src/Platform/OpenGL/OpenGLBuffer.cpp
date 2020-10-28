@@ -48,6 +48,7 @@ namespace Prism
 
 	void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
 	{
+		//glBufferSubData, glNamedBufferSubData — updates a subset of a buffer object's data store.
 		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBufferID);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
 	}

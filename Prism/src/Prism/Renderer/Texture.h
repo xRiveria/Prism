@@ -15,6 +15,8 @@ namespace Prism
 		virtual void SetTextureData(void* textureData, uint32_t size) = 0;
 
 		virtual void BindTexture(uint32_t textureSlot = 0) const = 0;
+
+		virtual bool operator==(const Texture& otherTexture) const = 0;
 	};
 
 	class Texture2D : public Texture

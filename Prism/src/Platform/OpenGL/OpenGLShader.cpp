@@ -191,6 +191,13 @@ namespace Prism
 		UploadUniformInt(name, value);
 	}
 
+	void OpenGLShader::SetShaderIntegerArray(const std::string& name, int* values, uint32_t count)
+	{
+		PRISM_PROFILE_FUNCTION();
+
+		UploadUniformIntArray(name, values, count);
+	}
+
 	void OpenGLShader::SetShaderFloat(const std::string& name, int value)
 	{
 		PRISM_PROFILE_FUNCTION();
@@ -223,6 +230,12 @@ namespace Prism
 	{
 		GLint location = glGetUniformLocation(m_ShaderID, uniformName.c_str());
 		glUniform1i(location, value);
+	}
+
+	void OpenGLShader::UploadUniformIntArray(const std::string& uniformName, int* values, uint32_t count)
+	{
+		GLint location = glGetUniformLocation(m_ShaderID, uniformName.c_str());
+		glUniform1iv(location, count, values);
 	}
 
 	void OpenGLShader::UploadUniformFloat(const std::string& uniformName, const float& value)
