@@ -7,22 +7,22 @@
 
 namespace Prism
 {
-	//Information per Vertex. To add TexID, Masking etc.
+	//Information per Vertex. 
 	struct QuadVertex 
 	{
 		glm::vec3 m_QuadPosition;
 		glm::vec4 m_QuadColor;
 		glm::vec2 m_TexCoord;
-		float m_TextureIndex; //If it's 0, its white which means it will sample from the white texture and not draw anything.
+		float m_TextureIndex = 0; //We will default this to 0, which is our white texture. If chosen, the shader will sample from the white texture and essentially not draw anything.
 		float m_TilingFactor;
 	};
 
 	//Information per Draw Call. (Batching)
 	struct Renderer2DData
 	{
-		const uint32_t m_MaxQuadsToDraw = 10000;
-		const uint32_t m_MaxVertices = m_MaxQuadsToDraw * 4;
-		const uint32_t m_MaxIndices = m_MaxQuadsToDraw * 6;
+		static const uint32_t m_MaxQuadsToDraw = 20000;
+		static const uint32_t m_MaxVertices = m_MaxQuadsToDraw * 4;
+		static const uint32_t m_MaxIndices = m_MaxQuadsToDraw * 6;
 		static const uint32_t m_MaxTextureSlots = 32; //To Do: RenderCapabilities.
 
 		Reference<Prism::VertexArray> m_QuadVertexArray;
@@ -35,9 +35,11 @@ namespace Prism
 		QuadVertex* m_QuadVertexBufferPointer = nullptr; //We need to create and push into the Vertex Buffer for new vertices.
 	
 		std::array<Reference<Texture2D>, m_MaxTextureSlots> m_TextureSlots; //Identifier for bound textures. In the future, all our assets will have a asset handle (UUID) that will point to the actual asset.
-		uint32_t m_CurrentTextureSlotIndex = 1; //0 is our white texture. //m_CurrentTextureSlotIndex will always be the next free texture slot we can assign to. 
+		uint32_t m_CurrentTextureSlotIndex = 1; //0 is our white texture. m_CurrentTextureSlotIndex's value will always be at the next free texture slot we can assign to. 
 	
-		glm::vec4 QuadVertexPositions[4];
+		glm::vec4 QuadVertexPositions[4]; 
+
+		Renderer2D::Statistics m_BatchingStatistics;
 	};
 
 	static Renderer2DData s_Data; 
@@ -142,7 +144,19 @@ namespace Prism
 			s_Data.m_TextureSlots[i]->BindTexture(i); //BindTexture() takes in a texture slot. We pass in i because that is the index of our texture slot. 
 		}
 		RenderCommand::DrawIndexed(s_Data.m_QuadVertexArray, s_Data.m_QuadIndexCount);
+		s_Data.m_BatchingStatistics.m_DrawCalls++;
 	}
+
+	void Renderer2D::FlushAndReset()
+	{
+		EndScene();
+
+		s_Data.m_QuadIndexCount = 0; //Reset amount of indexes currently drawn.
+		s_Data.m_CurrentTextureSlotIndex = 1; //Reset texture slot number.
+
+		s_Data.m_QuadVertexBufferPointer = s_Data.m_QuadVertexBufferBase; //Reset buffer pointer back to base.
+	}
+
 
 	void Renderer2D::DrawQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, const glm::vec4& quadColor)
 	{
@@ -152,6 +166,11 @@ namespace Prism
 	void Renderer2D::DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const glm::vec4& quadColor)
 	{
 		PRISM_PROFILE_FUNCTION();
+
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::m_MaxIndices)
+		{
+			FlushAndReset();
+		}
 
 		const float textureIndex = 0.0f; //White Texture
 		const float tilingFactor = 1.0f;
@@ -164,7 +183,6 @@ namespace Prism
 		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 0.0f, };
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = tilingFactor;
-
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[1];
@@ -172,7 +190,6 @@ namespace Prism
 		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 1.0f, 0.0f, };
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = tilingFactor;
-
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[2];
@@ -180,7 +197,6 @@ namespace Prism
 		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 1.0f, 1.0f, };
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = tilingFactor;
-
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[3];
@@ -188,10 +204,11 @@ namespace Prism
 		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 1.0f, };
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = tilingFactor;
-
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadIndexCount += 6;
+
+		s_Data.m_BatchingStatistics.m_QuadCount++;
 	}
 
 	//======== Texture ========
@@ -205,6 +222,11 @@ namespace Prism
 	{
 		PRISM_PROFILE_FUNCTION();
 
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::m_MaxIndices)
+		{
+			FlushAndReset();
+		}
+
 		constexpr glm::vec4 quadColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 		float textureIndex = 0.0f;
 
@@ -253,10 +275,11 @@ namespace Prism
 		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 1.0f, };
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
-
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadIndexCount += 6;
+
+		s_Data.m_BatchingStatistics.m_QuadCount++;
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, float quadRotation, const glm::vec4& quadColor)
@@ -267,6 +290,11 @@ namespace Prism
 	void Renderer2D::DrawRotatedQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, float quadRotation, const glm::vec4& quadColor)
 	{
 		PRISM_PROFILE_FUNCTION();
+
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::m_MaxIndices)
+		{
+			FlushAndReset();
+		}
 
 		const float textureIndex = 0.0f; //White Texture
 		const float tilingFactor = 1.0f;
@@ -301,10 +329,11 @@ namespace Prism
 		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 1.0f, };
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = tilingFactor;
-
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadIndexCount += 6;
+
+		s_Data.m_BatchingStatistics.m_QuadCount++;
 	}
 
 	void Renderer2D::DrawRotatedQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, float quadRotation, const Reference<Texture2D>& quadTexture, float quadTilingFactor, const glm::vec4& quadTintColor)
@@ -315,6 +344,11 @@ namespace Prism
 	void Renderer2D::DrawRotatedQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, float quadRotation, const Reference<Texture2D>& quadTexture, float quadTilingFactor, const glm::vec4& quadTintColor)
 	{
 		PRISM_PROFILE_FUNCTION();
+
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::m_MaxIndices)
+		{
+			FlushAndReset();
+		}
 
 		constexpr glm::vec4 quadColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 		float textureIndex = 0.0f;
@@ -365,9 +399,20 @@ namespace Prism
 		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 1.0f, };
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
-
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadIndexCount += 6;
+
+		s_Data.m_BatchingStatistics.m_QuadCount++;
+	}
+
+	Renderer2D::Statistics Renderer2D::GetBatchingStatistics()
+	{
+		return s_Data.m_BatchingStatistics;
+	}
+
+	void Renderer2D::ResetBatchingStatistics()
+	{
+		memset(&s_Data.m_BatchingStatistics, 0, sizeof(s_Data.m_BatchingStatistics));
 	}
 }
