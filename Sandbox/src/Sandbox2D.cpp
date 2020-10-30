@@ -19,6 +19,9 @@ void Sandbox2D::OnAttach()
 	m_CheckboardTexture = Prism::Texture2D::CreateTexture("assets/textures/Checkerboard.png");
 	m_ChickenTexture = Prism::Texture2D::CreateTexture("assets/textures/Chicken.png");
 	m_SpriteSheet = Prism::Texture2D::CreateTexture("assets/game/textures/RPGpack_sheet_2X.png");
+	m_TextureStairs = Prism::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 7.0f, 6.0f }, { 128.0f, 128.0f });
+	m_TextureBarrel = Prism::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 8.0f, 2.0f }, { 128.0f, 128.0f });
+	m_TextureTree = Prism::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 2, 1 }, { 128, 128 }, { 1,2 });
 }
 
 void Sandbox2D::OnDetach()
@@ -72,7 +75,9 @@ void Sandbox2D::OnUpdate(Prism::Timestep timeStep)
 #endif
 
 		Prism::Renderer2D::BeginScene(m_CameraController.GetCamera());
-		Prism::Renderer2D::DrawQuad({ 0.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, m_SpriteSheet);
+		Prism::Renderer2D::DrawQuad({ 0.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureBarrel);
+		Prism::Renderer2D::DrawQuad({ 1.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureStairs);
+		Prism::Renderer2D::DrawQuad({ -1.0f, 0.0f, 0.5f }, { 1.0f, 2.0f }, m_TextureTree);
 		Prism::Renderer2D::EndScene();
 	}
 }

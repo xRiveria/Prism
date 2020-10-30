@@ -23,6 +23,7 @@
 #include "Prism/Renderer/Shader.h"
 #include "Prism/Renderer/Texture.h"
 #include "Prism/Renderer/VertexArray.h"
+#include "Prism/Renderer/SubTexture2D.h"
 
 #include "Prism/Renderer/OrthographicCamera.h"
 

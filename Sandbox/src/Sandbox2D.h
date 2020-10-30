@@ -26,6 +26,7 @@ private:
 	Prism::Reference<Prism::Texture2D> m_ChickenTexture;
 
 	Prism::Reference<Prism::Texture2D> m_CheckboardTexture;
+	Prism::Reference<Prism::SubTexture2D> m_TextureStairs, m_TextureBarrel, m_TextureTree;
 	Prism::Reference<Prism::Texture2D> m_SpriteSheet;
 	Prism::OrthographicCameraController m_CameraController;
 };

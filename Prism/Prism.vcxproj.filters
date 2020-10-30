@@ -1391,6 +1391,7 @@
     </ClInclude>
     <ClInclude Include="src\Prism\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Prism\Debug\Instrumentor.h" />
+    <ClInclude Include="src\Prism\Renderer\SubTexture2D.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1469,5 +1470,6 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\Prism\Renderer\Renderer2D.cpp" />
+    <ClCompile Include="src\Prism\Renderer\SubTexture2D.cpp" />
   </ItemGroup>
 </Project>

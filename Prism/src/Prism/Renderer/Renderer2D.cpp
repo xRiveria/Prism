@@ -226,10 +226,6 @@ namespace Prism
 	{
 		PRISM_PROFILE_FUNCTION();
 
-		float x = 7, y = 6;
-		float sheetWidth = 2560.0f, sheetHeight = 1664.0f;
-		float spriteWidth = 128.0f, spriteHeight = 128.0f;
-
 		if (s_Data.m_QuadIndexCount >= Renderer2DData::m_MaxIndices)
 		{
 			FlushAndReset();
@@ -259,28 +255,28 @@ namespace Prism
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[0];
 		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
-		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { (x * spriteWidth) / sheetWidth, (y * spriteHeight) / sheetHeight }; //Bottom Left. We divide it to get the coordinates into that -1 to 1 space. 
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 0.0f, };
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[1];
 		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
-		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { ((x + 1) * spriteWidth) / sheetWidth, (y * spriteHeight) / sheetHeight }; //Bottom Right
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 1.0f, 0.0f, }; //Bottom Right
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[2];
 		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
-		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { ((x + 1) * spriteWidth) / sheetWidth, ((y+1) * spriteHeight) / sheetHeight }; //Upper Right
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 1.0f, 1.0f, }; //Upper Right
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[3];
 		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
-		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { (x * spriteWidth) / sheetWidth, ((y+1) * spriteHeight) / sheetHeight }; //Upper Left
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 1.0f, }; //Upper Left
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
 		s_Data.m_QuadVertexBufferPointer++;
@@ -360,6 +356,153 @@ namespace Prism
 
 		constexpr glm::vec4 quadColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 		float textureIndex = 0.0f;
+
+		for (uint32_t i = 1; i < s_Data.m_CurrentTextureSlotIndex; i++) //Check if texture already exists in our existing texture slots.
+		{
+			if (*s_Data.m_TextureSlots[i].get() == *quadTexture.get()) //.get() returns the stored pointer. By dereferencing it, we are comparing the data within the pointers.
+			{
+				textureIndex = (float)i;
+				break;
+			}
+		}
+
+		if (textureIndex == 0.0f) //If texture isn't bound to anything, we manually assign it a new slot. 
+		{
+			textureIndex = (float)s_Data.m_CurrentTextureSlotIndex; //m_CurrentTextureSlotIndex will always be the next free texture slot we can assign to. 
+			s_Data.m_TextureSlots[s_Data.m_CurrentTextureSlotIndex] = quadTexture;
+			s_Data.m_CurrentTextureSlotIndex++;
+		}
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), quadPosition)
+			* glm::rotate(glm::mat4(1.0f), glm::radians(quadRotation), { 0.0f, 0.0f, 1.0f })
+			* glm::scale(glm::mat4(1.0f), { quadSize.x, quadSize.y, 1.0f });
+
+		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[0];
+		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 0.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
+		s_Data.m_QuadVertexBufferPointer++;
+
+		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[1];
+		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 1.0f, 0.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
+		s_Data.m_QuadVertexBufferPointer++;
+
+		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[2];
+		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 1.0f, 1.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
+		s_Data.m_QuadVertexBufferPointer++;
+
+		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[3];
+		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 1.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
+		s_Data.m_QuadVertexBufferPointer++;
+
+		s_Data.m_QuadIndexCount += 6;
+
+		s_Data.m_BatchingStatistics.m_QuadCount++;
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, const Reference<SubTexture2D>& quadSubTexture, float quadTilingFactor, const glm::vec4& quadTintColor)
+	{
+		DrawQuad({ quadPosition.x, quadPosition.y, 0.0f }, quadSize, quadSubTexture, quadTilingFactor, quadTintColor);
+	}
+
+	//The reason why certain textures look very good is because said textures are drawn with straight lines.
+	//Its not attempting to be smooth. This will also look good when we manify it using nearest filtering.
+	//That is why games like Minecraft have textures that look very sharp even though they're 16x16. 
+
+	void Renderer2D::DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const Reference<SubTexture2D>& quadSubTexture, float quadTilingFactor, const glm::vec4& quadTintColor)
+	{
+		PRISM_PROFILE_FUNCTION();
+
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::m_MaxIndices)
+		{
+			FlushAndReset();
+		}
+
+		constexpr glm::vec4 quadColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+		float textureIndex = 0.0f;
+		const glm::vec2* textureCoordinates = quadSubTexture->GetTextureCoordinates();
+		const Reference<Texture2D> quadTexture = quadSubTexture->GetTexture();
+
+		for (uint32_t i = 1; i < s_Data.m_CurrentTextureSlotIndex; i++) //Check if texture already exists in our existing texture slots.
+		{
+			if (*s_Data.m_TextureSlots[i].get() == *quadTexture.get()) //.get() returns the stored pointer. By dereferencing it, we are comparing the data within the pointers.
+			{
+				textureIndex = (float)i;
+				break;
+			}
+		}
+
+		if (textureIndex == 0.0f) //If texture isn't bound to anything, we manually assign it a new slot. 
+		{
+			textureIndex = (float)s_Data.m_CurrentTextureSlotIndex; //m_CurrentTextureSlotIndex will always be the next free texture slot we can assign to. 
+			s_Data.m_TextureSlots[s_Data.m_CurrentTextureSlotIndex] = quadTexture;
+			s_Data.m_CurrentTextureSlotIndex++;
+		}
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), quadPosition)
+			* glm::scale(glm::mat4(1.0f), { quadSize.x, quadSize.y, 1.0f });
+
+		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[0];
+		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = textureCoordinates[0];
+		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
+		s_Data.m_QuadVertexBufferPointer++;
+
+		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[1];
+		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = textureCoordinates[1]; //Bottom Right
+		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
+		s_Data.m_QuadVertexBufferPointer++;
+
+		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[2];
+		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = textureCoordinates[2]; //Upper Right
+		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
+		s_Data.m_QuadVertexBufferPointer++;
+
+		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[3];
+		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = textureCoordinates[3]; //Upper Left
+		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
+		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
+		s_Data.m_QuadVertexBufferPointer++;
+
+		s_Data.m_QuadIndexCount += 6;
+
+		s_Data.m_BatchingStatistics.m_QuadCount++;
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, float quadRotation, const Reference<SubTexture2D>& quadSubTexture, float quadTilingFactor, const glm::vec4& quadTintColor)
+	{
+		DrawRotatedQuad({ quadPosition.x, quadPosition.y, 0.0f }, quadSize, quadRotation, quadSubTexture, quadTilingFactor, quadTintColor);
+	}
+
+	void Renderer2D::DrawRotatedQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, float quadRotation, const Reference<SubTexture2D>& quadSubTexture, float quadTilingFactor, const glm::vec4& quadTintColor)
+	{
+		PRISM_PROFILE_FUNCTION();
+
+		if (s_Data.m_QuadIndexCount >= Renderer2DData::m_MaxIndices)
+		{
+			FlushAndReset();
+		}
+
+		constexpr glm::vec4 quadColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+		float textureIndex = 0.0f;
+		const glm::vec2* textureCoordinates = quadSubTexture->GetTextureCoordinates();
+		const Reference<Texture2D> quadTexture = quadSubTexture->GetTexture();
 
 		for (uint32_t i = 1; i < s_Data.m_CurrentTextureSlotIndex; i++) //Check if texture already exists in our existing texture slots.
 		{

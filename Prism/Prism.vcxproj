@@ -179,6 +179,7 @@
     <ClInclude Include="src\Prism\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Prism\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Prism\Renderer\Shader.h" />
+    <ClInclude Include="src\Prism\Renderer\SubTexture2D.h" />
     <ClInclude Include="src\Prism\Renderer\Texture.h" />
     <ClInclude Include="src\Prism\Renderer\VertexArray.h" />
     <ClInclude Include="src\PrismPrecompiledHeader.h" />
@@ -615,6 +616,7 @@
     <ClCompile Include="src\Prism\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Prism\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\Prism\Renderer\Shader.cpp" />
+    <ClCompile Include="src\Prism\Renderer\SubTexture2D.cpp" />
     <ClCompile Include="src\Prism\Renderer\Texture.cpp" />
     <ClCompile Include="src\Prism\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\PrismPrecompiledHeader.cpp">
