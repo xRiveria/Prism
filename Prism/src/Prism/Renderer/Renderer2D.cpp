@@ -218,9 +218,17 @@ namespace Prism
 		DrawQuad({ quadPosition.x, quadPosition.y, 0.0f }, quadSize, quadTexture, quadTilingFactor, quadTintColor);
 	}
 
+	//The reason why certain textures look very good is because said textures are drawn with straight lines.
+	//Its not attempting to be smooth. This will also look good when we manify it using nearest filtering.
+	//That is why games like Minecraft have textures that look very sharp even though they're 16x16. 
+
 	void Renderer2D::DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const Reference<Texture2D>& quadTexture, float quadTilingFactor, const glm::vec4& quadTintColor)
 	{
 		PRISM_PROFILE_FUNCTION();
+
+		float x = 7, y = 6;
+		float sheetWidth = 2560.0f, sheetHeight = 1664.0f;
+		float spriteWidth = 128.0f, spriteHeight = 128.0f;
 
 		if (s_Data.m_QuadIndexCount >= Renderer2DData::m_MaxIndices)
 		{
@@ -251,28 +259,28 @@ namespace Prism
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[0];
 		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
-		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 0.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { (x * spriteWidth) / sheetWidth, (y * spriteHeight) / sheetHeight }; //Bottom Left. We divide it to get the coordinates into that -1 to 1 space. 
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[1];
 		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
-		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 1.0f, 0.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { ((x + 1) * spriteWidth) / sheetWidth, (y * spriteHeight) / sheetHeight }; //Bottom Right
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[2];
 		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
-		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 1.0f, 1.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { ((x + 1) * spriteWidth) / sheetWidth, ((y+1) * spriteHeight) / sheetHeight }; //Upper Right
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
 		s_Data.m_QuadVertexBufferPointer++;
 
 		s_Data.m_QuadVertexBufferPointer->m_QuadPosition = transform * s_Data.QuadVertexPositions[3];
 		s_Data.m_QuadVertexBufferPointer->m_QuadColor = quadColor;
-		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { 0.0f, 1.0f, };
+		s_Data.m_QuadVertexBufferPointer->m_TexCoord = { (x * spriteWidth) / sheetWidth, ((y+1) * spriteHeight) / sheetHeight }; //Upper Left
 		s_Data.m_QuadVertexBufferPointer->m_TextureIndex = textureIndex;
 		s_Data.m_QuadVertexBufferPointer->m_TilingFactor = quadTilingFactor;
 		s_Data.m_QuadVertexBufferPointer++;

@@ -19,6 +19,13 @@ public:
 private:
 	//Temporary
 	glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
+	glm::vec4 m_ClearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
+
+	glm::vec3 m_ChickenPosition = { 0.5f, -0.5f, 0.0f };
+	glm::vec2 m_ChickenScale = { 1.0f, 1.0f };
+	Prism::Reference<Prism::Texture2D> m_ChickenTexture;
+
 	Prism::Reference<Prism::Texture2D> m_CheckboardTexture;
+	Prism::Reference<Prism::Texture2D> m_SpriteSheet;
 	Prism::OrthographicCameraController m_CameraController;
 };
