@@ -61,13 +61,18 @@ namespace Prism
 		dispatcher.Dispatch<WindowResizeEvent>(PRISM_BIND_EVENT_FUNCTION(OrthographicCameraController::OnWindowResize));
 	}
 
+	void OrthographicCameraController::CalculateViewProjection()
+	{
+		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+	}
+
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& event)
 	{
 		PRISM_PROFILE_FUNCTION();
 
 		m_ZoomLevel -= event.GetYOffset() * 0.25f;
 		m_ZoomLevel = std::max(m_ZoomLevel, 0.25f);  //Returns the greater value of a and b. If they are equivalent, returns a. Thus, m_ZoomLevel will never go below 0.25f.
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		CalculateViewProjection();
 		return false;
 	}
 
@@ -76,7 +81,7 @@ namespace Prism
 		PRISM_PROFILE_FUNCTION();
 
 		m_AspectRatio = (float)event.GetWidth() / (float)event.GetHeight();
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+		CalculateViewProjection();
 		return false;
 	}
 }

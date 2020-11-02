@@ -29,4 +29,7 @@ private:
 	Prism::Reference<Prism::SubTexture2D> m_TextureStairs, m_TextureBarrel, m_TextureTree;
 	Prism::Reference<Prism::Texture2D> m_SpriteSheet;
 	Prism::OrthographicCameraController m_CameraController;
+
+	uint32_t m_MapWidth, m_MapHeight;
+	std::unordered_map<char, Prism::Reference<Prism::SubTexture2D>> s_TextureMapper;
 };
