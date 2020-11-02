@@ -28,7 +28,7 @@ namespace Prism
 		EventCategoryMouseButton = BIT(4)
 	};
 
-#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::##type; }\
+#define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\
 							   virtual EventType GetEventType() const override { return GetStaticType(); }\
 						        virtual const char* GetName() const override { return #type; }
 
@@ -54,18 +54,15 @@ namespace Prism
 
 	class EventDispatcher
 	{
-		template<typename T>
-		using EventFunction = std::function<bool(T&)>;  //T is any event type.
-
 	public:
 		EventDispatcher(Event& event) : m_Event(event) {}
 
-		template<typename T>
-		bool Dispatch(EventFunction<T> function) //Pass a function here that takes in an event type and returns a boolean. 
+		template<typename T, typename F>
+		bool Dispatch(const F& function) //Pass a function here that takes in an event type and returns a boolean. 
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.IsEventHandled = function(*(T*)&m_Event);
+				m_Event.IsEventHandled = function(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;

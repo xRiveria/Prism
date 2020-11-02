@@ -7,9 +7,4 @@ namespace Prism
 	{
 
 	}
-
-	Layer::~Layer()
-	{
-
-	}
 }

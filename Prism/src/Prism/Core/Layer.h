@@ -11,7 +11,7 @@ namespace Prism
 	{
 	public:
 		Layer(const std::string& layerName = "Layer");
-		virtual ~Layer();
+		virtual ~Layer() = default;
 
 		virtual void OnAttach() {}
 		virtual void OnDetach() {}

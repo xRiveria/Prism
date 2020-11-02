@@ -154,13 +154,14 @@ namespace Prism
 			return;
 		}
 
+		m_ShaderID = shaderProgramID;
+
 		//Always detach shaders after a successful link.
 		for (auto shaderID : glShaderIDs)
 		{
 			glDetachShader(shaderProgramID, shaderID);
+			glDeleteShader(shaderProgramID);
 		}
-
-		m_ShaderID = shaderProgramID;
 	}
 
 	OpenGLShader::~OpenGLShader()

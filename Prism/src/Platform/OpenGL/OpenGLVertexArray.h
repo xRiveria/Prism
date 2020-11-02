@@ -21,6 +21,7 @@ namespace Prism
 	private:
 		std::vector<Reference<VertexBuffer>> m_VertexBuffers;
 		Reference<IndexBuffer> m_IndexBuffer;
-		unsigned int m_VertexArrayID;
+		uint32_t m_VertexArrayID;
+		uint32_t m_VertexBufferIndex = 0;
 	};
 }

@@ -24,6 +24,6 @@ namespace Prism
 			glm::mat4 viewProjectionMatrix;
 		};
 
-		static SceneData* m_SceneData;
+		static SceneData* s_SceneData;
 	};
 }

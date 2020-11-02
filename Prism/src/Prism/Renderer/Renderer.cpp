@@ -7,7 +7,7 @@
 //This is the main renderer. We will spin off and create the 2D renderer when it is initialized.
 namespace Prism
 {
-	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
+	Renderer::SceneData* Renderer::s_SceneData = new Renderer::SceneData;
 
 	void Renderer::InitializeRenderer()
 	{
@@ -24,7 +24,7 @@ namespace Prism
 
 	void Renderer::BeginScene(OrthographicCamera& camera)
 	{
-		m_SceneData->viewProjectionMatrix = camera.GetViewProjectionMatrix();
+		s_SceneData->viewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
 
 	void Renderer::EndScene()
@@ -38,7 +38,7 @@ namespace Prism
 	void Renderer::SubmitToRenderQueue(const Reference<Shader>& shader, const Reference<VertexArray>& vertexArray, const glm::mat4& transform)
 	{
 		shader->BindShader();
-		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ViewProjection", m_SceneData->viewProjectionMatrix); //Does this really have to be done per object?
+		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_ViewProjection", s_SceneData->viewProjectionMatrix); //Does this really have to be done per object?
 		std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("u_Transform", transform); //Must be done per object. 
 
 		vertexArray->BindVertexArray();

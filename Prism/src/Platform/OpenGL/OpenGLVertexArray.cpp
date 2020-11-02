@@ -62,13 +62,12 @@ namespace Prism
 		glBindVertexArray(m_VertexArrayID);
 		vertexBuffer->BindVertexBuffer();
 
-		uint32_t index = 0;
 		const auto& layout = vertexBuffer->GetLayout();
 		for (const auto& element : layout)
 		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.elementType), element.elementNormalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)element.elementOffset);
-			index++;
+			glEnableVertexAttribArray(m_VertexBufferIndex);
+			glVertexAttribPointer(m_VertexBufferIndex, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.elementType), element.elementNormalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)(intptr_t)element.elementOffset);
+			m_VertexBufferIndex++;
 		}
 
 		m_VertexBuffers.push_back(vertexBuffer);

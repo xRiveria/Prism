@@ -104,7 +104,7 @@ namespace Prism
 	class VertexBuffer
 	{
 	public:
-		virtual ~VertexBuffer() {}
+		virtual ~VertexBuffer() = default;
 		
 		virtual void BindVertexBuffer() const = 0;
 		virtual void UnbindVertexBuffer() const = 0;
@@ -124,7 +124,7 @@ namespace Prism
 	class IndexBuffer
 	{
 	public:
-		virtual ~IndexBuffer() {}
+		virtual ~IndexBuffer() = default;
 
 		virtual void BindIndexBuffer() const = 0;
 		virtual void UnbindIndexBuffer() const = 0;

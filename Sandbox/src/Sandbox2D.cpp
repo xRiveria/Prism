@@ -97,11 +97,11 @@ void Sandbox2D::OnUpdate(Prism::Timestep timeStep)
 
 		Prism::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-		for (uint32_t y = 0; y < m_MapHeight; y++)
+		for (uint32_t y = 0; y < m_MapHeight; y++) //Take note of the way you are interating the chars due to memory layout (memory indirection).
 		{
 			for (uint32_t x = 0; x < m_MapWidth; x++)
 			{
-				char tileType = s_MapTiles[x + y * m_MapWidth]; 
+				char tileType = s_MapTiles[x + y * m_MapWidth]; //Gets the correct memory offset. We are dealing with the map as a contigious block of memory as it will be faster.  
 
 				Prism::Reference<Prism::SubTexture2D> texture; //Selected texture.
 				if (s_TextureMapper.find(tileType) != s_TextureMapper.end()) //If the texture is found within the mapper...

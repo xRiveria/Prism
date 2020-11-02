@@ -25,11 +25,6 @@ namespace Prism
 		PushOverlay(m_ImGuiLayer);
 	}
 
-	Application::~Application()
-	{
-		PRISM_PROFILE_FUNCTION();
-	}
-
 	void Application::PushLayer(Layer* layer)
 	{
 		PRISM_PROFILE_FUNCTION();

@@ -20,11 +20,6 @@ namespace Prism
 		PRISM_ENGINE_WARN("Created {0}", GetName());
 	}
 
-	ImGuiLayer::~ImGuiLayer()
-	{
-	
-	}
-
 	void ImGuiLayer::OnAttach()
 	{
 		PRISM_PROFILE_FUNCTION();
