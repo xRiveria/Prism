@@ -1392,6 +1392,8 @@
     <ClInclude Include="src\Prism\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Prism\Debug\Instrumentor.h" />
     <ClInclude Include="src\Prism\Renderer\SubTexture2D.h" />
+    <ClInclude Include="src\Prism\Renderer\Framebuffer.h" />
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1471,5 +1473,7 @@
     </ClCompile>
     <ClCompile Include="src\Prism\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Prism\Renderer\SubTexture2D.cpp" />
+    <ClCompile Include="src\Prism\Renderer\Framebuffer.cpp" />
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
   </ItemGroup>
 </Project>
