@@ -41,6 +41,11 @@ namespace Prism
 		layer->OnAttach();
 	}
 
+	void Application::CloseApplication()
+	{
+		m_Running = false;
+	}
+
 	void Application::OnEvent(Event& event)
 	{
 		PRISM_PROFILE_FUNCTION();

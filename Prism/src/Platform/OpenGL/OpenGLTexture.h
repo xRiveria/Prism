@@ -13,6 +13,7 @@ namespace Prism
 
 		virtual uint32_t GetTextureWidth() const override { return m_TextureWidth; }
 		virtual uint32_t GetTextureHeight() const override { return m_TextureHeight; }
+		virtual uint32_t GetTextureID() const override { return m_TextureID; }
 
 		virtual void SetTextureData(void* textureData, uint32_t size);
 

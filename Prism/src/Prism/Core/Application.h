@@ -24,6 +24,7 @@ namespace Prism
 		void PushOverlay(Layer* layer);
 
 		inline Window& GetWindow() const { return *m_Window; }
+		void CloseApplication();
 		inline static Application& GetApplication() { return *s_Instance; }
 
 	private:

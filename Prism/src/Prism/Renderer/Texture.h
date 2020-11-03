@@ -11,6 +11,7 @@ namespace Prism
 
 		virtual uint32_t GetTextureWidth() const = 0;
 		virtual uint32_t GetTextureHeight() const = 0;
+		virtual uint32_t GetTextureID() const = 0;
 
 		virtual void SetTextureData(void* textureData, uint32_t size) = 0;
 
