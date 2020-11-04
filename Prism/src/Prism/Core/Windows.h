@@ -10,10 +10,10 @@ namespace Prism
 	struct WindowProperties
 	{
 		std::string windowTitle;
-		unsigned int windowWidth;
-		unsigned int windowHeight;
+		uint32_t windowWidth;
+		uint32_t windowHeight;
 
-		WindowProperties(const std::string& title = "Prism Engine", unsigned int width = 1280, unsigned int height = 720)
+		WindowProperties(const std::string& title = "Prism Engine", uint32_t width = 1280, uint32_t height = 720)
 			: windowTitle(title), windowWidth(width), windowHeight(height)
 		{}
 	};
@@ -29,8 +29,8 @@ namespace Prism
 
 		virtual void OnUpdate() = 0;
 		
-		virtual inline unsigned int GetWindowWidth() const = 0;
-		virtual inline unsigned int GetWindowHeight() const = 0;
+		virtual inline uint32_t GetWindowWidth() const = 0;
+		virtual inline uint32_t GetWindowHeight() const = 0;
 		inline virtual void* GetNativeWindow() const = 0;
 
 		//Window Attributes

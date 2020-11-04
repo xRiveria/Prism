@@ -19,6 +19,9 @@
     <Filter Include="src\Prism\Core">
       <UniqueIdentifier>{9F34910C-8B02-8512-7496-F53860036177}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Prism\Debug">
+      <UniqueIdentifier>{9D23C49E-09AF-3163-12C0-B4577ECA8D63}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Prism\Events">
       <UniqueIdentifier>{EBE9D27A-D7E2-F1CC-0015-D751EC6CD1D8}</UniqueIdentifier>
     </Filter>
@@ -58,6 +61,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
@@ -114,6 +120,9 @@
     <ClInclude Include="src\Prism\Core\Windows.h">
       <Filter>src\Prism\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Prism\Debug\Instrumentor.h">
+      <Filter>src\Prism\Debug</Filter>
+    </ClInclude>
     <ClInclude Include="src\Prism\Events\ApplicationEvent.h">
       <Filter>src\Prism\Events</Filter>
     </ClInclude>
@@ -132,6 +141,9 @@
     <ClInclude Include="src\Prism\Renderer\Buffer.h">
       <Filter>src\Prism\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Prism\Renderer\Framebuffer.h">
+      <Filter>src\Prism\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Prism\Renderer\GraphicsContext.h">
       <Filter>src\Prism\Renderer</Filter>
     </ClInclude>
@@ -147,10 +159,16 @@
     <ClInclude Include="src\Prism\Renderer\Renderer.h">
       <Filter>src\Prism\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Prism\Renderer\Renderer2D.h">
+      <Filter>src\Prism\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Prism\Renderer\RendererAPI.h">
       <Filter>src\Prism\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Prism\Renderer\Shader.h">
+      <Filter>src\Prism\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Prism\Renderer\SubTexture2D.h">
       <Filter>src\Prism\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Prism\Renderer\Texture.h">
@@ -1389,17 +1407,15 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Prism\Renderer\Renderer2D.h" />
-    <ClInclude Include="src\Prism\Debug\Instrumentor.h" />
-    <ClInclude Include="src\Prism\Renderer\SubTexture2D.h" />
-    <ClInclude Include="src\Prism\Renderer\Framebuffer.h" />
-    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">
@@ -1441,6 +1457,9 @@
     <ClCompile Include="src\Prism\Renderer\Buffer.cpp">
       <Filter>src\Prism\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Prism\Renderer\Framebuffer.cpp">
+      <Filter>src\Prism\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Prism\Renderer\OrthographicCamera.cpp">
       <Filter>src\Prism\Renderer</Filter>
     </ClCompile>
@@ -1453,10 +1472,16 @@
     <ClCompile Include="src\Prism\Renderer\Renderer.cpp">
       <Filter>src\Prism\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Prism\Renderer\Renderer2D.cpp">
+      <Filter>src\Prism\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Prism\Renderer\RendererAPI.cpp">
       <Filter>src\Prism\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Prism\Renderer\Shader.cpp">
+      <Filter>src\Prism\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Prism\Renderer\SubTexture2D.cpp">
       <Filter>src\Prism\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Prism\Renderer\Texture.cpp">
@@ -1471,9 +1496,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Prism\Renderer\Renderer2D.cpp" />
-    <ClCompile Include="src\Prism\Renderer\SubTexture2D.cpp" />
-    <ClCompile Include="src\Prism\Renderer\Framebuffer.cpp" />
-    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp" />
   </ItemGroup>
 </Project>

@@ -1,233 +1,253 @@
-#include "Sandbox2D.h"
+#include "Prism.h"
+#include "Prism/Core/EntryPoint.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 #include "imgui/imgui.h"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "Sandbox2D.h"
 
-//To Do: ImGuii feature that essentially when button is clicked on, profile the next 10 seconds or until stop is pressed, and outputs to a .json file.
-
-static uint32_t s_MapWidth = 24; //The maximum width of each row. 
-static const char* s_MapTiles = 
-"WWWWWWWWWWWWWWWWWWWWWWWW"
-"WWWWWWWWWWWWWWWWWWWWWWWW"
-"WWWWWWWWWWWWWWWWWWWWWWWW"
-"WWWWWWWDDDDDDDWWWWWWWWWW"
-"WWWWDDDDDDDDDDWWWWWWWWWW"
-"WWWDDDDDDDDDDDDWWWWWWWWW"
-"WWWWWDDDDDDDDDDWWWWWWWWW"
-"WWWWWWWDDDDDDDDWWWWWWWWW"
-"WWWWWWWWDDDDDDDWWWWWWWWW"
-"WWWWWWWWWDDDDDWWWWWWWWWW"
-"WWWWWWWWWWWWWWWWWWWWWWWW"
-"WWWWWWWWWWWWWWWWWWWWWWWW"
-"WWWWWWWWWWWWWWWWWWWWWWWW"
-"WWWWWWWWWWWWWWWWWWWWWWWW";
-
-Sandbox2D::Sandbox2D() : Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f)
+class ExampleLayer : public Prism::Layer
 {
-
-}
-
-void Sandbox2D::OnAttach()
-{
-	PRISM_PROFILE_FUNCTION();
-
-	m_CheckboardTexture = Prism::Texture2D::CreateTexture("assets/textures/Checkerboard.png");
-	m_ChickenTexture = Prism::Texture2D::CreateTexture("assets/textures/Chicken.png");
-	m_SpriteSheet = Prism::Texture2D::CreateTexture("assets/game/textures/RPGpack_sheet_2X.png");
-	m_TextureStairs = Prism::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 0.0f, 11.0f }, { 128.0f, 128.0f });
-	m_TextureTree = Prism::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 2, 1 }, { 128, 128 }, { 1,2 });
-
-	m_MapWidth = s_MapWidth; 
-	m_MapHeight = strlen(s_MapTiles) / s_MapWidth; //Finds the maximum height of the map tiles. In this case: 337 / 24 = 14.02 = 14.
-	s_TextureMapper['D'] = Prism::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 6, 11 }, { 128, 128 }); //Maps 'D' to the Dirt texture.
-	s_TextureMapper['W'] = Prism::SubTexture2D::CreateFromCoords(m_SpriteSheet, { 11, 11 }, { 128, 128 }); //Maps 'W' to the Water texture.
-
-	m_CameraController.SetZoomLevel(5.0f);
-
-	Prism::FramebufferSpecification framebufferSpecification;
-	framebufferSpecification.bufferWidth = 1280;
-	framebufferSpecification.bufferHeight = 720;
-	m_Framebuffer = Prism::Framebuffer::CreateFramebuffer(framebufferSpecification);
-}
-
-void Sandbox2D::OnDetach()
-{
-	PRISM_PROFILE_FUNCTION();
-}
-
-void Sandbox2D::OnUpdate(Prism::Timestep timeStep)
-{
-	PRISM_PROFILE_FUNCTION();
-
-	//Update
-
-	m_CameraController.OnUpdate(timeStep);
-	
-	//Render
-	//Reset our rendering statistics here as its the start of a new frame.
-	Prism::Renderer2D::ResetBatchingStatistics();
-
+public:
+	ExampleLayer() :Layer("Example Layer"), m_CameraController(1280.0f / 720.0f)
 	{
-		PRISM_PROFILE_SCOPE("Rendering Initialization");
-		m_Framebuffer->BindFramebuffer();
-		Prism::RenderCommand::SetClearColor(m_ClearColor);
+		PRISM_CLIENT_WARN("Created {0}", GetName());
+
+		//=================================================================
+		// Triangle
+		//=================================================================
+
+		//Vertex Array
+		m_VertexArray = Prism::VertexArray::CreateVertexArray();
+		m_VertexArray->BindVertexArray();
+
+		float vertices[3 * 7] = //Within clip space already - no MVP needed.
+		{
+			-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
+			 0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
+			 0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
+		};
+
+		Prism::Reference<Prism::VertexBuffer> m_VertexBuffer;
+		//m_VertexBuffer.reset(Prism::VertexBuffer::CreateVertexBuffer(vertices, sizeof(vertices)));
+
+		Prism::BufferLayout layout =
+		{
+			{ Prism::ShaderDataType::Float3, "a_Position", false },
+			{ Prism::ShaderDataType::Float4, "a_Color", false }
+		};
+
+		m_VertexBuffer->SetBufferLayout(layout);
+		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
+
+		uint32_t indices[3]
+		{
+			0, 1, 2
+		};
+
+		//Index Buffer
+		Prism::Reference<Prism::IndexBuffer> m_IndexBuffer;
+		//m_IndexBuffer.reset(Prism::IndexBuffer::CreateIndexBuffer(indices, sizeof(indices) / sizeof(uint32_t)));
+		m_IndexBuffer->BindIndexBuffer();
+
+		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
+
+		//Shader
+		std::string vertexShaderSourceCode = R"(
+		#version 330 core
+		layout (location = 0) in vec3 attributePosition;
+		layout (location = 1) in vec4 attributeColor;
+		uniform mat4 u_ViewProjection;
+		uniform mat4 u_Transform;
+		out vec3 outputPosition;
+		out vec4 v_Color;
+		void main()
+		{
+			v_Color = attributeColor;
+			outputPosition = attributePosition;
+			gl_Position = u_ViewProjection * u_Transform * vec4(attributePosition, 1.0f);
+		}
+		)";
+
+		std::string fragmentShaderSourceCode = R"(
+		#version 330 core
+		
+		in vec3 outputPosition;
+		in vec4 v_Color;
+		out vec4 outputColor;
+		void main()
+		{
+			outputColor = v_Color;
+		}
+		)";
+
+		m_Shader = Prism::Shader::CreateShader("VertexColorTriangle", vertexShaderSourceCode, fragmentShaderSourceCode);
+
+		//=================================================================
+		// Square
+		//=================================================================
+
+		m_SquareVertexArray = Prism::VertexArray::CreateVertexArray();
+		m_SquareVertexArray->BindVertexArray();
+
+		float squareVertices[5 * 4] =
+		{
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 0.0f, 1.0f
+		};
+
+		Prism::Reference<Prism::VertexBuffer> squareVertexBuffer;
+		//squareVertexBuffer.reset(Prism::VertexBuffer::CreateVertexBuffer(squareVertices, sizeof(squareVertices)));
+		Prism::BufferLayout blueLayout =
+		{
+			{ Prism::ShaderDataType::Float3, "a_Position", false },
+			{ Prism::ShaderDataType::Float2, "a_TextCoord" }
+		};
+
+		squareVertexBuffer->SetBufferLayout(blueLayout);
+		m_SquareVertexArray->AddVertexBuffer(squareVertexBuffer);
+
+		uint32_t squareIndices[6]
+		{
+			0, 1, 2, 2, 3, 0
+		};
+
+		//Index Buffer
+		Prism::Reference<Prism::IndexBuffer> squareIndexBuffer;
+		//squareIndexBuffer.reset(Prism::IndexBuffer::CreateIndexBuffer(squareIndices, sizeof(squareIndices) / sizeof(uint32_t)));
+		squareIndexBuffer->BindIndexBuffer();
+
+		m_SquareVertexArray->SetIndexBuffer(squareIndexBuffer);
+
+		//Some graphic cards have default shaders created. Thus, we do not have to create them to start rendering.
+		//However, in more contexts, we will have to create shaders if we want to do anything remotely interesting.
+		std::string flatColorVertexShaderSourceCode = R"(
+		#version 330 core
+		layout (location = 0) in vec3 attributePosition;
+		uniform mat4 u_ViewProjection;
+		uniform mat4 u_Transform;
+		out vec3 outputPosition;
+		void main()
+		{
+			outputPosition = attributePosition;
+			gl_Position = u_ViewProjection * u_Transform * vec4(attributePosition, 1.0f);
+		}
+		)";
+
+		std::string flatColorFragmentShaderSourceCode = R"(
+		#version 330 core
+		
+		uniform vec3 u_Color;
+		in vec3 outputPosition;
+		out vec4 outputColor;
+		void main()
+		{
+			outputColor = vec4(u_Color, 1.0f);
+		}
+		)";
+
+		m_FlatColorShader = Prism::Shader::CreateShader("Flat Color", flatColorVertexShaderSourceCode, flatColorFragmentShaderSourceCode);
+		//Shader
+		Prism::Reference<Prism::Shader>& textureShader = m_ShaderLibrary.LoadShader("assets/shaders/Texture.glsl");
+
+		m_PrismTexture = Prism::Texture2D::CreateTexture("assets/textures/PrismLogo.png");
+		m_Texture = Prism::Texture2D::CreateTexture("assets/textures/Checkerboard.png");
+		std::dynamic_pointer_cast<Prism::OpenGLShader>(textureShader)->BindShader();
+		std::dynamic_pointer_cast<Prism::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
+	}
+
+	void OnUpdate(Prism::Timestep timestep) override //In any implementation, if we have OnRender, it typically happens after OnUpdate. 
+	{
+		//Update
+		m_CameraController.OnUpdate(timestep);
+
+		//Render
+		Prism::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0 });
 		Prism::RenderCommand::Clear();
+
+		//Renderer::BeginScene(camera, lights, environment);
+		Prism::Renderer::BeginScene(m_CameraController.GetCamera());
+		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
+
+		/*Prism::MaterialReference material = new Prism::Material(m_FlatColorShader);
+		Prism::MaterialInstanceReference materialReference = new Prism::MaterialInstance(material);
+		materialReference->SetColorValue("u_Color", redColor);
+		materialReference->SetTexture("u_AlbedoMap", texture);
+		squareMesh->SetMaterial(materialReference);*/
+
+		std::dynamic_pointer_cast<Prism::OpenGLShader>(m_FlatColorShader)->BindShader();
+		std::dynamic_pointer_cast<Prism::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+
+		for (int y = 0; y < 20; y++)
+		{
+			for (int x = 0; x < 20; x++)
+			{
+				glm::vec3 position(x * 0.11f, y * 0.11f, 0.0f);
+				glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * scale;
+				Prism::Renderer::SubmitToRenderQueue(m_FlatColorShader, m_SquareVertexArray, transform);
+			}
+		}
+
+		auto textureShader = m_ShaderLibrary.GetShader("Texture");
+		//Texture
+		m_Texture->BindTexture();
+		Prism::Renderer::SubmitToRenderQueue(textureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		m_PrismTexture->BindTexture();
+		Prism::Renderer::SubmitToRenderQueue(textureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+		//=================
+		//Prism::Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray, squarePosition);
+		//Prism::Renderer::SubmitToRenderQueue(m_Shader, m_VertexArray);
+
+		Prism::Renderer::EndScene();
 	}
 
+	void OnImGuiRender() override
 	{
-		PRISM_PROFILE_SCOPE("Rendering Draw");
-#if 0
-		static float rotation = 0.0f;
-		rotation += timeStep * 50.0f;
-
-		Prism::Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-		Prism::Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f }, { 0.8f, 0.8f }, rotation, { m_SquareColor });
-		Prism::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.5f, 0.75f }, { 0.8f, 0.2f, 0.3f, 1.0f });
-		Prism::Renderer2D::DrawQuad(m_ChickenPosition, m_ChickenScale, m_ChickenTexture);
-		Prism::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_CheckboardTexture, 10.0f);
-		Prism::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, rotation, m_CheckboardTexture, 20.0f);
-
-		for (float y = -5.0f; y < 5.0f; y += 0.5f)
-		{
-			for (float x = -5.0f; x < 5.0f; x += 0.5f)
-			{
-				glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f };
-				Prism::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
-			}
-		}
-
-		Prism::Renderer2D::EndScene();
-
-#endif
-
-		Prism::Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-		for (uint32_t y = 0; y < m_MapHeight; y++) //Take note of the way you are interating the chars due to memory layout (memory indirection).
-		{
-			for (uint32_t x = 0; x < m_MapWidth; x++)
-			{
-				char tileType = s_MapTiles[x + y * m_MapWidth]; //Gets the correct memory offset. We are dealing with the map as a contigious block of memory as it will be faster.  
-
-				Prism::Reference<Prism::SubTexture2D> texture; //Selected texture.
-				if (s_TextureMapper.find(tileType) != s_TextureMapper.end()) //If the texture is found within the mapper...
-				{
-					texture = s_TextureMapper[tileType]; //Select it.
-				}
-				else
-				{
-					texture = m_TextureStairs; //Else, auto assign stairs to it. 
-				} 
-				Prism::Renderer2D::DrawQuad({ x - m_MapWidth / 2.0f, y - m_MapHeight / 2.0f, 0.5f }, { 1.0f, 1.0f }, texture); //Draw the quad. 
-			}
-		}
-
-		//Prism::Renderer2D::DrawQuad({ 0.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureBarrel);
-		//Prism::Renderer2D::DrawQuad({ 1.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureStairs);
-		//Prism::Renderer2D::DrawQuad({ -1.0f, 0.0f, 0.5f }, { 1.0f, 2.0f }, m_TextureTree);
-		Prism::Renderer2D::EndScene();
-		m_Framebuffer->UnbindFramebuffer();
-	}
-}
-
-void Sandbox2D::OnImGuiRender()
-{
-	PRISM_PROFILE_FUNCTION();
-
-	bool dockingEnabled = true;
-
-	if (dockingEnabled)
-	{
-		static bool dockSpaceOpen = true;
-		static bool opt_fullscreen = true;
-		static bool opt_padding = false;
-		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
-		// because it would be confusing to have two docking targets within each others.
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-		if (opt_fullscreen)
-		{
-			ImGuiViewport* viewport = ImGui::GetMainViewport();
-			ImGui::SetNextWindowPos(viewport->GetWorkPos());
-			ImGui::SetNextWindowSize(viewport->GetWorkSize());
-			ImGui::SetNextWindowViewport(viewport->ID);
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-		}
-		else
-		{
-			dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
-		}
-
-		// When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background
-		// and handle the pass-thru hole, so we ask Begin() to not render a background.
-		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-			window_flags |= ImGuiWindowFlags_NoBackground;
-
-		// Important: note that we proceed even if Begin() returns false (aka window is collapsed).
-		// This is because we want to keep our DockSpace() active. If a DockSpace() is inactive,
-		// all active windows docked into it will lose their parent and become undocked.
-		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
-		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-		if (!opt_padding)
-			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin("DockSpace Demo", &dockSpaceOpen, window_flags);
-		if (!opt_padding)
-			ImGui::PopStyleVar();
-
-		if (opt_fullscreen)
-			ImGui::PopStyleVar(2);
-
-		// DockSpace
-		ImGuiIO& io = ImGui::GetIO();
-		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-		{
-			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-		}
-
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				// Disabling fullscreen would allow the window to be moved to the front of other windows,
-				// which we can't undo at the moment without finer window depth/z control.
-				if (ImGui::MenuItem("Exit")) { Prism::Application::GetApplication().CloseApplication(); }
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenuBar();
-		}
-
 		ImGui::Begin("Settings");
-		Prism::Renderer2D::Statistics batchingStatistics = Prism::Renderer2D::GetBatchingStatistics();
-		ImGui::Text("Renderer2D Stats:");
-		ImGui::Text("Draw Calls: %d", batchingStatistics.m_DrawCalls);
-		ImGui::Text("Quads: %d", batchingStatistics.m_QuadCount);
-		ImGui::Text("Vertices: %d", batchingStatistics.GetTotalVertexCount());
-		ImGui::Text("Indices: %d", batchingStatistics.GetTotalIndexCount());
-		ImGui::Spacing();
-
-		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
-
-		ImGui::Text("Clear Color:");
-		ImGui::ColorEdit4("Clear Color", glm::value_ptr(m_ClearColor));
-		ImGui::End();
-
-		ImGui::Begin("Scene");
-		uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
-		ImGui::Image((void*)textureID, { 1280.0f, 720.0f });
-		ImGui::End();
-
+		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_SquareColor));
 		ImGui::End();
 	}
-}
 
-void Sandbox2D::OnEvent(Prism::Event& event)
+	void OnEvent(Prism::Event& event) override
+	{
+		m_CameraController.OnEvent(event);
+	}
+
+private:
+	Prism::ShaderLibrary m_ShaderLibrary;
+	Prism::Reference<Prism::Shader> m_Shader;
+	Prism::Reference<Prism::VertexArray> m_VertexArray;
+
+	Prism::Reference<Prism::Shader> m_FlatColorShader;
+	Prism::Reference<Prism::VertexArray> m_SquareVertexArray;
+
+	Prism::Reference<Prism::Texture2D> m_Texture;
+	Prism::Reference<Prism::Texture2D> m_PrismTexture;
+
+	Prism::OrthographicCameraController m_CameraController;
+
+	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
+};
+
+class Sandbox : public Prism::Application
 {
-	m_CameraController.OnEvent(event);
+public:
+	Sandbox()
+	{
+		PRISM_CLIENT_WARN("Created Sandbox Application");
+		//PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
+	}
+
+	~Sandbox()
+	{
+
+	}
+};
+
+Prism::Application* Prism::CreateApplication()
+{
+	return new Sandbox();
 }
-
-

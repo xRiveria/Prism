@@ -14,7 +14,7 @@ namespace Prism
 	class PRISM_API Application
 	{
 	public:
-		Application();
+		Application(const std::string& applicationName = "Prism Application");
 		virtual ~Application() = default;
 
 		void Run();

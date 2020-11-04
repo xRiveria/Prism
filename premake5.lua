@@ -154,3 +154,56 @@ project "Sandbox"
 		defines "PRISM_DIST"
 		runtime "Release"
 		optimize "on"
+
+
+project "PrismEditor"
+	location "PrismEditor"
+	kind "ConsoleApp"
+	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
+
+	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+
+	files
+	{
+		"%{prj.name}/src/**.h",
+		"%{prj.name}/src/**.cpp"
+	}
+
+	includedirs
+	{
+		"Prism/vendor/spdlog/include",
+		"Prism/src",
+		"Prism/vendor",
+		"%{IncludeDir.glm}"
+	}
+
+	links
+	{
+		"Prism"
+	}
+
+	filter "system:windows"
+		systemversion "latest"
+
+		defines
+		{
+			"PRISM_PLATFORM_WINDOWS"
+		}
+
+	filter "configurations:Debug"
+		defines "PRISM_DEBUG"
+		runtime "Debug"
+		symbols "on"
+
+	filter "configurations:Release"
+		defines "PRISM_RELEASE"
+		runtime "Release"
+		optimize "on"
+
+	filter "configurations:Distribution"
+		defines "PRISM_DIST"
+		runtime "Release"
+		optimize "on"
