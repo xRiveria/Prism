@@ -8,25 +8,13 @@ namespace Prism
 	class PRISM_API Input
 	{
 	public: 
-		Input(const Input&) = delete;
-		Input& operator=(const Input&) = delete;
-
-		inline static bool IsKeyPressed(int keyCode) { return s_Instance->IsKeyPressedImplementation(keyCode); } //Checks if a specific key is pressed.
-		inline static bool IsMouseButtonPressed(int mouseButton) { return s_Instance->IsMouseButtonPressedImplementation(mouseButton); } //Checks if a specific mouse button is pressed.
-		inline static std::pair<float, float> GetMousePosition() { return s_Instance->GetMousePositionImplementation(); } //Gets the current mouse positions.
-		inline static float GetMouseX() { return s_Instance->GetMouseXImplementation(); }
-		inline static float GetMouseY() { return s_Instance->GetMouseYImplementation(); }
-	
-	protected:
-		Input() = default;
-		//To be inherited per platform.
-		virtual bool IsKeyPressedImplementation(int keyCode) = 0;
-		virtual bool IsMouseButtonPressedImplementation(int mouseButton) = 0;
-		virtual std::pair<float, float> GetMousePositionImplementation() = 0;
-		virtual float GetMouseXImplementation() = 0;
-		virtual float GetMouseYImplementation() = 0;
-
-	private:
-		static Input* s_Instance;
+		//Keyboard
+		static bool IsKeyPressed(int keyCode);
+		
+		//Mouse
+		static bool IsMouseButtonPressed(int mouseButton);
+		static std::pair<float, float> GetMousePosition();
+		static float GetMouseX();
+		static float GetMouseY();
 	};
 }

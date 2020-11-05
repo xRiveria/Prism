@@ -16,6 +16,8 @@ namespace Prism
 		};
 
 	public:
+		virtual ~RendererAPI() = default;
+
 		virtual void InitializeRenderer() = 0;
 		virtual void SetViewport(uint32_t x, uint32_t y, uint32_t windowWidth, uint32_t windowHeight) = 0;
 		virtual void SetClearColor(const glm::vec4& color) = 0;

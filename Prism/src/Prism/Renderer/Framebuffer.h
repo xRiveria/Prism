@@ -14,9 +14,10 @@ namespace Prism
 	class Framebuffer
 	{
 	public:
-		//virtual FramebufferSpecification& GetFramebufferSpecifications() = 0; //A non-const version to notify us if anything needs to be rebuilt.
+		virtual ~Framebuffer() = default; //If we're creating a Framebuffer object, even though it may be called as an OpenGLFrameBuffer, its destructor calls will always be in Framebuffer. Thus, if it doesn't exist, the destructor in OpenGLFramebuffer will never be called. Thus, use virtual default destructors.
 		virtual const FramebufferSpecification& GetFramebufferSpecifications() const = 0;
-		
+		//virtual FramebufferSpecification& GetFramebufferSpecifications() = 0; //A non-const version to notify us if anything needs to be rebuilt.
+
 		virtual void BindFramebuffer() = 0;
 		virtual void UnbindFramebuffer() = 0;
 		virtual void ResizeFramebuffer(uint32_t newWidth, uint32_t newHeight) = 0;

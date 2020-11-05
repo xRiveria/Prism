@@ -1,27 +1,25 @@
 #include "PrismPrecompiledHeader.h"
-#include "WindowsInput.h"
+#include "Prism/Core/Input.h"
 #include "GLFW/glfw3.h"
 #include "Prism/Core/Application.h"
 
 namespace Prism
 {
-	Input* Input::s_Instance = new WindowsInput();
-
-	bool WindowsInput::IsKeyPressedImplementation(int keyCode)
+	bool Input::IsKeyPressed(int keyCode)
 	{
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::GetApplication().GetWindow().GetNativeWindow());
 		auto keyState = glfwGetKey(window, keyCode);
 		return keyState == GLFW_PRESS || keyState == GLFW_REPEAT;
 	}
 
-	bool WindowsInput::IsMouseButtonPressedImplementation(int mouseButton)
+	bool Input::IsMouseButtonPressed(int mouseButton)
 	{
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::GetApplication().GetWindow().GetNativeWindow());
 		auto mouseState = glfwGetMouseButton(window, mouseButton);
 		return mouseState == GLFW_PRESS;
 	}
 
-	std::pair<float, float> WindowsInput::GetMousePositionImplementation()
+	std::pair<float, float> Input::GetMousePosition()
 	{
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::GetApplication().GetWindow().GetNativeWindow());
 		double xPosition, yPosition;
@@ -30,15 +28,15 @@ namespace Prism
 		return { (float)xPosition, (float)yPosition };
 	}
 
-	float WindowsInput::GetMouseXImplementation()
+	float Input::GetMouseX()
 	{
-		auto [x, y] = GetMousePositionImplementation();
+		auto [x, y] = GetMousePosition();
 		return x;
 	}
 
-	float WindowsInput::GetMouseYImplementation()
+	float Input::GetMouseY()
 	{
-		auto [x, y] = GetMousePositionImplementation();
+		auto [x, y] = GetMousePosition();
 		return y;
 	}
 }
