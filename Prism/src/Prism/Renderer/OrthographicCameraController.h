@@ -13,6 +13,7 @@ namespace Prism
 
 		void OnUpdate(Timestep timeStep);
 		void OnEvent(Event& event);
+		void OnViewportResize(float newWidth, float newHeight);
 
 		OrthographicCamera& GetCamera() { return m_Camera; }
 		const OrthographicCamera& GetCamera() const { return m_Camera; }

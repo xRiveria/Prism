@@ -1,6 +1,6 @@
 workspace "Prism"
 	architecture "x64"
-	startproject "Sandbox"
+	startproject "PrismEditor"
 
 	configurations
 	{

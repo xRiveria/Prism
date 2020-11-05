@@ -19,6 +19,7 @@ namespace Prism
 		
 		virtual void BindFramebuffer() = 0;
 		virtual void UnbindFramebuffer() = 0;
+		virtual void ResizeFramebuffer(uint32_t newWidth, uint32_t newHeight) = 0;
 		virtual uint32_t GetColorAttachmentID() const = 0;
 
 		static Reference<Framebuffer> CreateFramebuffer(const FramebufferSpecification& bufferSpecifications);

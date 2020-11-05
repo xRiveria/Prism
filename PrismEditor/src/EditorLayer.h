@@ -30,6 +30,8 @@ namespace Prism
 		Reference<Texture2D> m_SpriteSheet;
 		OrthographicCameraController m_CameraController;
 
+		glm::vec2 m_ViewportSize = { 0, 0 };
+
 		uint32_t m_MapWidth, m_MapHeight;
 		std::unordered_map<char, Reference<SubTexture2D>> s_TextureMapper;
 	};

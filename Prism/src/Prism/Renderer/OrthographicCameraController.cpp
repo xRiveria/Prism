@@ -61,6 +61,12 @@ namespace Prism
 		dispatcher.Dispatch<WindowResizeEvent>(PRISM_BIND_EVENT_FUNCTION(OrthographicCameraController::OnWindowResize));
 	}
 
+	void OrthographicCameraController::OnViewportResize(float newWidth, float newHeight)
+	{
+		m_AspectRatio = newWidth / newHeight;
+		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
+	}
+
 	void OrthographicCameraController::CalculateViewProjection()
 	{
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
@@ -80,8 +86,7 @@ namespace Prism
 	{
 		PRISM_PROFILE_FUNCTION();
 
-		m_AspectRatio = (float)event.GetWidth() / (float)event.GetHeight();
-		CalculateViewProjection();
+		OnViewportResize((float)event.GetWidth(), (float)event.GetHeight());
 		return false;
 	}
 }
