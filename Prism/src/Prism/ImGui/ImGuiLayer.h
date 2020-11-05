@@ -15,12 +15,16 @@ namespace Prism
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
+		virtual void OnEvent(Event& event) override;
 
 		void BeginImGuiRenderLoop();
 		virtual void OnImGuiRender() override; //This sits between Begin and End. All our ImGui render code goes here.
 		void EndImGuiRenderLoop();
 
+		void DoBlockEvents(bool blockEvent) { m_BlockEvents = blockEvent; }
+
 	private:
+		bool m_BlockEvents = true;
 		float m_Time = 0.0f;
 	};
 }

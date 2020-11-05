@@ -26,6 +26,7 @@ namespace Prism
 		inline Window& GetWindow() const { return *m_Window; }
 		void CloseApplication();
 		inline static Application& GetApplication() { return *s_Instance; }
+		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& closeEvent);

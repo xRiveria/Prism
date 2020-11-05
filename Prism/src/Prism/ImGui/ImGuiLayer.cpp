@@ -67,6 +67,17 @@ namespace Prism
 		ImGui::DestroyContext();
 	}
 
+	void ImGuiLayer::OnEvent(Event& event)
+	{
+		if (m_BlockEvents)
+		{
+			PRISM_PROFILE_FUNCTION();
+			ImGuiIO& io = ImGui::GetIO();
+			event.IsEventHandled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+			event.IsEventHandled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+		}
+	}
+
 	void ImGuiLayer::BeginImGuiRenderLoop()
 	{
 		PRISM_PROFILE_FUNCTION();

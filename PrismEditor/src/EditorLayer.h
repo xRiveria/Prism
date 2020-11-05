@@ -29,7 +29,9 @@ namespace Prism
 		Reference<SubTexture2D> m_TextureStairs, m_TextureBarrel, m_TextureTree;
 		Reference<Texture2D> m_SpriteSheet;
 		OrthographicCameraController m_CameraController;
-
+		
+		bool m_ViewportFocused = false;
+		bool m_ViewportHovered = false;
 		glm::vec2 m_ViewportSize = { 0, 0 };
 
 		uint32_t m_MapWidth, m_MapHeight;
