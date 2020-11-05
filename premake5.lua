@@ -180,7 +180,8 @@ project "PrismEditor"
 		"Prism/vendor/spdlog/include",
 		"Prism/src",
 		"Prism/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}"
 	}
 
 	links

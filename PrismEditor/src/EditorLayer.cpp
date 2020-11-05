@@ -6,6 +6,7 @@
 //Sandbox is going to become our runtime application.
 //We create a game in PrismEditor, which will create a whole bunch of game data in which Sandbox will load that information in.
 //We will create our tools and game in PrismEditor itself.
+//Remember that we do not want to have any 3rd party code in here other than Glm. The rest should all be Prism Code.
 
 namespace Prism
 {
@@ -54,6 +55,11 @@ namespace Prism
 		framebufferSpecification.bufferWidth = 1280;
 		framebufferSpecification.bufferHeight = 720;
 		m_Framebuffer = Framebuffer::CreateFramebuffer(framebufferSpecification);
+	
+		m_ActiveScene = CreateReference<Scene>();
+		m_SquareEntity = m_ActiveScene->CreateEntity();
+		m_ActiveScene->GetRegistry().emplace<TransformComponent>(m_SquareEntity);
+		m_ActiveScene->GetRegistry().emplace<SpriteRendererComponent>(m_SquareEntity, glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
 	}
 
 	void EditorLayer::OnDetach()
@@ -75,67 +81,66 @@ namespace Prism
 		//Reset our rendering statistics here as its the start of a new frame.
 		Renderer2D::ResetBatchingStatistics();
 
+		m_Framebuffer->BindFramebuffer();
+		RenderCommand::SetClearColor(m_ClearColor);
+		RenderCommand::Clear();
+
+#if 0
+		static float rotation = 0.0f;
+		rotation += timeStep * 50.0f;
+
+		Prism::Renderer2D::BeginScene(m_CameraController.GetCamera());
+
+		Prism::Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f }, { 0.8f, 0.8f }, rotation, { m_SquareColor });
+		Prism::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.5f, 0.75f }, { 0.8f, 0.2f, 0.3f, 1.0f });
+		Prism::Renderer2D::DrawQuad(m_ChickenPosition, m_ChickenScale, m_ChickenTexture);
+		Prism::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_CheckboardTexture, 10.0f);
+		Prism::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, rotation, m_CheckboardTexture, 20.0f);
+
+		for (float y = -5.0f; y < 5.0f; y += 0.5f)
 		{
-			PRISM_PROFILE_SCOPE("Rendering Initialization");
-			m_Framebuffer->BindFramebuffer();
-			RenderCommand::SetClearColor(m_ClearColor);
-			RenderCommand::Clear();
+			for (float x = -5.0f; x < 5.0f; x += 0.5f)
+			{
+				glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f };
+				Prism::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
+			}
 		}
 
+		Prism::Renderer2D::EndScene();
+
+		for (uint32_t y = 0; y < m_MapHeight; y++) //Take note of the way you are interating the chars due to memory layout (memory indirection).
 		{
-			PRISM_PROFILE_SCOPE("Rendering Draw");
-#if 0
-			static float rotation = 0.0f;
-			rotation += timeStep * 50.0f;
-
-			Prism::Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-			Prism::Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f }, { 0.8f, 0.8f }, rotation, { m_SquareColor });
-			Prism::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.5f, 0.75f }, { 0.8f, 0.2f, 0.3f, 1.0f });
-			Prism::Renderer2D::DrawQuad(m_ChickenPosition, m_ChickenScale, m_ChickenTexture);
-			Prism::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_CheckboardTexture, 10.0f);
-			Prism::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, rotation, m_CheckboardTexture, 20.0f);
-
-			for (float y = -5.0f; y < 5.0f; y += 0.5f)
+			for (uint32_t x = 0; x < m_MapWidth; x++)
 			{
-				for (float x = -5.0f; x < 5.0f; x += 0.5f)
-				{
-					glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f };
-					Prism::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
-				}
-			}
+				char tileType = s_MapTiles[x + y * m_MapWidth]; //Gets the correct memory offset. We are dealing with the map as a contigious block of memory as it will be faster.  
 
-			Prism::Renderer2D::EndScene();
+				Reference<Prism::SubTexture2D> texture; //Selected texture.
+				if (s_TextureMapper.find(tileType) != s_TextureMapper.end()) //If the texture is found within the mapper...
+				{
+					texture = s_TextureMapper[tileType]; //Select it.
+				}
+				else
+				{
+					texture = m_TextureStairs; //Else, auto assign stairs to it. 
+				}
+				Renderer2D::DrawQuad({ x - m_MapWidth / 2.0f, y - m_MapHeight / 2.0f, 0.5f }, { 1.0f, 1.0f }, texture); //Draw the quad. 
+	}
+}
 
 #endif
+		Prism::Renderer2D::BeginScene(m_CameraController.GetCamera());
 
-			Prism::Renderer2D::BeginScene(m_CameraController.GetCamera());
+		//Update Scene
+		m_ActiveScene->OnUpdate(timeStep);
 
-			for (uint32_t y = 0; y < m_MapHeight; y++) //Take note of the way you are interating the chars due to memory layout (memory indirection).
-			{
-				for (uint32_t x = 0; x < m_MapWidth; x++)
-				{
-					char tileType = s_MapTiles[x + y * m_MapWidth]; //Gets the correct memory offset. We are dealing with the map as a contigious block of memory as it will be faster.  
 
-					Reference<Prism::SubTexture2D> texture; //Selected texture.
-					if (s_TextureMapper.find(tileType) != s_TextureMapper.end()) //If the texture is found within the mapper...
-					{
-						texture = s_TextureMapper[tileType]; //Select it.
-					}
-					else
-					{
-						texture = m_TextureStairs; //Else, auto assign stairs to it. 
-					}
-					Renderer2D::DrawQuad({ x - m_MapWidth / 2.0f, y - m_MapHeight / 2.0f, 0.5f }, { 1.0f, 1.0f }, texture); //Draw the quad. 
-				}
-			}
 
-			//Prism::Renderer2D::DrawQuad({ 0.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureBarrel);
-			//Prism::Renderer2D::DrawQuad({ 1.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureStairs);
-			//Prism::Renderer2D::DrawQuad({ -1.0f, 0.0f, 0.5f }, { 1.0f, 2.0f }, m_TextureTree);
-			Renderer2D::EndScene();
-			m_Framebuffer->UnbindFramebuffer();
-		}
+		//Prism::Renderer2D::DrawQuad({ 0.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureBarrel);
+		//Prism::Renderer2D::DrawQuad({ 1.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureStairs);
+		//Prism::Renderer2D::DrawQuad({ -1.0f, 0.0f, 0.5f }, { 1.0f, 2.0f }, m_TextureTree);
+		Renderer2D::EndScene();
+		m_Framebuffer->UnbindFramebuffer();
+
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -214,7 +219,8 @@ namespace Prism
 		ImGui::Text("Indices: %d", batchingStatistics.GetTotalIndexCount());
 		ImGui::Spacing();
 
-		ImGui::ColorEdit4("Square Color", glm::value_ptr(m_SquareColor));
+		auto& squareColor = m_ActiveScene->GetRegistry().get<SpriteRendererComponent>(m_SquareEntity).m_Color;
+		ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
 		ImGui::Text("Clear Color:");
 		ImGui::ColorEdit4("Clear Color", glm::value_ptr(m_ClearColor));
 		ImGui::End();

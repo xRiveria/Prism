@@ -183,6 +183,8 @@
     <ClInclude Include="src\Prism\Renderer\SubTexture2D.h" />
     <ClInclude Include="src\Prism\Renderer\Texture.h" />
     <ClInclude Include="src\Prism\Renderer\VertexArray.h" />
+    <ClInclude Include="src\Prism\Scene\Components.h" />
+    <ClInclude Include="src\Prism\Scene\Scene.h" />
     <ClInclude Include="src\PrismPrecompiledHeader.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
@@ -622,6 +624,7 @@
     <ClCompile Include="src\Prism\Renderer\SubTexture2D.cpp" />
     <ClCompile Include="src\Prism\Renderer\Texture.cpp" />
     <ClCompile Include="src\Prism\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\Prism\Scene\Scene.cpp" />
     <ClCompile Include="src\PrismPrecompiledHeader.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

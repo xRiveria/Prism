@@ -31,6 +31,9 @@
     <Filter Include="src\Prism\Renderer">
       <UniqueIdentifier>{6D1F3072-5903-F1C7-C263-EB1AAE66DB49}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Prism\Scene">
+      <UniqueIdentifier>{4486D29F-B011-4064-B922-C358252D9C64}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
     </Filter>
@@ -173,6 +176,12 @@
     </ClInclude>
     <ClInclude Include="src\Prism\Renderer\VertexArray.h">
       <Filter>src\Prism\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Prism\Scene\Components.h">
+      <Filter>src\Prism\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Prism\Scene\Scene.h">
+      <Filter>src\Prism\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\PrismPrecompiledHeader.h">
       <Filter>src</Filter>
@@ -1486,6 +1495,9 @@
     </ClCompile>
     <ClCompile Include="src\Prism\Renderer\VertexArray.cpp">
       <Filter>src\Prism\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Prism\Scene\Scene.cpp">
+      <Filter>src\Prism\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\PrismPrecompiledHeader.cpp">
       <Filter>src</Filter>

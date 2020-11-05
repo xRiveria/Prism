@@ -23,6 +23,9 @@ namespace Prism
 		static void DrawQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, const Reference<SubTexture2D>& quadSubTexture, float quadTilingFactor = 1.0f, const glm::vec4& quadTintColor = glm::vec4(1.0f));
 		static void DrawQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, const Reference<SubTexture2D>& quadSubTexture, float quadTilingFactor = 1.0f, const glm::vec4& quadTintColor = glm::vec4(1.0f));
 
+		static void DrawQuad(const glm::mat4 transform, const glm::vec4& color);;
+		static void DrawQuad(const glm::mat4 transform, const Reference<Texture2D>& texture, float tilingFactor = 1.0f, const glm::vec4& quadTintColor = glm::vec4(1.0f));
+
 		static void DrawRotatedQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, float quadRotation, const glm::vec4& quadColor);
 		static void DrawRotatedQuad(const glm::vec3& quadPosition, const glm::vec2& quadSize, float quadRotation, const glm::vec4& quadColor);
 		static void DrawRotatedQuad(const glm::vec2& quadPosition, const glm::vec2& quadSize, float quadRotation, const Reference<Texture2D>& quadTexture, float quadTilingFactor = 1.0f, const glm::vec4& quadTintColor = glm::vec4(1.0f));

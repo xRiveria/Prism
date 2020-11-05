@@ -29,6 +29,9 @@ namespace Prism
 		Reference<SubTexture2D> m_TextureStairs, m_TextureBarrel, m_TextureTree;
 		Reference<Texture2D> m_SpriteSheet;
 		OrthographicCameraController m_CameraController;
+
+		Reference<Scene> m_ActiveScene;
+		entt::entity m_SquareEntity;
 		
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
