@@ -23,6 +23,7 @@ IncludeDir["Glad"] = "Prism/vendor/Glad/include"
 IncludeDir["ImGui"] = "Prism/vendor/imgui"
 IncludeDir["glm"] = "Prism/vendor/glm"
 IncludeDir["stb_image"] = "Prism/vendor/stb_image"
+IncludeDir["entt"] = "Prism/vendor/entt/include"
 
 group "Dependencies"
 	include "Prism/vendor/GLFW"
@@ -67,7 +68,8 @@ project "Prism"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.entt}"
 	}
 
 	links 
@@ -124,7 +126,8 @@ project "Sandbox"
 		"Prism/vendor/spdlog/include",
 		"Prism/src",
 		"Prism/vendor",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}"
 	}
 
 	links
