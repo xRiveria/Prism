@@ -4,6 +4,8 @@
 
 namespace Prism
 {
+	static const uint32_t s_MaxFramebufferSize = 8192;
+
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& bufferSpecifications) : m_Specifications(bufferSpecifications)
 	{
 		InvalidateFrameBuffer();
@@ -61,6 +63,12 @@ namespace Prism
 
 	void OpenGLFramebuffer::ResizeFramebuffer(uint32_t newWidth, uint32_t newHeight)
 	{
+		if (newWidth == 0 || newHeight == 0 || newWidth > s_MaxFramebufferSize || newHeight > s_MaxFramebufferSize)
+		{
+			PRISM_ENGINE_WARN("Attempted to resize framebuffer to: {0}, {1}", newWidth, newHeight);
+			return;
+		}
+
 		m_Specifications.bufferWidth = newWidth;
 		m_Specifications.bufferHeight = newHeight;
 		InvalidateFrameBuffer();

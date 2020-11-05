@@ -9,7 +9,7 @@
 
 namespace Prism
 {
-	//To Do: ImGuii feature that essentially when button is clicked on, profile the next 10 seconds or until stop is pressed, and outputs to a .json file.
+	//To Do: ImGui feature that essentially when button is clicked on, profile the next 10 seconds or until stop is pressed, and outputs to a .json file.
 
 	static uint32_t s_MapWidth = 24; //The maximum width of each row. 
 	static const char* s_MapTiles =
@@ -226,11 +226,11 @@ namespace Prism
 		m_ViewportHovered = ImGui::IsWindowHovered();
 		if (m_ViewportFocused)
 		{
-			Application::GetApplication().GetImGuiLayer()->DoBlockEvents(!m_ViewportFocused || !m_ViewportHovered); 
+			Application::GetApplication().GetImGuiLayer()->DoBlockEvents(!m_ViewportFocused || !m_ViewportHovered); //Allow or block events depending on which window is being hovered over or focused on.
 		}
 		
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-		if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize))
+		if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize) && viewportPanelSize.x > 0 && viewportPanelSize.y > 0)
 		{
 			m_Framebuffer->ResizeFramebuffer((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
 			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };

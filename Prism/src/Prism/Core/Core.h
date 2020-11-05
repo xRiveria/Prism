@@ -19,6 +19,7 @@
 	#define PRISM_ENABLE_ASSERTS
 #endif;
 
+//To Do: Make this macro be able to take in no arguments except condition.
 #ifdef PRISM_ENABLE_ASSERTS //Zero is intepreted as false, while anything non-zero is true. 
 #define PRISM_CLIENT_ASSERT(x, ...) { if(!(x)) { PRISM_CLIENT_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 #define PRISM_ENGINE_ASSERT(x, ...) { if(!(x)) { PRISM_ENGINE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
