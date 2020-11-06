@@ -13,7 +13,7 @@ namespace Prism
 #if UsefulStuff
 		entt::entity entity = m_Registry.create(); //This is how we create an Entity. Remember that entities are just an unsigned integer. (Identifier)
 		auto& transform = m_Registry.emplace<TransformComponent>(entity, glm::mat4(1.0f)); //This registers components on the fly instead of needing to register them manually with a function.
-		
+
 		if (m_Registry.has<TransformComponent>(entity)) //Gets a component from n entity. 
 		{
 			TransformComponent& transform = m_Registry.get<TransformComponent>(entity);
@@ -59,7 +59,7 @@ namespace Prism
 		Entity entity = { m_Registry.create(), this };
 		entity.AddComponent<TransformComponent>(); //Default component added.	
 		auto& entityTag = entity.AddComponent<TagComponent>(); //Default component added.
-		
+
 		entityTag.m_Tag = entityName.empty() ? "Unnamed Entity" : entityName;
 
 		return entity;
@@ -71,14 +71,15 @@ namespace Prism
 		{
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nativeScriptComponent)
 				{
+					//To Do: Move to Scene::OnScenePlay
 					if (!nativeScriptComponent.m_EntityInstance)
 					{
-						nativeScriptComponent.InstantiateFunction();
+						nativeScriptComponent.m_EntityInstance = nativeScriptComponent.InstantiateScript();
 						nativeScriptComponent.m_EntityInstance->m_Entity = { entity, this };
-						nativeScriptComponent.OnCreateFunction(nativeScriptComponent.m_EntityInstance);
+						nativeScriptComponent.m_EntityInstance->OnCreate();
 					}
 
-					nativeScriptComponent.OnUpdateFunction(nativeScriptComponent.m_EntityInstance, deltaTime);
+					nativeScriptComponent.m_EntityInstance->OnUpdate(deltaTime);
 				});
 		}
 
@@ -90,7 +91,7 @@ namespace Prism
 			auto sceneCameras = m_Registry.view<TransformComponent, CameraComponent>();
 			for (auto entity : sceneCameras)
 			{
-				auto& [transform, camera] = sceneCameras.get<TransformComponent, CameraComponent>(entity);
+				auto [transform, camera] = sceneCameras.get<TransformComponent, CameraComponent>(entity);
 				if (camera.m_IsPrimaryCamera)
 				{
 					mainCamera = &camera.m_Camera;
@@ -103,11 +104,11 @@ namespace Prism
 		if (mainCamera) //No rendering if camera doesn't exist.
 		{
 			Renderer2D::BeginScene(mainCamera->GetProjection(), *cameraTransform);
- 
+
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
 			{
-				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 				Renderer2D::DrawQuad(transform, sprite.m_Color);
 			}
 

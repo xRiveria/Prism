@@ -22,8 +22,8 @@ namespace Prism
 		TransformComponent(const TransformComponent&) = default;
 		TransformComponent(const glm::mat4& transform) : m_Transform(transform) {}
 
-		operator glm::mat4&() { return m_Transform; }
-		operator const glm::mat4&() const { return m_Transform; }
+		operator glm::mat4& () { return m_Transform; }
+		operator const glm::mat4& () const { return m_Transform; }
 	};
 
 	struct SpriteRendererComponent
@@ -49,22 +49,41 @@ namespace Prism
 	{
 		ScriptableEntity* m_EntityInstance = nullptr;
 
-		std::function<void()> InstantiateFunction;
-		std::function<void()> DestroyInstanceFunction;
-
-		std::function<void(ScriptableEntity*)> OnCreateFunction;
-		std::function<void(ScriptableEntity*, Timestep)> OnUpdateFunction;
-		std::function<void(ScriptableEntity*)> OnDestroyFunction;
+		ScriptableEntity* (*InstantiateScript)(); //Returns a ScriptableEntity.
+		void(*DestroyScript)(NativeScriptComponent*); //Takes in a NativeScriptComponent.
 
 		template<typename T>
 		void BindClass()
 		{
-			InstantiateFunction = [&]() { m_EntityInstance = new T(); };
-			DestroyInstanceFunction = [&]() { delete (T*)m_EntityInstance; m_EntityInstance = nullptr; };
-
-			OnCreateFunction = [](ScriptableEntity* entityInstance) { ((T*)entityInstance)->OnCreate(); };
-			OnDestroyFunction = [](ScriptableEntity* entityInstance) { ((T*)entityInstance)->OnDestroy(); };
-			OnUpdateFunction = [](ScriptableEntity* entityInstance, Timestep deltaTime) { ((T*)entityInstance)->OnUpdate(deltaTime); };
+			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nativeScriptComponent) { delete nativeScriptComponent->m_EntityInstance; nativeScriptComponent->m_EntityInstance = nullptr; };
 		}
 	};
 }
+
+#if NotUsingVirtual
+struct NativeScriptComponent
+{
+	ScriptableEntity* m_EntityInstance = nullptr;
+
+	std::function<void()> InstantiateFunction;
+	std::function<void()> DestroyInstanceFunction;
+
+	std::function<void(ScriptableEntity*)> OnCreateFunction;
+	std::function<void(ScriptableEntity*, Timestep)> OnUpdateFunction;
+	std::function<void(ScriptableEntity*)> OnDestroyFunction;
+
+	template<typename T>
+	void BindClass()
+	{
+		InstantiateFunction = [&]() { m_EntityInstance = new T(); };
+		DestroyInstanceFunction = [&]() { delete (T*)m_EntityInstance; m_EntityInstance = nullptr; };
+
+		OnCreateFunction = [](ScriptableEntity* entityInstance) { ((T*)entityInstance)->OnCreate(); };
+		OnDestroyFunction = [](ScriptableEntity* entityInstance) { ((T*)entityInstance)->OnDestroy(); };
+		OnUpdateFunction = [](ScriptableEntity* entityInstance, Timestep deltaTime) { ((T*)entityInstance)->OnUpdate(deltaTime); };
+	}
+};
+#endif
+
+

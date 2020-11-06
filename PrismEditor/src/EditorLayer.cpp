@@ -11,7 +11,6 @@
 namespace Prism
 {
 	//To Do: ImGui feature that essentially when button is clicked on, profile the next 10 seconds or until stop is pressed, and outputs to a .json file.
-
 	EditorLayer::EditorLayer() : Layer("Editor Layer"), m_CameraController(1280.0f / 720.0f), m_SquareColor({ 0.2f, 0.3f, 0.8f, 1.0f })
 	{
 
@@ -47,7 +46,8 @@ namespace Prism
 		public:
 			void OnCreate() 
 			{
-
+				auto& transformComponent = GetComponent<TransformComponent>().m_Transform;
+				transformComponent[3][0] = rand() % 10 - 5.0f;
 			}
 
 			void OnDestroy()
@@ -80,6 +80,7 @@ namespace Prism
 		};
 
 		m_CameraEntity.AddComponent<NativeScriptComponent>().BindClass<CameraController>();
+		m_SecondCamera.AddComponent<NativeScriptComponent>().BindClass<CameraController>();
 	}
 
 	void EditorLayer::OnDetach()

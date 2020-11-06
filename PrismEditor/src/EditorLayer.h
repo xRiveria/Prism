@@ -32,8 +32,8 @@ namespace Prism
 		Entity m_SquareEntity;
 		Entity m_CameraEntity;
 		Entity m_SecondCamera;
+
 		bool m_PrimaryCamera = true;
-		
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
 		glm::vec2 m_ViewportSize = { 0, 0 };
