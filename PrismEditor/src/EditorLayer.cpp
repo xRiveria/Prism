@@ -55,11 +55,11 @@ namespace Prism
 		framebufferSpecification.bufferWidth = 1280;
 		framebufferSpecification.bufferHeight = 720;
 		m_Framebuffer = Framebuffer::CreateFramebuffer(framebufferSpecification);
-	
+		
+		//Entity
 		m_ActiveScene = CreateReference<Scene>();
-		m_SquareEntity = m_ActiveScene->CreateEntity();
-		m_ActiveScene->GetRegistry().emplace<TransformComponent>(m_SquareEntity);
-		m_ActiveScene->GetRegistry().emplace<SpriteRendererComponent>(m_SquareEntity, glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
+		m_SquareEntity = m_ActiveScene->CreateEntity("Square");
+		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
 	}
 
 	void EditorLayer::OnDetach()
@@ -219,8 +219,17 @@ namespace Prism
 		ImGui::Text("Indices: %d", batchingStatistics.GetTotalIndexCount());
 		ImGui::Spacing();
 
-		auto& squareColor = m_ActiveScene->GetRegistry().get<SpriteRendererComponent>(m_SquareEntity).m_Color;
-		ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+		if (m_SquareEntity)
+		{
+			ImGui::Separator();
+			auto& tagName = m_SquareEntity.GetComponent<TagComponent>().m_Tag;
+			ImGui::Text("%s", tagName.c_str());
+
+			auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().m_Color;
+			ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+			ImGui::Separator();
+		}
+
 		ImGui::Text("Clear Color:");
 		ImGui::ColorEdit4("Clear Color", glm::value_ptr(m_ClearColor));
 		ImGui::End();

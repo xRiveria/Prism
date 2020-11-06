@@ -3,6 +3,7 @@
 #include "glm/glm.hpp"
 #include "Components.h"
 #include "Prism/Renderer/Renderer2D.h"
+#include "Entity.h"
 
 namespace Prism
 {
@@ -53,9 +54,15 @@ namespace Prism
 
 	}
 
-	entt::entity Scene::CreateEntity()
+	Entity Scene::CreateEntity(const std::string& entityName)
 	{
-		return m_Registry.create();
+		Entity entity = { m_Registry.create(), this };
+		entity.AddComponent<TransformComponent>(); //Default component added.	
+		auto& entityTag = entity.AddComponent<TagComponent>(); //Default component added.
+		
+		entityTag.m_Tag = entityName.empty() ? "Unnamed Entity" : entityName;
+
+		return entity;
 	}
 
 	void Scene::OnUpdate(Timestep deltaTime)

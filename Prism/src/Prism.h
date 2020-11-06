@@ -8,6 +8,7 @@
 #include "Prism/Renderer/OrthographicCameraController.h"
 #include "Prism/Scene/Scene.h"
 #include "Prism/Scene/Components.h"
+#include "Prism/Scene/Entity.h"
 
 #include "Prism/ImGui/ImGuiLayer.h"
 

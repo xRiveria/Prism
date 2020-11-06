@@ -3,6 +3,15 @@
 
 namespace Prism
 {
+	struct TagComponent
+	{
+		std::string m_Tag;
+
+		TagComponent() = default;
+		TagComponent(const TagComponent&) = default;
+		TagComponent(const std::string& tag) : m_Tag(tag) {}
+	};
+
 	struct TransformComponent
 	{
 		glm::mat4 m_Transform = glm::mat4(1.0f);
