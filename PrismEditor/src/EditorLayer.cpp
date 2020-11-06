@@ -41,6 +41,45 @@ namespace Prism
 		m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Camera Entity");
 		auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
 		cc.m_IsPrimaryCamera = false;
+
+		class CameraController : public ScriptableEntity
+		{
+		public:
+			void OnCreate() 
+			{
+
+			}
+
+			void OnDestroy()
+			{
+
+			}
+
+			void OnUpdate(Timestep deltaTime)
+			{
+				auto& transformComponent = GetComponent<TransformComponent>().m_Transform;
+				float cameraSpeed = 5.0f;
+
+				if (Input::IsKeyPressed(PRISM_KEY_A))
+				{
+					transformComponent[3][0] -= cameraSpeed * deltaTime;
+				}
+			    if (Input::IsKeyPressed(PRISM_KEY_D))
+				{
+					transformComponent[3][0] += cameraSpeed * deltaTime;
+				}
+				if (Input::IsKeyPressed(PRISM_KEY_W))
+				{
+					transformComponent[3][1] += cameraSpeed * deltaTime;
+				}
+				if (Input::IsKeyPressed(PRISM_KEY_S))
+				{
+					transformComponent[3][1] -= cameraSpeed * deltaTime;
+				}
+			}
+		};
+
+		m_CameraEntity.AddComponent<NativeScriptComponent>().BindClass<CameraController>();
 	}
 
 	void EditorLayer::OnDetach()

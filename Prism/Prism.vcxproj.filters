@@ -1416,6 +1416,7 @@
     <ClInclude Include="src\Prism\Scene\Entity.h" />
     <ClInclude Include="src\Prism\Renderer\Camera.h" />
     <ClInclude Include="src\Prism\Scene\SceneCamera.h" />
+    <ClInclude Include="src\Prism\Scene\ScriptableEntity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">

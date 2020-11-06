@@ -67,6 +67,21 @@ namespace Prism
 
 	void Scene::OnUpdate(Timestep deltaTime)
 	{
+		//Update Scripts
+		{
+			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nativeScriptComponent)
+				{
+					if (!nativeScriptComponent.m_EntityInstance)
+					{
+						nativeScriptComponent.InstantiateFunction();
+						nativeScriptComponent.m_EntityInstance->m_Entity = { entity, this };
+						nativeScriptComponent.OnCreateFunction(nativeScriptComponent.m_EntityInstance);
+					}
+
+					nativeScriptComponent.OnUpdateFunction(nativeScriptComponent.m_EntityInstance, deltaTime);
+				});
+		}
+
 		//Render 2D
 		Camera* mainCamera = nullptr;
 		glm::mat4* cameraTransform = nullptr;

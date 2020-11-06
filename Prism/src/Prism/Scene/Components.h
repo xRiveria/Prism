@@ -1,6 +1,7 @@
 #pragma once
 #include "glm/glm.hpp"
 #include "SceneCamera.h"
+#include "ScriptableEntity.h"
 
 namespace Prism
 {
@@ -42,5 +43,28 @@ namespace Prism
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+	};
+
+	struct NativeScriptComponent
+	{
+		ScriptableEntity* m_EntityInstance = nullptr;
+
+		std::function<void()> InstantiateFunction;
+		std::function<void()> DestroyInstanceFunction;
+
+		std::function<void(ScriptableEntity*)> OnCreateFunction;
+		std::function<void(ScriptableEntity*, Timestep)> OnUpdateFunction;
+		std::function<void(ScriptableEntity*)> OnDestroyFunction;
+
+		template<typename T>
+		void BindClass()
+		{
+			InstantiateFunction = [&]() { m_EntityInstance = new T(); };
+			DestroyInstanceFunction = [&]() { delete (T*)m_EntityInstance; m_EntityInstance = nullptr; };
+
+			OnCreateFunction = [](ScriptableEntity* entityInstance) { ((T*)entityInstance)->OnCreate(); };
+			OnDestroyFunction = [](ScriptableEntity* entityInstance) { ((T*)entityInstance)->OnDestroy(); };
+			OnUpdateFunction = [](ScriptableEntity* entityInstance, Timestep deltaTime) { ((T*)entityInstance)->OnUpdate(deltaTime); };
+		}
 	};
 }

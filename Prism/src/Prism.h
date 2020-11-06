@@ -6,9 +6,13 @@
 #include "Prism/Core/Log.h"
 #include "Prism/Core/Timestep.h"
 #include "Prism/Renderer/OrthographicCameraController.h"
+
+//Scenes & Entities
+
 #include "Prism/Scene/Scene.h"
 #include "Prism/Scene/Components.h"
 #include "Prism/Scene/Entity.h"
+#include "Prism/Scene/ScriptableEntity.h"
 
 #include "Prism/ImGui/ImGuiLayer.h"
 

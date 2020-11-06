@@ -189,6 +189,7 @@
     <ClInclude Include="src\Prism\Scene\Scene.h" />
     <ClInclude Include="src\PrismPrecompiledHeader.h" />
     <ClInclude Include="src\Prism\Scene\SceneCamera.h" />
+    <ClInclude Include="src\Prism\Scene\ScriptableEntity.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
