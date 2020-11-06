@@ -12,24 +12,7 @@ namespace Prism
 {
 	//To Do: ImGui feature that essentially when button is clicked on, profile the next 10 seconds or until stop is pressed, and outputs to a .json file.
 
-	static uint32_t s_MapWidth = 24; //The maximum width of each row. 
-	static const char* s_MapTiles =
-		"WWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWDDDDDDDWWWWWWWWWW"
-		"WWWWDDDDDDDDDDWWWWWWWWWW"
-		"WWWDDDDDDDDDDDDWWWWWWWWW"
-		"WWWWWDDDDDDDDDDWWWWWWWWW"
-		"WWWWWWWDDDDDDDDWWWWWWWWW"
-		"WWWWWWWWDDDDDDDWWWWWWWWW"
-		"WWWWWWWWWDDDDDWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWW"
-		"WWWWWWWWWWWWWWWWWWWWWWWW";
-
-	EditorLayer::EditorLayer() : Layer("Sandbox2D"), m_CameraController(1280.0f / 720.0f)
+	EditorLayer::EditorLayer() : Layer("Editor Layer"), m_CameraController(1280.0f / 720.0f), m_SquareColor({ 0.2f, 0.3f, 0.8f, 1.0f })
 	{
 
 	}
@@ -39,18 +22,7 @@ namespace Prism
 		PRISM_PROFILE_FUNCTION();
 
 		m_CheckboardTexture = Texture2D::CreateTexture("assets/textures/Checkerboard.png");
-		m_ChickenTexture = Texture2D::CreateTexture("assets/textures/Chicken.png");
-		m_SpriteSheet = Texture2D::CreateTexture("assets/game/textures/RPGpack_sheet_2X.png");
-		m_TextureStairs = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 0.0f, 11.0f }, { 128.0f, 128.0f });
-		m_TextureTree = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 2, 1 }, { 128, 128 }, { 1,2 });
-
-		m_MapWidth = s_MapWidth;
-		m_MapHeight = strlen(s_MapTiles) / s_MapWidth; //Finds the maximum height of the map tiles. In this case: 337 / 24 = 14.02 = 14.
-		s_TextureMapper['D'] = SubTexture2D::CreateFromCoords(m_SpriteSheet, { 6, 11 }, { 128, 128 }); //Maps 'D' to the Dirt texture.
-		s_TextureMapper['W'] =SubTexture2D::CreateFromCoords(m_SpriteSheet, { 11, 11 }, { 128, 128 }); //Maps 'W' to the Water texture.
-
-		m_CameraController.SetZoomLevel(5.0f);
-
+	
 		FramebufferSpecification framebufferSpecification;
 		framebufferSpecification.bufferWidth = 1280;
 		framebufferSpecification.bufferHeight = 720;
@@ -58,14 +30,16 @@ namespace Prism
 		
 		//Entity
 		m_ActiveScene = CreateReference<Scene>();
-		m_SquareEntity = m_ActiveScene->CreateEntity("Square");
-		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
-	
+
+		auto square = m_ActiveScene->CreateEntity("Square");
+		square.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
+		m_SquareEntity = square;
+
 		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
-		m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+		m_CameraEntity.AddComponent<CameraComponent>();
 
 		m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Camera Entity");
-		auto& cc = m_SecondCamera.AddComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
+		auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
 		cc.m_IsPrimaryCamera = false;
 	}
 
@@ -77,6 +51,15 @@ namespace Prism
 	void EditorLayer::OnUpdate(Timestep timeStep)
 	{
 		PRISM_PROFILE_FUNCTION();
+		// Resize
+		if (FramebufferSpecification spec = m_Framebuffer->GetFramebufferSpecifications();
+			m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f && (spec.bufferWidth != m_ViewportSize.x || spec.bufferHeight != m_ViewportSize.y)) // zero sized framebuffer is invalid
+		{
+			m_Framebuffer->ResizeFramebuffer((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_CameraController.OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
+
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		}
 
 		//Update
 		if (m_ViewportFocused)
@@ -92,58 +75,10 @@ namespace Prism
 		RenderCommand::SetClearColor(m_ClearColor);
 		RenderCommand::Clear();
 
-#if 0
-		static float rotation = 0.0f;
-		rotation += timeStep * 50.0f;
-
-		Prism::Renderer2D::BeginScene(m_CameraController.GetCamera());
-
-		Prism::Renderer2D::DrawRotatedQuad({ 1.0f, 0.0f }, { 0.8f, 0.8f }, rotation, { m_SquareColor });
-		Prism::Renderer2D::DrawQuad({ -1.0f, 0.0f }, { 0.5f, 0.75f }, { 0.8f, 0.2f, 0.3f, 1.0f });
-		Prism::Renderer2D::DrawQuad(m_ChickenPosition, m_ChickenScale, m_ChickenTexture);
-		Prism::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 20.0f, 20.0f }, m_CheckboardTexture, 10.0f);
-		Prism::Renderer2D::DrawRotatedQuad({ -2.0f, 0.0f, 0.0f }, { 1.0f, 1.0f }, rotation, m_CheckboardTexture, 20.0f);
-
-		for (float y = -5.0f; y < 5.0f; y += 0.5f)
-		{
-			for (float x = -5.0f; x < 5.0f; x += 0.5f)
-			{
-				glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 5.0f) / 10.0f, 0.7f };
-				Prism::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
-			}
-		}
-
-		Prism::Renderer2D::EndScene();
-
-		for (uint32_t y = 0; y < m_MapHeight; y++) //Take note of the way you are interating the chars due to memory layout (memory indirection).
-		{
-			for (uint32_t x = 0; x < m_MapWidth; x++)
-			{
-				char tileType = s_MapTiles[x + y * m_MapWidth]; //Gets the correct memory offset. We are dealing with the map as a contigious block of memory as it will be faster.  
-
-				Reference<Prism::SubTexture2D> texture; //Selected texture.
-				if (s_TextureMapper.find(tileType) != s_TextureMapper.end()) //If the texture is found within the mapper...
-				{
-					texture = s_TextureMapper[tileType]; //Select it.
-				}
-				else
-				{
-					texture = m_TextureStairs; //Else, auto assign stairs to it. 
-				}
-				Renderer2D::DrawQuad({ x - m_MapWidth / 2.0f, y - m_MapHeight / 2.0f, 0.5f }, { 1.0f, 1.0f }, texture); //Draw the quad. 
-	}
-}
-
-#endif
 		//Update Scene
-		m_ActiveScene->OnUpdate(timeStep);
-
-		//Prism::Renderer2D::DrawQuad({ 0.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureBarrel);
-		//Prism::Renderer2D::DrawQuad({ 1.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureStairs);
-		//Prism::Renderer2D::DrawQuad({ -1.0f, 0.0f, 0.5f }, { 1.0f, 2.0f }, m_TextureTree);
+		m_ActiveScene->OnUpdate(timeStep);	
 
 		m_Framebuffer->UnbindFramebuffer();
-
 	}
 
 	void EditorLayer::EditorImGuiRenderContent()
@@ -188,6 +123,17 @@ namespace Prism
 			m_SecondCamera.GetComponent<CameraComponent>().m_IsPrimaryCamera = !m_PrimaryCamera;
 		}
 
+		{
+			auto& camera = m_SecondCamera.GetComponent<CameraComponent>().m_Camera;
+			float orthoSize = camera.GetOrthographicSize();
+			
+			if (ImGui::DragFloat("Second Camera Ortho Size", &orthoSize))
+			{
+				camera.SetOrthographicSize(orthoSize);
+			}
+
+		}
+
 		ImGui::Text("Clear Color:");
 		ImGui::ColorEdit4("Clear Color", glm::value_ptr(m_ClearColor));
 		ImGui::End();
@@ -203,13 +149,7 @@ namespace Prism
 		}
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-		if (m_ViewportSize != *((glm::vec2*) & viewportPanelSize) && viewportPanelSize.x > 0 && viewportPanelSize.y > 0)
-		{
-			m_Framebuffer->ResizeFramebuffer((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
-			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-
-			m_CameraController.OnViewportResize(viewportPanelSize.x, viewportPanelSize.y);
-		}
+		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
 		ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 }); //0,0 in ImGui might be at the top, while for OpenGL it might be at the bottom.

@@ -71,16 +71,18 @@ namespace Prism
 		Camera* mainCamera = nullptr;
 		glm::mat4* cameraTransform = nullptr;
 
-		auto sceneCameras = m_Registry.view<TransformComponent, CameraComponent>();
-		for (auto entity : sceneCameras)
 		{
-			auto& [transform, camera] = sceneCameras.get<TransformComponent, CameraComponent>(entity);
-			if (camera.m_IsPrimaryCamera)
+			auto sceneCameras = m_Registry.view<TransformComponent, CameraComponent>();
+			for (auto entity : sceneCameras)
 			{
-				mainCamera = &camera.m_Camera;
-				cameraTransform = &transform.m_Transform;
-				break;
-			}	
+				auto& [transform, camera] = sceneCameras.get<TransformComponent, CameraComponent>(entity);
+				if (camera.m_IsPrimaryCamera)
+				{
+					mainCamera = &camera.m_Camera;
+					cameraTransform = &transform.m_Transform;
+					break;
+				}
+			}
 		}
 
 		if (mainCamera) //No rendering if camera doesn't exist.
@@ -95,6 +97,21 @@ namespace Prism
 			}
 
 			Renderer2D::EndScene();
+		}
+	}
+
+	void Scene::OnViewportResize(uint32_t newWidth, uint32_t newHeight)
+	{
+		m_ViewportWidth = newWidth;
+		m_ViewportHeight = newHeight;
+
+		// Resize our non-FixedAspectRatio cameras
+		auto view = m_Registry.view<CameraComponent>();
+		for (auto entity : view)
+		{
+			auto& cameraComponent = view.get<CameraComponent>(entity);
+			if (!cameraComponent.m_IsAspectRatioFixed)
+				cameraComponent.m_Camera.SetViewportSize(newWidth, newHeight);
 		}
 	}
 

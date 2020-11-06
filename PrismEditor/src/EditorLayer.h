@@ -24,11 +24,8 @@ namespace Prism
 		glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 		glm::vec4 m_ClearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
 
-		Reference<Texture2D> m_ChickenTexture;
 		Reference<Framebuffer> m_Framebuffer;
 		Reference<Texture2D> m_CheckboardTexture;
-		Reference<SubTexture2D> m_TextureStairs, m_TextureBarrel, m_TextureTree;
-		Reference<Texture2D> m_SpriteSheet;
 		OrthographicCameraController m_CameraController;
 
 		Reference<Scene> m_ActiveScene;
@@ -40,8 +37,5 @@ namespace Prism
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
 		glm::vec2 m_ViewportSize = { 0, 0 };
-
-		uint32_t m_MapWidth, m_MapHeight;
-		std::unordered_map<char, Reference<SubTexture2D>> s_TextureMapper;
 	};
 }

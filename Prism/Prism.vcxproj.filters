@@ -1415,6 +1415,7 @@
     </ClInclude>
     <ClInclude Include="src\Prism\Scene\Entity.h" />
     <ClInclude Include="src\Prism\Renderer\Camera.h" />
+    <ClInclude Include="src\Prism\Scene\SceneCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1508,5 +1509,6 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\Prism\Scene\Entity.cpp" />
+    <ClCompile Include="src\Prism\Scene\SceneCamera.cpp" />
   </ItemGroup>
 </Project>

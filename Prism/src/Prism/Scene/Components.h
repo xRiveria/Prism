@@ -1,6 +1,6 @@
 #pragma once
 #include "glm/glm.hpp"
-#include "Prism/Renderer/Camera.h"
+#include "SceneCamera.h"
 
 namespace Prism
 {
@@ -36,11 +36,11 @@ namespace Prism
 
 	struct CameraComponent
 	{
-		Prism::Camera m_Camera;
+		SceneCamera m_Camera;
 		bool m_IsPrimaryCamera = true; //To Do: Moving to scene.
+		bool m_IsAspectRatioFixed = false;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
-		CameraComponent(const glm::mat4& projectionMatrix) : m_Camera(projectionMatrix) {}
 	};
 }
