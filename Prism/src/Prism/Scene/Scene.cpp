@@ -67,11 +67,34 @@ namespace Prism
 
 	void Scene::OnUpdate(Timestep deltaTime)
 	{
-		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group)
+		//Render 2D
+		Camera* mainCamera = nullptr;
+		glm::mat4* cameraTransform = nullptr;
+
+		auto sceneCameras = m_Registry.view<TransformComponent, CameraComponent>();
+		for (auto entity : sceneCameras)
 		{
-			auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			Renderer2D::DrawQuad(transform, sprite.m_Color);
+			auto& [transform, camera] = sceneCameras.get<TransformComponent, CameraComponent>(entity);
+			if (camera.m_IsPrimaryCamera)
+			{
+				mainCamera = &camera.m_Camera;
+				cameraTransform = &transform.m_Transform;
+				break;
+			}	
+		}
+
+		if (mainCamera) //No rendering if camera doesn't exist.
+		{
+			Renderer2D::BeginScene(mainCamera->GetProjection(), *cameraTransform);
+ 
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				Renderer2D::DrawQuad(transform, sprite.m_Color);
+			}
+
+			Renderer2D::EndScene();
 		}
 	}
 

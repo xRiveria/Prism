@@ -1,5 +1,6 @@
 #pragma once
 #include "OrthographicCamera.h"
+#include "Camera.h"
 #include "Texture.h"
 #include "Prism/Renderer/SubTexture2D.h"
 
@@ -11,6 +12,7 @@ namespace Prism
 		static void Initialize2DRenderer();
 		static void Shutdown2DRenderer();
 
+		static void BeginScene(const Camera& camera, const glm::mat4& transform);
 		static void BeginScene(const OrthographicCamera& camera);
 		static void EndScene();
 		static void FlushRenderer();

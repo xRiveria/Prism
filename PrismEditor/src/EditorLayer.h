@@ -16,6 +16,7 @@ namespace Prism
 
 		virtual void OnUpdate(Timestep timeStep) override;
 		virtual void OnImGuiRender() override;
+		void EditorImGuiRenderContent();
 		virtual void OnEvent(Event& event) override;
 
 	private:
@@ -32,6 +33,9 @@ namespace Prism
 
 		Reference<Scene> m_ActiveScene;
 		Entity m_SquareEntity;
+		Entity m_CameraEntity;
+		Entity m_SecondCamera;
+		bool m_PrimaryCamera = true;
 		
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;

@@ -171,6 +171,7 @@
     <ClInclude Include="src\Prism\Events\MouseEvent.h" />
     <ClInclude Include="src\Prism\ImGui\ImGuiLayer.h" />
     <ClInclude Include="src\Prism\Renderer\Buffer.h" />
+    <ClInclude Include="src\Prism\Renderer\Camera.h" />
     <ClInclude Include="src\Prism\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Prism\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Prism\Renderer\OrthographicCamera.h" />

@@ -60,6 +60,13 @@ namespace Prism
 		m_ActiveScene = CreateReference<Scene>();
 		m_SquareEntity = m_ActiveScene->CreateEntity("Square");
 		m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
+	
+		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+		m_CameraEntity.AddComponent<CameraComponent>(glm::ortho(-16.0f, 16.0f, -9.0f, 9.0f, -1.0f, 1.0f));
+
+		m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Camera Entity");
+		auto& cc = m_SecondCamera.AddComponent<CameraComponent>(glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f));
+		cc.m_IsPrimaryCamera = false;
 	}
 
 	void EditorLayer::OnDetach()
@@ -128,19 +135,88 @@ namespace Prism
 }
 
 #endif
-		Prism::Renderer2D::BeginScene(m_CameraController.GetCamera());
-
 		//Update Scene
 		m_ActiveScene->OnUpdate(timeStep);
-
-
 
 		//Prism::Renderer2D::DrawQuad({ 0.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureBarrel);
 		//Prism::Renderer2D::DrawQuad({ 1.0f, 0.0f, 0.5f }, { 1.0f, 1.0f }, m_TextureStairs);
 		//Prism::Renderer2D::DrawQuad({ -1.0f, 0.0f, 0.5f }, { 1.0f, 2.0f }, m_TextureTree);
-		Renderer2D::EndScene();
+
 		m_Framebuffer->UnbindFramebuffer();
 
+	}
+
+	void EditorLayer::EditorImGuiRenderContent()
+	{
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				// Disabling fullscreen would allow the window to be moved to the front of other windows,
+				// which we can't undo at the moment without finer window depth/z control.
+				if (ImGui::MenuItem("Exit")) { Application::GetApplication().CloseApplication(); }
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+
+		ImGui::Begin("Settings");
+		Renderer2D::Statistics batchingStatistics = Renderer2D::GetBatchingStatistics();
+		ImGui::Text("Renderer2D Stats:");
+		ImGui::Text("Draw Calls: %d", batchingStatistics.m_DrawCalls);
+		ImGui::Text("Quads: %d", batchingStatistics.m_QuadCount);
+		ImGui::Text("Vertices: %d", batchingStatistics.GetTotalVertexCount());
+		ImGui::Text("Indices: %d", batchingStatistics.GetTotalIndexCount());
+		ImGui::Spacing();
+
+		if (m_SquareEntity)
+		{
+			ImGui::Separator();
+			auto& tagName = m_SquareEntity.GetComponent<TagComponent>().m_Tag;
+			ImGui::Text("%s", tagName.c_str());
+
+			auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().m_Color;
+			ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
+			ImGui::Separator();
+		}
+
+		ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().m_Transform[3]));
+
+		if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
+		{
+			m_SecondCamera.GetComponent<CameraComponent>().m_IsPrimaryCamera = m_PrimaryCamera;
+			m_SecondCamera.GetComponent<CameraComponent>().m_IsPrimaryCamera = !m_PrimaryCamera;
+		}
+
+		ImGui::Text("Clear Color:");
+		ImGui::ColorEdit4("Clear Color", glm::value_ptr(m_ClearColor));
+		ImGui::End();
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
+		ImGui::Begin("Viewport");
+
+		m_ViewportFocused = ImGui::IsWindowFocused();
+		m_ViewportHovered = ImGui::IsWindowHovered();
+		if (m_ViewportFocused)
+		{
+			Application::GetApplication().GetImGuiLayer()->DoBlockEvents(!m_ViewportFocused || !m_ViewportHovered); //Allow or block events depending on which window is being hovered over or focused on.
+		}
+
+		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+		if (m_ViewportSize != *((glm::vec2*) & viewportPanelSize) && viewportPanelSize.x > 0 && viewportPanelSize.y > 0)
+		{
+			m_Framebuffer->ResizeFramebuffer((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
+			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+
+			m_CameraController.OnViewportResize(viewportPanelSize.x, viewportPanelSize.y);
+		}
+
+		uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
+		ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 }); //0,0 in ImGui might be at the top, while for OpenGL it might be at the bottom.
+		ImGui::End();
+		ImGui::PopStyleVar(); //Pops the pushed style so other windows beyond this won't have the style's properties.
+
+		ImGui::End();
 	}
 
 	void EditorLayer::OnImGuiRender()
@@ -198,67 +274,7 @@ namespace Prism
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				// Disabling fullscreen would allow the window to be moved to the front of other windows,
-				// which we can't undo at the moment without finer window depth/z control.
-				if (ImGui::MenuItem("Exit")) { Application::GetApplication().CloseApplication(); }
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenuBar();
-		}
-
-		ImGui::Begin("Settings");
-		Renderer2D::Statistics batchingStatistics = Renderer2D::GetBatchingStatistics();
-		ImGui::Text("Renderer2D Stats:");
-		ImGui::Text("Draw Calls: %d", batchingStatistics.m_DrawCalls);
-		ImGui::Text("Quads: %d", batchingStatistics.m_QuadCount);
-		ImGui::Text("Vertices: %d", batchingStatistics.GetTotalVertexCount());
-		ImGui::Text("Indices: %d", batchingStatistics.GetTotalIndexCount());
-		ImGui::Spacing();
-
-		if (m_SquareEntity)
-		{
-			ImGui::Separator();
-			auto& tagName = m_SquareEntity.GetComponent<TagComponent>().m_Tag;
-			ImGui::Text("%s", tagName.c_str());
-
-			auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().m_Color;
-			ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
-			ImGui::Separator();
-		}
-
-		ImGui::Text("Clear Color:");
-		ImGui::ColorEdit4("Clear Color", glm::value_ptr(m_ClearColor));
-		ImGui::End();
-
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
-		ImGui::Begin("Viewport");
-
-		m_ViewportFocused = ImGui::IsWindowFocused();
-		m_ViewportHovered = ImGui::IsWindowHovered();
-		if (m_ViewportFocused)
-		{
-			Application::GetApplication().GetImGuiLayer()->DoBlockEvents(!m_ViewportFocused || !m_ViewportHovered); //Allow or block events depending on which window is being hovered over or focused on.
-		}
-		
-		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-		if (m_ViewportSize != *((glm::vec2*)&viewportPanelSize) && viewportPanelSize.x > 0 && viewportPanelSize.y > 0)
-		{
-			m_Framebuffer->ResizeFramebuffer((uint32_t)viewportPanelSize.x, (uint32_t)viewportPanelSize.y);
-			m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
-
-			m_CameraController.OnViewportResize(viewportPanelSize.x, viewportPanelSize.y);
-		}
-
-		uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
-		ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 }); //0,0 in ImGui might be at the top, while for OpenGL it might be at the bottom.
-		ImGui::End();
-		ImGui::PopStyleVar(); //Pops the pushed style so other windows beyond this won't have the style's properties.
-
-		ImGui::End();
+		EditorImGuiRenderContent();
 	}
 
 	void EditorLayer::OnEvent(Event& event)
