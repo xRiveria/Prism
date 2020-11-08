@@ -83,5 +83,84 @@ namespace Prism
 				ImGui::TreePop();
 			}		
 		}
+
+		if (entity.HasComponent<CameraComponent>())
+		{
+			if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
+			{
+				CameraComponent& cameraComponent = entity.GetComponent<CameraComponent>();
+				SceneCamera& sceneCamera = cameraComponent.m_Camera;
+
+				ImGui::Checkbox("Primary", &cameraComponent.m_IsPrimaryCamera);
+
+				const char* projectionTypeStrings[] = { "Perspective", "Orthographic" };
+				const char* currentProjectionTypeString = projectionTypeStrings[(int)sceneCamera.GetProjectionType()];
+				if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
+				{
+					for (int i = 0; i < 2; i++)
+					{
+						bool isSelected = currentProjectionTypeString == projectionTypeStrings[i];
+						if (ImGui::Selectable(projectionTypeStrings[i], isSelected))
+						{
+							currentProjectionTypeString = projectionTypeStrings[i];
+							sceneCamera.SetProjectionType((SceneCamera::ProjectionType)i);
+						}
+
+						if (isSelected)
+						{
+							ImGui::SetItemDefaultFocus();
+						}
+					}
+
+					ImGui::EndCombo();
+				}
+				//Remember that we want to keep the values of both projections even when switching between them. Thus, we will have seperate stack containers for them.
+				if (sceneCamera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
+				{
+					float perspectiveVerticalFieldOfView = glm::degrees(sceneCamera.GetPerspectiveVerticalFieldOfView());
+					if (ImGui::DragFloat("Vertical FOV", &perspectiveVerticalFieldOfView))
+					{
+						sceneCamera.SetPerspectiveVerticalFieldOfView(glm::radians(perspectiveVerticalFieldOfView));
+					}
+
+					float perspectiveNear = sceneCamera.GetPerspectiveNearClip();
+					if (ImGui::DragFloat("Near", &perspectiveNear))
+					{
+						sceneCamera.SetPerspectiveNearClip(perspectiveNear);
+					}
+
+					float perspectiveFar = sceneCamera.GetPerspectiveFarClip();
+					if (ImGui::DragFloat("Far", &perspectiveFar))
+					{
+						sceneCamera.SetPerspectiveFarClip(perspectiveFar);
+					}
+				}
+				
+				if (sceneCamera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
+				{
+					float orthographicSize = sceneCamera.GetOrthographicSize();
+					if (ImGui::DragFloat("Size", &orthographicSize))
+					{
+						sceneCamera.SetOrthographicSize(orthographicSize);
+					}
+
+					float orthographicNearClip = sceneCamera.GetOrthographicNearClip();
+					if (ImGui::DragFloat("Near", &orthographicNearClip))
+					{
+						sceneCamera.SetOrthographicNearClip(orthographicNearClip);
+					}
+
+					float orthographicFarClip = sceneCamera.GetOrthographicFarClip();
+					if (ImGui::DragFloat("Far", &orthographicFarClip))
+					{
+						sceneCamera.SetOrthographicFarClip(orthographicFarClip);
+					}
+
+					ImGui::Checkbox("Fixed Aspect Ration", &cameraComponent.m_IsAspectRatioFixed);
+				}
+
+				ImGui::TreePop();
+			}
+		}
 	}
 }

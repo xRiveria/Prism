@@ -37,7 +37,7 @@ namespace Prism
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
 		//Setup Styling
-		ImGui::StyleColorsDark();
+		ImGui::StyleColorsDark(); 
 
 		//When viewports are enabled, we tweak WindowRounding/WindowBg so Window platforms can look identifical to regular ones.
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -46,6 +46,7 @@ namespace Prism
 			style.WindowRounding = 0.0f;
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}	
+		style.Colors[ImGuiCol_WindowBg] = ImVec4(0.15f, 0.15f, 0.15f, style.Colors[ImGuiCol_WindowBg].w);
 
 		ImFont* pFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\segoeui.ttf", 18.0f);
 		io.FontDefault = io.Fonts->Fonts.back();
