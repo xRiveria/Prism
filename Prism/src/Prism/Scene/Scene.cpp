@@ -127,7 +127,9 @@ namespace Prism
 		{
 			auto& cameraComponent = view.get<CameraComponent>(entity);
 			if (!cameraComponent.m_IsAspectRatioFixed)
+			{
 				cameraComponent.m_Camera.SetViewportSize(newWidth, newHeight);
+			}
 		}
 	}
 

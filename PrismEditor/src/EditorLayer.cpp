@@ -81,6 +81,8 @@ namespace Prism
 
 		m_CameraEntity.AddComponent<NativeScriptComponent>().BindClass<CameraController>();
 		m_SecondCamera.AddComponent<NativeScriptComponent>().BindClass<CameraController>();
+		
+		m_SceneHierarchyPanel.SetHierachyContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnDetach()
@@ -134,6 +136,8 @@ namespace Prism
 			}
 			ImGui::EndMenuBar();
 		}
+
+		m_SceneHierarchyPanel.OnImGuiRender();
 
 		ImGui::Begin("Settings");
 		Renderer2D::Statistics batchingStatistics = Renderer2D::GetBatchingStatistics();

@@ -1,5 +1,6 @@
 #pragma once
 #include "Prism.h"
+#include "Panels/SceneHierarchyPanel.h"
 #include "glm/glm.hpp"
 #include <vector>
 
@@ -37,5 +38,8 @@ namespace Prism
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
 		glm::vec2 m_ViewportSize = { 0, 0 };
+
+		//Panels
+		SceneHierarchyPanel m_SceneHierarchyPanel;
 	};
 }
