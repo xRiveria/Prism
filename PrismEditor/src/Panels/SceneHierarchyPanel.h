@@ -17,6 +17,7 @@ namespace Prism
 
 	private:
 		void DrawEntityNode(Entity entity);
+		void DrawComponents(Entity entity);
 
 	private:
 		Reference<Scene> m_HierarchyContext; 
