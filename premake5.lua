@@ -24,12 +24,13 @@ IncludeDir["ImGui"] = "Prism/vendor/imgui"
 IncludeDir["glm"] = "Prism/vendor/glm"
 IncludeDir["stb_image"] = "Prism/vendor/stb_image"
 IncludeDir["entt"] = "Prism/vendor/entt/include"
+IncludeDir["yaml_cpp"] = "Prism/vendor/yaml-cpp/include"
 
 group "Dependencies"
 	include "Prism/vendor/GLFW"
 	include "Prism/vendor/Glad"
 	include "Prism/vendor/imgui"
-
+	include "Prism/vendor/yaml-cpp"
 group ""
 
 project "Prism"
@@ -69,7 +70,8 @@ project "Prism"
 		"%{IncludeDir.ImGui}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.yaml_cpp}"
 	}
 
 	links 
@@ -77,6 +79,7 @@ project "Prism"
 		"GLFW",
 		"Glad",
 		"ImGui",
+		"yaml-cpp",
 		"opengl32.lib"
 	}
 

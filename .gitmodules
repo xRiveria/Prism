@@ -10,3 +10,6 @@
 [submodule "Prism/vendor/glm"]
 	path = Prism/vendor/glm
 	url = https://github.com/g-truc/glm
+[submodule "Prism/vendor/yaml-cpp"]
+	path = Prism/vendor/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp

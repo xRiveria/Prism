@@ -2,6 +2,7 @@
 #include "imgui/imgui.h"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "Prism/Scene/SceneSerializer.h"
 
 //Sandbox is going to become our runtime application.
 //We create a game in PrismEditor, which will create a whole bunch of game data in which Sandbox will load that information in.
@@ -30,6 +31,7 @@ namespace Prism
 		//Entity
 		m_ActiveScene = CreateReference<Scene>();
 
+#if 0
 		auto square = m_ActiveScene->CreateEntity("Square");
 		square.AddComponent<SpriteRendererComponent>(glm::vec4{0.0f, 1.0f, 0.0f, 1.0f});
 		
@@ -85,8 +87,8 @@ namespace Prism
 
 		m_CameraEntity.AddComponent<NativeScriptComponent>().BindClass<CameraController>();
 		m_SecondCamera.AddComponent<NativeScriptComponent>().BindClass<CameraController>();
-		
-		m_SceneHierarchyPanel.SetHierachyContext(m_ActiveScene);
+#endif
+		m_SceneHierarchyPanel.SetHierachyContext(m_ActiveScene);	
 	}
 
 	void EditorLayer::OnDetach()
@@ -135,6 +137,19 @@ namespace Prism
 			{
 				// Disabling fullscreen would allow the window to be moved to the front of other windows,
 				// which we can't undo at the moment without finer window depth/z control.
+				
+				if (ImGui::MenuItem("Serialize"))
+				{
+					SceneSerializer serializer(m_ActiveScene);
+					serializer.SerializeToYAML("assets/scenes/Example.prism");
+				}
+
+				if (ImGui::MenuItem("Deserialize"))
+				{
+					SceneSerializer serializer(m_ActiveScene);
+					serializer.DeserializeFromYAML("assets/scenes/Example.prism");
+				}
+
 				if (ImGui::MenuItem("Exit")) { Application::GetApplication().CloseApplication(); }
 				ImGui::EndMenu();
 			}

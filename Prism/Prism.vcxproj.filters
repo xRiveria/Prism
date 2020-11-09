@@ -141,6 +141,9 @@
     <ClInclude Include="src\Prism\Renderer\Buffer.h">
       <Filter>src\Prism\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Prism\Renderer\Camera.h">
+      <Filter>src\Prism\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Prism\Renderer\Framebuffer.h">
       <Filter>src\Prism\Renderer</Filter>
     </ClInclude>
@@ -180,7 +183,16 @@
     <ClInclude Include="src\Prism\Scene\Components.h">
       <Filter>src\Prism\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Prism\Scene\Entity.h">
+      <Filter>src\Prism\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\Prism\Scene\Scene.h">
+      <Filter>src\Prism\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Prism\Scene\SceneCamera.h">
+      <Filter>src\Prism\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Prism\Scene\ScriptableEntity.h">
       <Filter>src\Prism\Scene</Filter>
     </ClInclude>
     <ClInclude Include="src\PrismPrecompiledHeader.h">
@@ -1413,11 +1425,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Prism\Scene\Entity.h" />
-    <ClInclude Include="src\Prism\Renderer\Camera.h" />
-    <ClInclude Include="src\Prism\Scene\SceneCamera.h" />
-    <ClInclude Include="src\Prism\Scene\ScriptableEntity.h" />
-    <ClInclude Include="Revisit.h" />
+    <ClInclude Include="src\Prism\Scene\SceneSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1501,7 +1509,13 @@
     <ClCompile Include="src\Prism\Renderer\VertexArray.cpp">
       <Filter>src\Prism\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Prism\Scene\Entity.cpp">
+      <Filter>src\Prism\Scene</Filter>
+    </ClCompile>
     <ClCompile Include="src\Prism\Scene\Scene.cpp">
+      <Filter>src\Prism\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Prism\Scene\SceneCamera.cpp">
       <Filter>src\Prism\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\PrismPrecompiledHeader.cpp">
@@ -1510,7 +1524,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Prism\Scene\Entity.cpp" />
-    <ClCompile Include="src\Prism\Scene\SceneCamera.cpp" />
+    <ClCompile Include="src\Prism\Scene\SceneSerializer.cpp" />
   </ItemGroup>
 </Project>

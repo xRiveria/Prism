@@ -20,7 +20,7 @@ namespace Prism
 
 	void SceneHierarchyPanel::OnImGuiRender()
 	{
-		ImGui::Begin("Scene Hierarcy");
+		ImGui::Begin("Scene Hierarchy");
 		m_HierarchyContext->m_Registry.each([&](auto entityID)
 		{
 			Entity entity{ entityID, m_HierarchyContext.get() };
