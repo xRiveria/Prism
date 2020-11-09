@@ -23,6 +23,8 @@ namespace Prism
 
 		void DoBlockEvents(bool blockEvent) { m_BlockEvents = blockEvent; }
 
+		void SetDarkThemeColors();
+
 	private:
 		bool m_BlockEvents = true;
 		float m_Time = 0.0f;

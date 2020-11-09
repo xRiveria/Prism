@@ -138,6 +138,12 @@ namespace Prism
 				if (ImGui::MenuItem("Exit")) { Application::GetApplication().CloseApplication(); }
 				ImGui::EndMenu();
 			}
+
+			if (ImGui::BeginMenu("Customize"))
+			{
+				if (ImGui::MenuItem("Editor")) { }
+				ImGui::EndMenu();
+			}
 			ImGui::EndMenuBar();
 		}
 
@@ -154,6 +160,7 @@ namespace Prism
 
 		ImGui::Text("Clear Color:");
 		ImGui::ColorEdit4("Clear Color", glm::value_ptr(m_ClearColor));
+
 		ImGui::End();
 
 		RenderCommand::DrawGraphicsInformation();
@@ -228,11 +235,17 @@ namespace Prism
 
 		// DockSpace
 		ImGuiIO& io = ImGui::GetIO();
+		ImGuiStyle& style = ImGui::GetStyle();
+
+		float minimumWindowsize = style.WindowMinSize.x;
+		style.WindowMinSize.x = 370.0f;
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
 			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
+		style.WindowMinSize.x = minimumWindowsize;
+
 
 		EditorImGuiRenderContent();
 	}
