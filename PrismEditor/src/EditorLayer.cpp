@@ -38,10 +38,10 @@ namespace Prism
 
 		m_SquareEntity = square;
 
-		m_CameraEntity = m_ActiveScene->CreateEntity("Camera Entity");
+		m_CameraEntity = m_ActiveScene->CreateEntity("Camera A");
 		m_CameraEntity.AddComponent<CameraComponent>();
 
-		m_SecondCamera = m_ActiveScene->CreateEntity("Clip-Space Camera Entity");
+		m_SecondCamera = m_ActiveScene->CreateEntity("Camera B");
 		auto& cc = m_SecondCamera.AddComponent<CameraComponent>();
 		cc.m_IsPrimaryCamera = false;
 
@@ -143,7 +143,7 @@ namespace Prism
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 
-		ImGui::Begin("Settings");
+		ImGui::Begin("Stats");
 		Renderer2D::Statistics batchingStatistics = Renderer2D::GetBatchingStatistics();
 		ImGui::Text("Renderer2D Stats:");
 		ImGui::Text("Draw Calls: %d", batchingStatistics.m_DrawCalls);
@@ -151,36 +151,6 @@ namespace Prism
 		ImGui::Text("Vertices: %d", batchingStatistics.GetTotalVertexCount());
 		ImGui::Text("Indices: %d", batchingStatistics.GetTotalIndexCount());
 		ImGui::Spacing();
-
-		if (m_SquareEntity)
-		{
-			ImGui::Separator();
-			auto& tagName = m_SquareEntity.GetComponent<TagComponent>().m_Tag;
-			ImGui::Text("%s", tagName.c_str());
-
-			auto& squareColor = m_SquareEntity.GetComponent<SpriteRendererComponent>().m_Color;
-			ImGui::ColorEdit4("Square Color", glm::value_ptr(squareColor));
-			ImGui::Separator();
-		}
-
-		ImGui::DragFloat3("Camera Transform", glm::value_ptr(m_CameraEntity.GetComponent<TransformComponent>().m_Transform[3]));
-
-		if (ImGui::Checkbox("Camera A", &m_PrimaryCamera))
-		{
-			m_SecondCamera.GetComponent<CameraComponent>().m_IsPrimaryCamera = m_PrimaryCamera;
-			m_SecondCamera.GetComponent<CameraComponent>().m_IsPrimaryCamera = !m_PrimaryCamera;
-		}
-
-		{
-			auto& camera = m_SecondCamera.GetComponent<CameraComponent>().m_Camera;
-			float orthoSize = camera.GetOrthographicSize();
-			
-			if (ImGui::DragFloat("Second Camera Ortho Size", &orthoSize))
-			{
-				camera.SetOrthographicSize(orthoSize);
-			}
-
-		}
 
 		ImGui::Text("Clear Color:");
 		ImGui::ColorEdit4("Clear Color", glm::value_ptr(m_ClearColor));
