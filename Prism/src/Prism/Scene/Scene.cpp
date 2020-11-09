@@ -85,7 +85,7 @@ namespace Prism
 
 		//Render 2D
 		Camera* mainCamera = nullptr;
-		glm::mat4* cameraTransform = nullptr;
+		glm::mat4 cameraTransform;
 
 		{
 			auto sceneCameras = m_Registry.view<TransformComponent, CameraComponent>();
@@ -95,7 +95,7 @@ namespace Prism
 				if (camera.m_IsPrimaryCamera)
 				{
 					mainCamera = &camera.m_Camera;
-					cameraTransform = &transform.m_Transform;
+					cameraTransform = transform.GetTransform();
 					break;
 				}
 			}
@@ -103,13 +103,13 @@ namespace Prism
 
 		if (mainCamera) //No rendering if camera doesn't exist.
 		{
-			Renderer2D::BeginScene(mainCamera->GetProjection(), *cameraTransform);
+			Renderer2D::BeginScene(mainCamera->GetProjection(), cameraTransform);
 
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group)
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawQuad(transform, sprite.m_Color);
+				Renderer2D::DrawQuad(transform.GetTransform(), sprite.m_Color);
 			}
 
 			Renderer2D::EndScene();

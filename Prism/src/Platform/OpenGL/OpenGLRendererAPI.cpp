@@ -1,6 +1,7 @@
 #include "PrismPrecompiledHeader.h"
 #include "OpenGLRendererAPI.h"
 #include "glad/glad.h"
+#include "imgui.h"
 
 namespace Prism
 {
@@ -27,6 +28,16 @@ namespace Prism
 	void OpenGLRendererAPI::Clear()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	void OpenGLRendererAPI::DrawGraphicsInformation()
+	{
+		ImGui::Begin("Graphical Information");
+		ImGui::Text("FPS: %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Text("Renderer: %s", (char*)glGetString(GL_RENDERER));
+		ImGui::Text("OpenGL Version: %s", (char*)glGetString(GL_VERSION));
+		ImGui::Text("Card Vendor: %s", (char*)glGetString(GL_VENDOR));
+		ImGui::End();
 	}
 
 	void OpenGLRendererAPI::DrawIndexed(const Reference<VertexArray>& vertexArray, uint32_t indexCount)

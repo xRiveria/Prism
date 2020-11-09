@@ -30,6 +30,11 @@ namespace Prism
 			s_RendererAPI->SetClearColor(color);
 		}
 
+		inline static void DrawGraphicsInformation()
+		{
+			s_RendererAPI->DrawGraphicsInformation();
+		}
+
 		inline static void Clear()
 		{
 			s_RendererAPI->Clear();

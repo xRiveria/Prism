@@ -50,8 +50,8 @@ namespace Prism
 		public:
 			void OnCreate() 
 			{
-				auto& transformComponent = GetComponent<TransformComponent>().m_Transform;
-				transformComponent[3][0] = rand() % 10 - 5.0f;
+				auto& transformComponentTranslation = GetComponent<TransformComponent>().m_Translation;
+				transformComponentTranslation.x = rand() % 10 - 5.0f;
 			}
 
 			void OnDestroy()
@@ -61,24 +61,24 @@ namespace Prism
 
 			void OnUpdate(Timestep deltaTime)
 			{
-				auto& transformComponent = GetComponent<TransformComponent>().m_Transform;
+				auto& transformComponentTranslation = GetComponent<TransformComponent>().m_Translation;
 				float cameraSpeed = 5.0f;
 
 				if (Input::IsKeyPressed(PRISM_KEY_A))
 				{
-					transformComponent[3][0] -= cameraSpeed * deltaTime;
+					transformComponentTranslation.x -= cameraSpeed * deltaTime;
 				}
 			    if (Input::IsKeyPressed(PRISM_KEY_D))
 				{
-					transformComponent[3][0] += cameraSpeed * deltaTime;
+					transformComponentTranslation.x += cameraSpeed * deltaTime;
 				}
 				if (Input::IsKeyPressed(PRISM_KEY_W))
 				{
-					transformComponent[3][1] += cameraSpeed * deltaTime;
+					transformComponentTranslation.y += cameraSpeed * deltaTime;
 				}
 				if (Input::IsKeyPressed(PRISM_KEY_S))
 				{
-					transformComponent[3][1] -= cameraSpeed * deltaTime;
+					transformComponentTranslation.y -= cameraSpeed * deltaTime;
 				}
 			}
 		};
@@ -155,6 +155,8 @@ namespace Prism
 		ImGui::Text("Clear Color:");
 		ImGui::ColorEdit4("Clear Color", glm::value_ptr(m_ClearColor));
 		ImGui::End();
+
+		RenderCommand::DrawGraphicsInformation();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0, 0 });
 		ImGui::Begin("Viewport");
