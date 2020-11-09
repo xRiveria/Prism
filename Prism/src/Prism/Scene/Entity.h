@@ -15,7 +15,9 @@ namespace Prism
 		T& AddComponent(Args&&... args)
 		{
 			PRISM_ENGINE_ASSERT(!HasComponent<T>(), "Entity already has component."); 
-			return m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...); //Don't upack Args here. Forward the arguments into Entt instead.
+			T& component = m_Scene->m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...); //Don't upack Args here. Forward the arguments into Entt instead.
+			m_Scene->OnComponentAdded<T>(*this, component);
+			return component;
 		}
 
 		template<typename T>
@@ -41,6 +43,7 @@ namespace Prism
 		operator bool() const { return m_EntityHandle != entt::null; } //To use if (m_EntityHandle);
 
 		operator uint32_t() const { return (uint32_t)m_EntityHandle; }
+		operator entt::entity() const { return m_EntityHandle; }
 
 		bool operator==(const Entity& other) const 
 		{ 

@@ -13,9 +13,14 @@ namespace Prism
 		~Scene();
 
 		Entity CreateEntity(const std::string& entityName = std::string());
+		void DestroyEntity(Entity entity);
 
 		void OnUpdate(Timestep deltaTime);
 		void OnViewportResize(uint32_t newWidth, uint32_t newHeight);
+
+	private:
+		template<typename T>
+		void OnComponentAdded(Entity entity, T& component);
 
 	private:
 		entt::registry m_Registry; //The registry is a container for all our component data and entity IDs. Think of it as a entity context that contains our entities. Thats why we have 1 per scene.		

@@ -3,6 +3,8 @@
 #include "imgui/imgui_internal.h"
 #include "Prism/Scene/Components.h"
 #include "glm/gtc/type_ptr.hpp"
+#include "Prism/Core/Input.h"
+#include "Prism/Core/KeyCodes.h"
 
 namespace Prism
 {
@@ -30,13 +32,45 @@ namespace Prism
 			m_HierarchySelectedEntity = {};
 		}
 
+		//Right click on blank space inside the Hierarchy window. We can add more things here eventually.
+		if (ImGui::BeginPopupContextWindow(0, 1, false)) //Last parameter makes it so we can't right click and open the popup whilst hovering over items.
+		{
+			if (ImGui::MenuItem("Create Empty Entity"))
+			{
+				m_HierarchyContext->CreateEntity("Empty Entity");
+			}
+			ImGui::EndPopup();
+		}
+
 		ImGui::End();
 
 		ImGui::Begin("Properties");
 		if (m_HierarchySelectedEntity)
 		{
 			DrawComponents(m_HierarchySelectedEntity);
+
+			if (ImGui::Button("Add Component"))
+			{
+				ImGui::OpenPopup("AddComponent"); //If we click on the button, it will open the popup with the passed in ID and we will render the popup below accordingly. 
+			}
+
+			if (ImGui::BeginPopup("AddComponent"))
+			{
+				if (ImGui::MenuItem("Camera"))
+				{
+					m_HierarchySelectedEntity.AddComponent<CameraComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+
+				if (ImGui::MenuItem("Sprite Renderer"))
+				{
+					m_HierarchySelectedEntity.AddComponent<SpriteRendererComponent>();
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
+			}
 		}
+
 		ImGui::End();
 	}
 
@@ -52,9 +86,34 @@ namespace Prism
 			m_HierarchySelectedEntity = entity;
 		}
 
+		bool entityDeleted = false; 
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (ImGui::MenuItem("Delete Entity"))
+			{
+				entityDeleted = true;
+			}
+			ImGui::EndPopup();
+		}
+
+		if (entity == m_HierarchySelectedEntity && Input::IsKeyPressed(PRISM_KEY_DELETE))
+		{
+			entityDeleted = true;
+		}
+
 		if (isExpanded) //If any child entities exist within the selected node, we continue recursively going down their trees.
 		{
 			ImGui::TreePop();
+		}
+
+		//Defer deletion until the end of the frame in the event that ImGui is still rendering child nodes of the entity we are trying to delete.
+		if (entityDeleted)
+		{
+			if (m_HierarchySelectedEntity == entity)
+			{
+				m_HierarchySelectedEntity = {};
+			}
+			m_HierarchyContext->DestroyEntity(entity);
 		}
 	} 
 
@@ -134,9 +193,13 @@ namespace Prism
 			}
 		}
 
+		const ImGuiTreeNodeFlags treeNodeFlags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_AllowItemOverlap;
+
 		if (entity.HasComponent<TransformComponent>())
 		{
-			if (ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Transform"))
+			bool open = ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), treeNodeFlags, "Transform");
+
+			if (open)
 			{
 				auto& transformComponent = entity.GetComponent<TransformComponent>();
 				DrawVector3Control("Translation", transformComponent.m_Translation);
@@ -153,18 +216,44 @@ namespace Prism
 
 		if (entity.HasComponent<SpriteRendererComponent>())
 		{
-			if (ImGui::TreeNodeEx((void*)typeid(SpriteRendererComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Sprite Renderer"))
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4, 4 });
+			bool open = ImGui::TreeNodeEx((void*)typeid(SpriteRendererComponent).hash_code(), treeNodeFlags, "Sprite Renderer");
+
+			ImGui::SameLine(ImGui::GetWindowWidth() - 25.0f);
+
+			if (ImGui::Button("+", ImVec2{ 20, 20 }))
+			{
+				ImGui::OpenPopup("ComponentSettings");
+			}
+			ImGui::PopStyleVar();
+
+			bool removeComponent = false;
+			if (ImGui::BeginPopup("ComponentSettings"))
+			{
+				if (ImGui::MenuItem("Remove Component"))
+				{
+					removeComponent = true;
+				}
+				ImGui::EndPopup();
+			}
+
+			if (open)
 			{
 				auto& entitySpriteComponent = entity.GetComponent<SpriteRendererComponent>();
 				ImGui::ColorEdit4("Color", glm::value_ptr(entitySpriteComponent.m_Color));
 				
 				ImGui::TreePop();
 			}
+
+			if (removeComponent)
+			{
+				entity.RemoveComponent<SpriteRendererComponent>();
+			}
 		}
 
 		if (entity.HasComponent<CameraComponent>())
 		{
-			if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera"))
+			if (ImGui::TreeNodeEx((void*)typeid(CameraComponent).hash_code(), treeNodeFlags, "Camera"))
 			{
 				CameraComponent& cameraComponent = entity.GetComponent<CameraComponent>();
 				SceneCamera& sceneCamera = cameraComponent.m_Camera;

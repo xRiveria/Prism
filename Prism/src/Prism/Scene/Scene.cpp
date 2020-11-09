@@ -9,7 +9,6 @@ namespace Prism
 {
 	Scene::Scene()
 	{
-
 #if UsefulStuff
 		entt::entity entity = m_Registry.create(); //This is how we create an Entity. Remember that entities are just an unsigned integer. (Identifier)
 		auto& transform = m_Registry.emplace<TransformComponent>(entity, glm::mat4(1.0f)); //This registers components on the fly instead of needing to register them manually with a function.
@@ -63,6 +62,11 @@ namespace Prism
 		entityTag.m_Tag = entityName.empty() ? "Unnamed Entity" : entityName;
 
 		return entity;
+	}
+
+	void Scene::DestroyEntity(Entity entity)
+	{
+		m_Registry.destroy(entity);
 	}
 
 	void Scene::OnUpdate(Timestep deltaTime)
@@ -133,4 +137,39 @@ namespace Prism
 		}
 	}
 
+	template<typename T>
+	void Scene::OnComponentAdded(Entity entity, T& component)
+	{
+		static_assert(false); //Fail if a component is added that isn't being specialized below. 
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component)
+	{
+
+	}
+
+	template<>
+	void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+	{
+
+	}
+
+	template<>
+	void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
+	{
+
+	}
+
+	template<>
+	void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
+	{
+		component.m_Camera.SetViewportSize(m_ViewportWidth, m_ViewportHeight);
+	}
+
+	template<>
+	void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
+	{
+
+	}
 }
