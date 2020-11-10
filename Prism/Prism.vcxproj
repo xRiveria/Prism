@@ -191,6 +191,7 @@
     <ClInclude Include="src\Prism\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Prism\Scene\ScriptableEntity.h" />
     <ClInclude Include="src\PrismPrecompiledHeader.h" />
+    <ClInclude Include="src\Prism\Utilities\PlatformUtilities.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -610,6 +611,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtilities.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\Prism\Core\Application.cpp" />
     <ClCompile Include="src\Prism\Core\Layer.cpp" />

@@ -19,6 +19,12 @@ namespace Prism
 		virtual void OnImGuiRender() override;
 		void EditorImGuiRenderContent();
 		virtual void OnEvent(Event& event) override;
+		
+	private:
+		bool OnKeyPressed(KeyPressedEvent& event);
+		void NewScene();
+		void OpenScene();
+		void SaveSceneAs();
 
 	private:
 		//Temporary

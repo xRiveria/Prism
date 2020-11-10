@@ -3,6 +3,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "Prism/Scene/SceneSerializer.h"
+#include "Prism/Utilities/PlatformUtilities.h"
 
 //Sandbox is going to become our runtime application.
 //We create a game in PrismEditor, which will create a whole bunch of game data in which Sandbox will load that information in.
@@ -138,19 +139,32 @@ namespace Prism
 				// Disabling fullscreen would allow the window to be moved to the front of other windows,
 				// which we can't undo at the moment without finer window depth/z control.
 				
-				if (ImGui::MenuItem("Serialize"))
+				if (ImGui::MenuItem("New", "Ctrl+N"))
 				{
-					SceneSerializer serializer(m_ActiveScene);
-					serializer.SerializeToYAML("assets/scenes/Example.prism");
+					NewScene();
 				}
 
-				if (ImGui::MenuItem("Deserialize"))
+				ImGui::Separator();
+				
+				if (ImGui::MenuItem("Open...", "Ctrl+O"))
 				{
-					SceneSerializer serializer(m_ActiveScene);
-					serializer.DeserializeFromYAML("assets/scenes/Example.prism");
+					OpenScene();
 				}
 
-				if (ImGui::MenuItem("Exit")) { Application::GetApplication().CloseApplication(); }
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+				{
+					SaveSceneAs();
+				}
+
+				ImGui::Separator();
+
+				if (ImGui::MenuItem("Exit")) 
+				{ 
+					Application::GetApplication().CloseApplication();
+				}
+
 				ImGui::EndMenu();
 			}
 
@@ -268,6 +282,83 @@ namespace Prism
 	void EditorLayer::OnEvent(Event& event)
 	{
 		m_CameraController.OnEvent(event);
+
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<KeyPressedEvent>(PRISM_BIND_EVENT_FUNCTION(EditorLayer::OnKeyPressed));
+	}
+
+	bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
+	{
+		if (event.GetRepeatCount() > 0)
+		{
+			return false;
+		}
+
+		bool controlPressed = Input::IsKeyPressed(PRISM_KEY_LEFT_CONTROL) || Input::IsKeyPressed(PRISM_KEY_RIGHT_CONTROL);
+		bool shiftPressed = Input::IsKeyPressed(PRISM_KEY_LEFT_SHIFT) || Input::IsKeyPressed(PRISM_KEY_RIGHT_SHIFT);
+
+		switch (event.GetKeyCode())
+		{
+			case PRISM_KEY_N:
+			{
+				if (controlPressed)
+				{
+					NewScene();
+				}
+
+				break;
+			}
+
+			case PRISM_KEY_O:
+			{
+				if (controlPressed)
+				{
+					OpenScene();
+				}
+
+				break;
+			}
+
+			case PRISM_KEY_S:
+			{
+				if (controlPressed && shiftPressed)
+				{
+					SaveSceneAs();
+				}
+				break;
+			}
+		}
+	}
+
+	void EditorLayer::NewScene()
+	{
+		m_ActiveScene = CreateReference<Scene>();
+		m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+		m_SceneHierarchyPanel.SetHierachyContext(m_ActiveScene);
+	}
+
+	void EditorLayer::OpenScene()
+	{
+		std::string filePath = FileDialogs::OpenFile("Prism Scene (*.prism)\0*.prism\0"); //First half of the string is for display in the dialog box, the second half is the actual filter. 
+		if (!filePath.empty())
+		{
+			m_ActiveScene = CreateReference<Scene>();
+			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+			m_SceneHierarchyPanel.SetHierachyContext(m_ActiveScene);
+
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.DeserializeFromYAML(filePath);
+		}
+	}
+
+	void EditorLayer::SaveSceneAs()
+	{
+		std::string filePath = FileDialogs::SaveFile("Prism Scene (*.prism)\0*.prism\0");
+		if (!filePath.empty())
+		{
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.SerializeToYAML(filePath);
+		}
 	}
 }
 

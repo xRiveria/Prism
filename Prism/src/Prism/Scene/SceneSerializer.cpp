@@ -124,7 +124,7 @@ namespace Prism
 			outputFile << YAML::BeginMap; //Camera
 			outputFile << YAML::Key << "ProjectionType" << YAML::Value << (int)sceneCamera.GetProjectionType();
 			outputFile << YAML::Key << "PerspectiveFOV" << YAML::Value << sceneCamera.GetPerspectiveVerticalFieldOfView();
-			outputFile << YAML::Key << "PerspectiveNearClip" << YAML::Value << sceneCamera.GetOrthographicNearClip();
+			outputFile << YAML::Key << "PerspectiveNearClip" << YAML::Value << sceneCamera.GetPerspectiveNearClip();
 			outputFile << YAML::Key << "PerspectiveFarClip" << YAML::Value << sceneCamera.GetPerspectiveFarClip();
 			outputFile << YAML::Key << "OrthographicSize" << YAML::Value << sceneCamera.GetOrthographicSize();
 			outputFile << YAML::Key << "OrthographicNearClip" << YAML::Value << sceneCamera.GetOrthographicNearClip();

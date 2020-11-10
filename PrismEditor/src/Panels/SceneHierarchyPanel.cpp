@@ -16,6 +16,7 @@ namespace Prism
 	void SceneHierarchyPanel::SetHierachyContext(const Reference<Scene>& sceneContext)
 	{
 		m_HierarchyContext = sceneContext;
+		m_HierarchySelectedEntity = {};
 	}
 
 	void SceneHierarchyPanel::OnImGuiRender()

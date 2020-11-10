@@ -1426,6 +1426,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\Prism\Scene\SceneSerializer.h" />
+    <ClInclude Include="src\Prism\Utilities\PlatformUtilities.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1525,5 +1526,6 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\Prism\Scene\SceneSerializer.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtilities.cpp" />
   </ItemGroup>
 </Project>
