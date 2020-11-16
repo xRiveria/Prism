@@ -241,13 +241,28 @@ namespace Prism
 		{
 			if (ImGui::MenuItem("Camera"))
 			{
-				m_HierarchySelectedEntity.AddComponent<CameraComponent>();
+				if (!m_HierarchySelectedEntity.HasComponent<CameraComponent>())
+				{
+					m_HierarchySelectedEntity.AddComponent<CameraComponent>();
+				}
+				else
+				{
+					PRISM_ENGINE_WARN("Entity already has a Camera Component!");
+				}
+
 				ImGui::CloseCurrentPopup();
 			}
 
 			if (ImGui::MenuItem("Sprite Renderer"))
 			{
-				m_HierarchySelectedEntity.AddComponent<SpriteRendererComponent>();
+				if (!m_HierarchySelectedEntity.HasComponent<SpriteRendererComponent>())
+				{
+					m_HierarchySelectedEntity.AddComponent<SpriteRendererComponent>();
+				}
+				else
+				{
+					PRISM_ENGINE_WARN("Entity already has a Sprite Renderer Component!");
+				}
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
