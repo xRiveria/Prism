@@ -16,6 +16,7 @@ namespace YAML
 			node.push_back(rhs.x);
 			node.push_back(rhs.y);
 			node.push_back(rhs.z);
+			node.SetStyle(EmitterStyle::Flow);
 			return node;
 		}
 
@@ -43,6 +44,7 @@ namespace YAML
 			node.push_back(rhs.y);
 			node.push_back(rhs.z);
 			node.push_back(rhs.w);
+			node.SetStyle(EmitterStyle::Flow);
 			return node;
 		}
 
@@ -181,11 +183,7 @@ namespace Prism
 
 	bool SceneSerializer::DeserializeFromYAML(const std::string& filePath)
 	{
-		std::ifstream fileStream(filePath);
-		std::stringstream stringStream;
-		stringStream << fileStream.rdbuf(); //Read Buffer from fileStream. StringStream is essentially all the text from our scene save.
-
-		YAML::Node data = YAML::Load(stringStream.str()); //Passes in the strings from our file into YAML::Load.
+		YAML::Node data = YAML::LoadFile(filePath); 
 		if (!data["Scene"]) { return false; } //If the scene node isn't present, something's wrong. Nodes are essentially the Keys we created for each information. We have 2 root nodes: Scene & Entities.
 
 		std::string sceneName = data["Scene"].as<std::string>(); //We then get the scene name.
