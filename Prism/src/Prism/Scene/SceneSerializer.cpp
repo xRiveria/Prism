@@ -154,9 +154,10 @@ namespace Prism
 	void SceneSerializer::SerializeToYAML(const std::string& filePath)
 	{
 		YAML::Emitter outputFile;
-		outputFile << YAML::BeginMap;
-		outputFile << YAML::Key << "Scene" << YAML::Value << "Untitled";
-		outputFile << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+		outputFile << YAML::BeginMap; 
+		outputFile << YAML::Key << "Scene" << YAML::Value << "Untitled"; //Scene Information
+
+		outputFile << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq; //Entities
 		m_Scene->m_Registry.each([&](auto entityID)
 		{
 			Entity entity = { entityID, m_Scene.get() };
@@ -164,7 +165,8 @@ namespace Prism
 
 			SerializeEntity(outputFile, entity);
 		});
-		outputFile << YAML::EndSeq;
+		outputFile << YAML::EndSeq; //Entities
+
 		outputFile << YAML::EndMap;
 
 		std::ofstream fout(filePath);

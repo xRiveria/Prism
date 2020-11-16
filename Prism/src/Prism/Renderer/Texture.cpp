@@ -24,7 +24,7 @@ namespace Prism
 		return nullptr;
 	}
 
-	Reference<Texture2D> Texture2D::CreateTexture(const std::string& filePath)
+	std::shared_ptr<Texture2D> Texture2D::CreateTexture(const std::string& filePath)
 	{
 		switch (Renderer::GetCurrentRenderAPI())
 		{

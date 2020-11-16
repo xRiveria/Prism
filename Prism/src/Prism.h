@@ -1,24 +1,28 @@
 #pragma once
 
-//For use by Prism applications.
+//All includes here are for use by Prism applications.
+
+//----- Core -----
+
 #include "Prism/Core/Application.h"
 #include "Prism/Core/Layer.h"
 #include "Prism/Core/Log.h"
 #include "Prism/Core/Timestep.h"
-#include "Prism/Renderer/OrthographicCameraController.h"
+#include "Prism/Core/Input.h"
+#include "Prism/Core/MouseButtonCodes.h"
+#include "Prism/Core/KeyCodes.h"
 
-//Scenes & Entities
+//----- Scenes & Entities -----
 
 #include "Prism/Scene/Scene.h"
 #include "Prism/Scene/Components.h"
 #include "Prism/Scene/Entity.h"
 #include "Prism/Scene/ScriptableEntity.h"
 
+//----- Editor -----
+
 #include "Prism/ImGui/ImGuiLayer.h"
 
-#include "Prism/Core/Input.h"
-#include "Prism/Core/MouseButtonCodes.h"
-#include "Prism/Core/KeyCodes.h"
 
 //----- Renderer -----
 
@@ -34,6 +38,7 @@
 #include "Prism/Renderer/Framebuffer.h"
 
 #include "Prism/Renderer/OrthographicCamera.h"
+#include "Prism/Renderer/OrthographicCameraController.h"
 
 
 

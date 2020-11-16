@@ -13,7 +13,7 @@
 namespace Prism
 {
 	//To Do: ImGui feature that essentially when button is clicked on, profile the next 10 seconds or until stop is pressed, and outputs to a .json file.
-	EditorLayer::EditorLayer() : Layer("Editor Layer"), m_CameraController(1280.0f / 720.0f), m_SquareColor({ 0.2f, 0.3f, 0.8f, 1.0f })
+	EditorLayer::EditorLayer() : Layer("Editor Layer"), m_CameraController(1280.0f / 720.0f)
 	{
 
 	}
@@ -121,7 +121,7 @@ namespace Prism
 		Renderer2D::ResetBatchingStatistics();
 
 		m_Framebuffer->BindFramebuffer();
-		RenderCommand::SetClearColor(m_ClearColor);
+		RenderCommand::SetClearColor(m_SceneClearColor);
 		RenderCommand::Clear();
 
 		//Update Scene
@@ -188,8 +188,7 @@ namespace Prism
 		ImGui::Spacing();
 
 		ImGui::Text("Clear Color:");
-		ImGui::ColorEdit4("Clear Color", glm::value_ptr(m_ClearColor));
-
+		ImGui::ColorEdit4("Clear Color", glm::value_ptr(m_SceneClearColor));
 		ImGui::End();
 
 		RenderCommand::DrawGraphicsInformation();
@@ -301,30 +300,19 @@ namespace Prism
 		{
 			case PRISM_KEY_N:
 			{
-				if (controlPressed)
-				{
-					NewScene();
-				}
-
+				if (controlPressed) { NewScene(); }
 				break;
 			}
 
 			case PRISM_KEY_O:
 			{
-				if (controlPressed)
-				{
-					OpenScene();
-				}
-
+				if (controlPressed) { OpenScene(); }
 				break;
 			}
 
 			case PRISM_KEY_S:
 			{
-				if (controlPressed && shiftPressed)
-				{
-					SaveSceneAs();
-				}
+				if (controlPressed && shiftPressed) { SaveSceneAs(); }
 				break;
 			}
 		}
@@ -339,25 +327,25 @@ namespace Prism
 
 	void EditorLayer::OpenScene()
 	{
-		std::string filePath = FileDialogs::OpenFile("Prism Scene (*.prism)\0*.prism\0"); //First half of the string is for display in the dialog box, the second half is the actual filter. 
-		if (!filePath.empty())
+		std::optional<std::string> filePath = FileDialogs::OpenFile("Prism Scene (*.prism)\0*.prism\0"); //First half of the string is for display in the dialog box, the second half is the actual filter. 
+		if (filePath)
 		{
 			m_ActiveScene = CreateReference<Scene>();
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_SceneHierarchyPanel.SetHierachyContext(m_ActiveScene);
 
 			SceneSerializer serializer(m_ActiveScene);
-			serializer.DeserializeFromYAML(filePath);
+			serializer.DeserializeFromYAML(*filePath);
 		}
 	}
 
 	void EditorLayer::SaveSceneAs()
 	{
-		std::string filePath = FileDialogs::SaveFile("Prism Scene (*.prism)\0*.prism\0");
-		if (!filePath.empty())
+		std::optional<std::string> filePath = FileDialogs::SaveFile("Prism Scene (*.prism)\0*.prism\0");
+		if (filePath)
 		{
 			SceneSerializer serializer(m_ActiveScene);
-			serializer.SerializeToYAML(filePath);
+			serializer.SerializeToYAML(*filePath);
 		}
 	}
 }

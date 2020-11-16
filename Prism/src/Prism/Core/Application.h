@@ -23,9 +23,9 @@ namespace Prism
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* layer);
 
-		inline Window& GetWindow() const { return *m_Window; }
+		Window& GetWindow() const { return *m_Window; }
 		void CloseApplication();
-		inline static Application& GetApplication() { return *s_Instance; }
+		static Application& GetApplication() { return *s_Instance; }
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
 	private:

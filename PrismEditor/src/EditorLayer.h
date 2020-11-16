@@ -27,10 +27,7 @@ namespace Prism
 		void SaveSceneAs();
 
 	private:
-		//Temporary
-		glm::vec4 m_SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
-		glm::vec4 m_ClearColor = { 0.1f, 0.1f, 0.1f, 1.0f };
-
+		glm::vec4 m_SceneClearColor = { 0, 0, 0, 0.1 };
 		Reference<Framebuffer> m_Framebuffer;
 		Reference<Texture2D> m_CheckboardTexture;
 		OrthographicCameraController m_CameraController;

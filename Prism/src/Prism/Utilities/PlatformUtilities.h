@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <optional>
 
 namespace Prism
 {
@@ -7,7 +8,7 @@ namespace Prism
 	{
 	public:
 		//These return empty strings if cancelled.
-		static std::string OpenFile(const char* filter); //Filter is essentially the extension filtering we see when we try to open a file.
-		static std::string SaveFile(const char* filter); 
+		static std::optional<std::string> OpenFile(const char* filter); //Filter is essentially the extension filtering we see when we try to open a file.
+		static std::optional<std::string> SaveFile(const char* filter); 
 	};
 }

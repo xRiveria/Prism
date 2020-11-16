@@ -258,7 +258,7 @@ namespace Prism
 		}
 	};
 
-	Application*CreateApplication()
+	Application* CreateApplication()
 	{
 		return new PrismEditor();
 	}

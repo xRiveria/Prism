@@ -1,6 +1,5 @@
 #include "PrismPrecompiledHeader.h"
 #include "Scene.h"
-#include "glm/glm.hpp"
 #include "Components.h"
 #include "Prism/Renderer/Renderer2D.h"
 #include "Entity.h"
