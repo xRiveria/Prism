@@ -21,11 +21,11 @@ namespace Prism
 	enum EventCategory //Serves as a way to quickly filter incoming events without looping through all events individually.
 	{
 		None = 0,
-		EventCategoryApplication = BIT(0),
-		EventCategoryInput		 = BIT(1),
-		EventCategoryKeyboard	 = BIT(2),
-		EventCategoryMouse		 = BIT(3),
-		EventCategoryMouseButton = BIT(4)
+		EventCategoryApplication = 1 << 0, // 0000 0000
+		EventCategoryInput		 = 1 << 1, // 0000 0010
+		EventCategoryKeyboard	 = 1 << 2, // 0000 0100
+		EventCategoryMouse		 = 1 << 3, // 0000 1000
+		EventCategoryMouseButton = 1 << 4  // 0001 0000
 	};
 
 #define EVENT_CLASS_TYPE(type) static EventType GetStaticType() { return EventType::type; }\
