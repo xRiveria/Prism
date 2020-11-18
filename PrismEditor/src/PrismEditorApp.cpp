@@ -248,8 +248,9 @@ namespace Prism
 		PrismEditor() : Application("Prism Editor")
 		{
 			PRISM_CLIENT_WARN("Created Prism Editor");
+			GetApplicationVersion().SetApplicationVersion(1, 2);
 			//PushLayer(new ExampleLayer());
-			PushLayer(new EditorLayer());
+			PushLayer(new EditorLayer(GetApplicationVersion()));
 		}
 
 		~PrismEditor()

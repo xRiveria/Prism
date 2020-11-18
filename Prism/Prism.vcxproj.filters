@@ -1427,6 +1427,7 @@
     </ClInclude>
     <ClInclude Include="src\Prism\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Prism\Utilities\PlatformUtilities.h" />
+    <ClInclude Include="src\Prism\Utilities\Version.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1527,5 +1528,6 @@
     </ClCompile>
     <ClCompile Include="src\Prism\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtilities.cpp" />
+    <ClCompile Include="src\Prism\Utilities\Version.cpp" />
   </ItemGroup>
 </Project>

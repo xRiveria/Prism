@@ -13,7 +13,7 @@
 namespace Prism
 {
 	//To Do: ImGui feature that essentially when button is clicked on, profile the next 10 seconds or until stop is pressed, and outputs to a .json file.
-	EditorLayer::EditorLayer() : Layer("Editor Layer"), m_CameraController(1280.0f / 720.0f)
+	EditorLayer::EditorLayer(ApplicationVersion& applicationVersion) : m_ApplicationVersion(&applicationVersion), Layer("Editor Layer"), m_CameraController(1280.0f / 720.0f)
 	{
 
 	}
@@ -177,6 +177,10 @@ namespace Prism
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
+
+		ImGui::Begin("Prism Version");
+		ImGui::Text(m_ApplicationVersion->RetrieveApplicationVersion().c_str());
+		ImGui::End();
 
 		ImGui::Begin("Stats");
 		Renderer2D::Statistics batchingStatistics = Renderer2D::GetBatchingStatistics();

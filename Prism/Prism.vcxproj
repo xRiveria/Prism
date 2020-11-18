@@ -192,6 +192,7 @@
     <ClInclude Include="src\Prism\Scene\ScriptableEntity.h" />
     <ClInclude Include="src\PrismPrecompiledHeader.h" />
     <ClInclude Include="src\Prism\Utilities\PlatformUtilities.h" />
+    <ClInclude Include="src\Prism\Utilities\Version.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -638,6 +639,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Prism\Scene\SceneSerializer.cpp" />
+    <ClCompile Include="src\Prism\Utilities\Version.cpp" />
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@
 #include "Prism/Core/LayerStack.h"
 #include "Prism/ImGui/ImGuiLayer.h"
 #include "Prism/Core/Timestep.h"
+#include "Prism/Utilities/Version.h"
 
 //This class is meant to be inherited by all Prism applications.
 //In this case, our Sandbox application is the first to do this.
@@ -27,6 +28,7 @@ namespace Prism
 		void CloseApplication();
 		static Application& GetApplication() { return *s_Instance; }
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
+		ApplicationVersion& GetApplicationVersion() { return m_ApplicationVersion; }
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& closeEvent);
@@ -39,6 +41,7 @@ namespace Prism
 		bool m_Minimized = false;
 		LayerStack m_LayerStack;
 		Timestep m_Timestep;
+		ApplicationVersion m_ApplicationVersion = { 0, 0 };
 		float m_LastFrameTime = 0.0f;
 
 	private:

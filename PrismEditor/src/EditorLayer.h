@@ -9,7 +9,7 @@ namespace Prism
 	class EditorLayer : public Layer
 	{
 	public:
-		EditorLayer();
+		EditorLayer(ApplicationVersion& applicationVersion);
 		virtual ~EditorLayer() = default;
 
 		virtual void OnAttach() override;
@@ -41,6 +41,8 @@ namespace Prism
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
 		glm::vec2 m_ViewportSize = { 0, 0 };
+
+		ApplicationVersion* m_ApplicationVersion;
 
 		//Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
