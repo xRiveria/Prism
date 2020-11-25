@@ -3,6 +3,9 @@
 #include "Panels/SceneHierarchyPanel.h"
 #include "glm/glm.hpp"
 #include <vector>
+#include "imgui/imgui.h"
+#include "Widgets/ConsoleWidget.h"
+
 
 namespace Prism
 {
@@ -19,6 +22,7 @@ namespace Prism
 		virtual void OnImGuiRender() override;
 		void EditorImGuiRenderContent();
 		virtual void OnEvent(Event& event) override;
+
 		
 	private:
 		bool OnKeyPressed(KeyPressedEvent& event);
@@ -46,5 +50,6 @@ namespace Prism
 
 		//Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
+		ConsoleWidget m_ConsoleWidget;
 	};
 }

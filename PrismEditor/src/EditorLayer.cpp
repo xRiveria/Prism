@@ -1,5 +1,4 @@
 #include "EditorLayer.h"
-#include "imgui/imgui.h"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "Prism/Scene/SceneSerializer.h"
@@ -177,6 +176,7 @@ namespace Prism
 		}
 
 		m_SceneHierarchyPanel.OnImGuiRender();
+		m_ConsoleWidget.OnConsoleWidgetUpdate();
 
 		ImGui::Begin("Prism Version");
 		ImGui::Text(m_ApplicationVersion->RetrieveApplicationVersion().c_str());

@@ -11,7 +11,7 @@ namespace Prism
 
 		}
 
-		const std::string RetrieveApplicationVersion() const;
+		inline const std::string RetrieveApplicationVersion() const { return std::string("Prism Version: ") + std::to_string(m_majorVersion) + "." + std::to_string(m_minorVersion); }
 		void SetApplicationVersion(const int majorVersion, const int minorVersion);
 		
 	private:
