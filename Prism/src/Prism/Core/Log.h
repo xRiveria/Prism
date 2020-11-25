@@ -21,7 +21,7 @@ namespace Prism
 
 
 //Core Logging Macros
-#define PRISM_ENGINE_ERROR(...)			::Prism::Log::GetCoreLogger()->error(__VA_ARGS__)
+#define PRISM_ENGINE_ERROR(...)			::Prism::Log::GetCoreLogger()->error(__VA_ARGS__) 
 #define PRISM_ENGINE_INFO(...)			::Prism::Log::GetCoreLogger()->info(__VA_ARGS__)
 #define PRISM_ENGINE_WARN(...)			::Prism::Log::GetCoreLogger()->warn(__VA_ARGS__)
 #define PRISM_ENGINE_TRACE(...)			::Prism::Log::GetCoreLogger()->trace(__VA_ARGS__)
