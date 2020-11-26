@@ -1428,6 +1428,9 @@
     <ClInclude Include="src\Prism\Scene\SceneSerializer.h" />
     <ClInclude Include="src\Prism\Utilities\PlatformUtilities.h" />
     <ClInclude Include="src\Prism\Utilities\Version.h" />
+    <ClInclude Include="src\Prism\Core\ILogInterface.h">
+      <Filter>src\Prism\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">

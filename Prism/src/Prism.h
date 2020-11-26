@@ -23,6 +23,7 @@
 //----- Editor -----
 
 #include "Prism/ImGui/ImGuiLayer.h"
+#include "Prism/Core/ILogInterface.h"
 
 
 //----- Renderer -----

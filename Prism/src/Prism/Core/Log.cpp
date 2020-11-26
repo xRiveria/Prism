@@ -6,11 +6,11 @@ namespace Prism
 {
 	std::shared_ptr<spdlog::logger> Log::s_CoreLogger;
 	std::shared_ptr<spdlog::logger> Log::s_ClientLogger;
+	std::weak_ptr<ILogInterface> Log::s_EditorLogger;
 	
 	void Log::Initialize()
 	{
 		spdlog::set_pattern("%^[%T] %n: %v%$");
-
 		s_CoreLogger = spdlog::stdout_color_mt("Prism Engine");
 		s_CoreLogger->set_level(spdlog::level::trace);
 

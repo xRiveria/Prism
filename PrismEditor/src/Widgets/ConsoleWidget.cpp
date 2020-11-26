@@ -12,6 +12,15 @@ namespace Prism
 		m_LogInfoIcon = Texture2D::CreateTexture("assets/icons/console_info.png");
 		m_LogWarningIcon = Texture2D::CreateTexture("assets/icons/console_warning.png");
 		m_LogErrorIcon = Texture2D::CreateTexture("assets/icons/console_error.png");
+		
+		m_EditorLogger = CreateReference<EditorLogger>();
+		m_EditorLogger->SetCallback([this](const LogPackage& package)
+		{
+			AddLogPackage(package);
+		});
+
+		Log::SetEditorLogger(m_EditorLogger);
+		m_EditorLogger->Log("Initialized Editor Logger", 0);
 	}
 
 	bool ConsoleWidget::CreateImGuiImageButton(const Icon_Type& icon, const float& size)
@@ -64,8 +73,8 @@ namespace Prism
 
 		//Log Type Visibility Buttons
 		ButtonLogTypeVisibilityToggle(Icon_Console_Info, 0);
-		ButtonLogTypeVisibilityToggle(Icon_Console_Warning, 0);
-		ButtonLogTypeVisibilityToggle(Icon_Console_Error, 0);
+		ButtonLogTypeVisibilityToggle(Icon_Console_Warning, 1);
+		ButtonLogTypeVisibilityToggle(Icon_Console_Error, 2);
 
 		//Text Filter
 		const float label_width = 150.0f;
@@ -105,7 +114,6 @@ namespace Prism
 							ImGui::EndGroup();
 						}
 					}
-
 					index++;
 				}
 			}
@@ -121,6 +129,8 @@ namespace Prism
 	void ConsoleWidget::ClearAllLogs()
 	{
 		AddLogPackage(LogPackage("Hello", 1));
+		AddLogPackage(LogPackage("Hello", 0));
+		AddLogPackage(LogPackage("Hello", 2));
 	}
 
 	void ConsoleWidget::AddLogPackage(const LogPackage& package)

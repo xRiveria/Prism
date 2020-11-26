@@ -7,12 +7,13 @@
 #include <imgui/imgui.h>
 #include <stb_image/stb_image.h>
 #include "Prism.h"
+#include <functional>
 
 namespace Prism
 {
 	struct LogPackage
 	{
-		LogPackage(const std::string& text, const int errorLevel) : m_LogText(text), m_ErrorLevel(errorLevel) {}
+		LogPackage(const std::string& text, const int& errorLevel) : m_LogText(text), m_ErrorLevel(errorLevel) {}
 
 		std::string m_LogText;
 		unsigned int m_ErrorLevel = 0;
@@ -25,6 +26,26 @@ namespace Prism
 		Icon_Console_Warning,
 		Icon_Console_Error
 	};
+	
+	class EditorLogger : public ILogInterface
+	{
+	public:
+		typedef std::function<void(LogPackage)> LoggingFunction;
+
+		void SetCallback(LoggingFunction&& logFunction)
+		{
+			m_LoggingFunction = std::forward<LoggingFunction>(logFunction);
+		}
+
+		void Log(const std::string& log, const int& type) override
+		{
+			LogPackage package(log, type);
+			m_LoggingFunction(package);
+		}
+
+	private:
+		LoggingFunction m_LoggingFunction;
+	};
 
 	class ConsoleWidget
 	{
@@ -36,6 +57,7 @@ namespace Prism
 		void ClearAllLogs();
 
 	private:
+		Reference<EditorLogger> m_EditorLogger;
 		bool m_ScrollToBottom = false;
 		uint32_t m_MaximumLogCount = 1000;
 

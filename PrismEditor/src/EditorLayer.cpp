@@ -140,6 +140,7 @@ namespace Prism
 				
 				if (ImGui::MenuItem("New", "Ctrl+N"))
 				{
+					PRISM_ENGINE_INFO("Creating new Scene...");
 					NewScene();
 				}
 
