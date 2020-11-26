@@ -20,7 +20,9 @@ namespace Prism
 		});
 
 		Log::SetEditorLogger(m_EditorLogger);
-		m_EditorLogger->Log("Initialized Editor Logger", 0);
+		PRISM_EDITOR_INFO("Initialized Editor Logger");
+		PRISM_EDITOR_WARN("Test Warning");
+		PRISM_EDITOR_ERROR("Test Error");
 	}
 
 	bool ConsoleWidget::CreateImGuiImageButton(const Icon_Type& icon, const float& size)
@@ -128,9 +130,7 @@ namespace Prism
 
 	void ConsoleWidget::ClearAllLogs()
 	{
-		AddLogPackage(LogPackage("Hello", 1));
-		AddLogPackage(LogPackage("Hello", 0));
-		AddLogPackage(LogPackage("Hello", 2));
+
 	}
 
 	void ConsoleWidget::AddLogPackage(const LogPackage& package)
