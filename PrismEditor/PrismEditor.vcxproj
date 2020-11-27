@@ -138,12 +138,14 @@
     <ClInclude Include="src\EditorLayer.h" />
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
     <ClInclude Include="src\Widgets\ConsoleWidget.h" />
+    <ClInclude Include="src\Widgets\FileDialog.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EditorLayer.cpp" />
     <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp" />
     <ClCompile Include="src\PrismEditorApp.cpp" />
     <ClCompile Include="src\Widgets\ConsoleWidget.cpp" />
+    <ClCompile Include="src\Widgets\FileDialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Prism\Prism.vcxproj">
