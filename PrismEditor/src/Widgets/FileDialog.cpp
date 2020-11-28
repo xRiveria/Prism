@@ -15,7 +15,7 @@ namespace Prism
 		m_DialogFilter = dialogFilter;
 		m_Title = OPERATION_NAME;
 		m_IsWindow = standaloneWindow;
-		m_ItemSize = glm::vec2(100.0f, 100.0f);
+		m_ItemSize = ImVec2(100.0f, 100.0f);
 		m_IsDirty = true;
 		m_SelectionMade = false;
 		m_CallbackOnItemClicked = nullptr;
@@ -137,17 +137,234 @@ namespace Prism
 		const float fontHeight = context.FontSize;
 		const float labelHeight = fontHeight;
 		const float textOffset = 3.0f;
-		const float penXMinimum = 0.0f;
-		const float penX = 0.0f;
+		float penXMinimum = 0.0f;
+		float penX = 0.0f;
 		bool newLine = true;
 		m_DisplayedItemCount = 0;
 
 		ImRect rectButton;
 		ImRect rectLabel;
 
+		//Remove Border
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
+
+		//Make background slightly darker.
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(
+			static_cast<int>(m_ContentBackground.x),
+			static_cast<int>(m_ContentBackground.y),
+			static_cast<int>(m_ContentBackground.z),
+			static_cast<int>(m_ContentBackground.w)));
+
+		if (ImGui::BeginChild("##ContentRegion", ImVec2(contentWidth, contentHeight), true))
+		{
+			m_IsHoveringWindow = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem) ? true : m_IsHoveringWindow;
+
+			//Set Starting Position
+			{
+				float offset = ImGui::GetStyle().ItemSpacing.x;
+				penXMinimum = ImGui::GetCursorPosX() + offset;
+				ImGui::SetCursorPosX(penXMinimum);
+			}
+
+			//Go through all the items.
+			for (int i = 0; i < m_Items.size(); i++)
+			{
+				//Get the item to be displayed.
+				FileDialogItem& item = m_Items[i];
+
+				//Apply search filter.
+				if (!m_SearchFilter.PassFilter(item.GetLabel().c_str()))
+				{
+					continue;
+				}
+
+				m_DisplayedItemCount++;
+
+				//Start new line.
+				if (newLine)
+				{
+					ImGui::BeginGroup();
+					newLine = false;
+				}
+
+				ImGui::BeginGroup();
+				{
+					//Compute rectanges for elements that make up an item.
+					{
+						rectButton = ImRect(
+							ImGui::GetCursorScreenPos().x,
+							ImGui::GetCursorScreenPos().y,
+							ImGui::GetCursorScreenPos().x + m_ItemSize.x,
+							ImGui::GetCursorScreenPos().y + m_ItemSize.y
+						);
+
+						rectLabel = ImRect(
+							rectButton.Min.x,
+							rectButton.Max.y - labelHeight - style.FramePadding.y,
+							rectButton.Max.x,
+							rectButton.Max.y
+						);
+					}
+
+					//Drop shadow effect.
+					if (m_DropShadow)
+					{
+						static const float shadowThickness = 2.0f;
+						ImVec4 color = ImGui::GetStyle().Colors[ImGuiCol_BorderShadow];
+						ImGui::GetWindowDrawList()->AddRectFilled(rectButton.Min, ImVec2(rectLabel.Max.x + shadowThickness, rectLabel.Max.y + shadowThickness), IM_COL32(color.x * 255, color.y * 255, color.z * 255, color.w * 255));
+					}
+
+					//Thumbnail
+					{
+						ImGui::PushID(i);
+						ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
+						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 1.0f, 0.25f));
+
+						if (ImGui::Button("##Dummy", m_ItemSize))
+						{
+							//Determine type of click.
+							item.Clicked();
+							const bool IsSingleClick = item.GetTimeSinceLastClickMilliseconds() > 500;
+
+							if (IsSingleClick) //Do not navigate, just display information.
+							{
+								//Updated Input Box
+								m_InputBox = item.GetLabel();
+								//Callback
+								if (m_CallbackOnItemClicked)
+								{
+									m_CallbackOnItemClicked(item.GetPath());
+								}
+							}
+							else //Is Double Click
+							{
+								m_IsDirty = m_Navigation.Navigate(item.GetPath());
+								m_SelectionMade = !item.IsDirectory();
+
+								//When browsing files, open them on double click.
+								if (m_DialogType == FileDialogType_Browser)
+								{
+									if (!item.IsDirectory())
+									{
+										OpenDirectoryWindow(item.GetPath());
+									}
+								}
+
+								//Callback
+								if (m_CallbackOnItemDoubleClicked)
+								{
+									m_CallbackOnItemDoubleClicked(m_Navigation.m_CurrentPath);
+								}
+							}
+						}
+
+						//Item Functionality
+						{
+							//Manually detect some useful states?
+							if (ImGui::IsItemHovered(ImGuiHoveredFlags_RectOnly))
+							{
+								m_IsHoveringItem = true;
+								m_HoveredItemPath = item.GetPath();
+							}
+
+							ItemClick(&item);
+							ItemContextMenu(&item);
+							ItemDrag(&item);
+						}
+
+						ImGui::SetCursorScreenPos(ImVec2(rectButton.Min.x + style.FramePadding.x, rectButton.Min.y + style.FramePadding.y));
+						ImGui::Image((void*)item.GetTexture()->GetTextureID(), ImVec2(rectButton.Max.x - rectButton.Min.x - style.FramePadding.x * 2.0f,
+							rectButton.Max.y - rectButton.Min.y - style.FramePadding.y - labelHeight - 5.0f));
+						ImGui::PopStyleColor(2);
+						ImGui::PopID();
+					}
+
+					//Label
+					{
+						const char* labelText = item.GetLabel().c_str();
+						const ImVec2 labelSize = ImGui::CalcTextSize(labelText, nullptr, true);
+
+						//Draw Text Background
+						ImGui::GetWindowDrawList()->AddRectFilled(rectLabel.Min, rectLabel.Max, IM_COL32(51, 51, 51, 190));
+
+						//Draw Text
+						ImGui::SetCursorScreenPos(ImVec2(rectLabel.Min.x + textOffset, rectLabel.Min.y + textOffset));
+						if (labelSize.x <= m_ItemSize.x && labelSize.y <= m_ItemSize.y)
+						{
+							ImGui::TextUnformatted(labelText);
+						}
+						else
+						{
+							ImGui::RenderTextClipped(rectLabel.Min, rectLabel.Max, labelText, nullptr, &labelSize, ImVec2(0, 0), &rectLabel);
+						}
+					}
+
+					ImGui::EndGroup();
+				}
+
+				//Decide whether we shouls switch to the next column or switch rows.
+				penX += m_ItemSize.x + ImGui::GetStyle().ItemSpacing.x;
+				if (penX >= contentWidth - m_ItemSize.x)
+				{
+					ImGui::EndGroup();
+					penX = penXMinimum;
+					ImGui::SetCursorPosX(penX);
+					newLine = true;
+				}
+				else
+				{
+					ImGui::SameLine();
+				}
+			}
+
+			if (!newLine)
+			{
+				ImGui::EndGroup();
+			}
+		}
+
+		ImGui::EndChild();
+		ImGui::PopStyleColor();
+		ImGui::PopStyleVar();
 	}
 
 	void FileDialog::ShowBottom(bool* isVisible)
+	{
+		if (m_DialogType == FileDialogType_Browser)
+		{
+			//Move to the bottom of the window.
+			m_BottomOffset = 20.0f;
+			ImGui::SetCursorPosY(ImGui::GetWindowSize().y - m_BottomOffset);
+
+			const char* text = (m_DisplayedItemCount == 1) ? "%d item" : "%d items";
+			ImGui::Text(text, m_DisplayedItemCount);
+		}
+		else
+		{
+			//Move to the bottom of the window.
+			m_BottomOffset = 35.0f;
+			ImGui::SetCursorPosY(ImGui::GetWindowSize().y - m_BottomOffset);
+		}
+	}
+
+	void FileDialog::ItemDrag(FileDialogItem* item) const
+	{
+	}
+
+	void FileDialog::ItemClick(FileDialogItem* item) const
+	{
+	}
+
+	void FileDialog::ItemContextMenu(FileDialogItem* item) const
+	{
+	}
+
+	bool FileDialog::DialogUpdateFromDirectory(const std::string& path)
+	{
+		return false;
+	}
+
+	void FileDialog::EmptyAreaContextMenu()
 	{
 	}
 

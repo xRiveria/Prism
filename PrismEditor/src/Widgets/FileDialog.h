@@ -8,6 +8,7 @@
 #include <imgui/imgui_internal.h>
 #include <functional>
 #include <variant>
+#include <shellapi.h>
 
 namespace Prism
 {
@@ -78,6 +79,22 @@ namespace Prism
 	inline static std::string GetFileNameFromFilePath(const std::string& path)
 	{
 		return std::filesystem::path(path).filename().generic_string();
+	}
+
+	inline static void OpenDirectoryWindow(const std::string& directory)
+	{
+		ShellExecute(nullptr, nullptr, StringToWstring(directory).c_str(), nullptr, nullptr, SW_SHOW);
+	}
+
+	inline static std::wstring StringToWstring(const std::string& str)
+	{
+		const auto slength = static_cast<int>(str.length()) + 1;
+		const auto len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), slength, nullptr, 0);
+		const auto buf = new wchar_t[len];
+		MultiByteToWideChar(CP_ACP, 0, str.c_str(), slength, buf, len);
+		std::wstring result(buf);
+		delete[] buf;
+		return result;
 	}
 
 	static uint32_t g_GlobalID = 0;
@@ -222,7 +239,7 @@ namespace Prism
 		const std::string& GetPath() const { return m_Path; }
 		const std::string& GetLabel() const { return m_Label; }
 		const unsigned int& GetID() const { return m_ID; }
-		//const Reference<Texture2D> GetTexture() const { return ;
+		const Reference<Texture2D> GetTexture() const { return nullptr; }
 		const bool& IsDirectory() const { return m_IsDirectory; }
 		const float& GetTimeSinceLastClickMilliseconds() const { return static_cast<float>(m_TimeSinceLastClick.count()); }
 
@@ -302,8 +319,8 @@ namespace Prism
 		FileDialogType m_DialogType;
 		FileDialogOperation m_DialogOperation;
 		FileDialogFilter m_DialogFilter;
-		std::vector<FileDialogItem> m_Filter;
-		glm::vec2 m_ItemSize;
+		std::vector<FileDialogItem> m_Items;
+		ImVec2 m_ItemSize;
 		ImGuiTextFilter m_SearchFilter;
 		
 		//Callbacks
