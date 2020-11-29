@@ -1,11 +1,11 @@
 #include "AssetsWidget.h"
-#include "FileDialog.h"
+#include "../Utilities/FileDialog.h"
 
-namespace Widget_Assets_Statics
+namespace AssetsStatics
 {
-	static bool g_show_file_dialog_view = true;
-	static bool g_show_file_dialog_load = false;
-	static std::string g_double_clicked_path_import_dialog;
+	static bool g_ShowFileDialogView = true;
+	static bool g_ShowFileDialogLoad = false;
+	static std::string g_DoubleClickedPathImportDialog;
 }
 
 namespace Prism
@@ -22,13 +22,13 @@ namespace Prism
 
 		if (ImGui::Button("Import"))
 		{
-			Widget_Assets_Statics::g_show_file_dialog_load = true;
+			AssetsStatics::g_ShowFileDialogLoad = true;
 		}
 
 		ImGui::SameLine();
 
 		// VIEW
-		m_FileDialogView->Show(&Widget_Assets_Statics::g_show_file_dialog_view);
+		m_FileDialogView->Show(&AssetsStatics::g_ShowFileDialogView);
 
 		ImGui::End();
 	}

@@ -6,7 +6,7 @@
 #include "imgui/imgui.h"
 #include "Widgets/ConsoleWidget.h"
 #include "Widgets/AssetsWidget.h"
-#include "Widgets/FileDialog.h"
+#include "Utilities/FileDialog.h"
 
 
 namespace Prism
