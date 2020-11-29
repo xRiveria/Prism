@@ -178,6 +178,7 @@ namespace Prism
 
 		m_SceneHierarchyPanel.OnImGuiRender();
 		m_ConsoleWidget.OnConsoleWidgetUpdate();
+		m_AssetsWidget.OnAssetsWidgetUpdate();
 
 		ImGui::Begin("Prism Version");
 		ImGui::Text(m_ApplicationVersion->RetrieveApplicationVersion().c_str());

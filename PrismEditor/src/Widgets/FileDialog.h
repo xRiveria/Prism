@@ -1,21 +1,17 @@
 #pragma once
 #include "Prism.h"
-#include <string>
-#include <vector>
-#include <filesystem>
 #include <chrono>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <functional>
 #include <variant>
-#include <shellapi.h>
 
 namespace Prism
 {
 	enum FileDialogType
 	{
 		FileDialogType_Browser,
-		FilaDialogType_FileSelection
+		FileDialogType_FileSelection
 	};
 
 	enum FileDialogOperation
@@ -25,7 +21,7 @@ namespace Prism
 		FileDialogOperation_Save
 	};
 
-	enum FileDialogFilter
+	enum FileDialogFilter 
 	{
 		FileDialogFilter_All,
 		FileDialogFilter_Scene,
@@ -33,6 +29,7 @@ namespace Prism
 	};
 
 	//============ To Move Out ===================
+	
 	//Drag and Drop
 	enum DragPayloadType
 	{
@@ -59,42 +56,10 @@ namespace Prism
 		
 	};
 
-	inline static bool IsDirectoryValid(const std::string& path)  //static inline generally works as static, but the inline keyword suggest compiler trying to inline this function.
+	inline static Reference<Texture2D> GetIconTexture() 
 	{
-		try
-		{
-			if (std::filesystem::exists(path) && std::filesystem::is_directory(path))
-			{
-				return true;
-			}
-		}
-
-		catch (std::filesystem::filesystem_error& caughtError)
-		{
-			std::string displayedWarning = std::string("Invalid Path: ") + path.c_str();
-			PRISM_EDITOR_WARN(displayedWarning);
-		}
-	}
-
-	inline static std::string GetFileNameFromFilePath(const std::string& path)
-	{
-		return std::filesystem::path(path).filename().generic_string();
-	}
-
-	inline static void OpenDirectoryWindow(const std::string& directory)
-	{
-		ShellExecute(nullptr, nullptr, StringToWstring(directory).c_str(), nullptr, nullptr, SW_SHOW);
-	}
-
-	inline static std::wstring StringToWstring(const std::string& str)
-	{
-		const auto slength = static_cast<int>(str.length()) + 1;
-		const auto len = MultiByteToWideChar(CP_ACP, 0, str.c_str(), slength, nullptr, 0);
-		const auto buf = new wchar_t[len];
-		MultiByteToWideChar(CP_ACP, 0, str.c_str(), slength, buf, len);
-		std::wstring result(buf);
-		delete[] buf;
-		return result;
+		static Reference<Texture2D> m_FolderIcon = Texture2D::CreateTexture("assets/icons/file.png");
+		return m_FolderIcon;
 	}
 
 	static uint32_t g_GlobalID = 0;
@@ -114,7 +79,7 @@ namespace Prism
 	public:
 		bool Navigate(std::string directory, const bool& updateTrackedHistory = true)
 		{
-			if (!IsDirectoryValid(directory))
+			if (!WindowsFileSystem::IsDirectoryValid(directory))
 			{
 				return false;
 			}
@@ -232,14 +197,14 @@ namespace Prism
 			m_Path = path;
 			m_Thumbnail = thumbnail;
 			m_ID = GenerateGlobalObjectID::GenerateID();
-			m_IsDirectory = IsDirectoryValid(path);
-			m_Label = GetFileNameFromFilePath(path);
+			m_IsDirectory = WindowsFileSystem::IsDirectoryValid(path);
+			m_Label = WindowsFileSystem::GetFileNameFromFilePath(path);
 		}
 
 		const std::string& GetPath() const { return m_Path; }
 		const std::string& GetLabel() const { return m_Label; }
 		const unsigned int& GetID() const { return m_ID; }
-		const Reference<Texture2D> GetTexture() const { return nullptr; }
+		const Reference<Texture2D> GetTexture() const { return GetIconTexture(); }
 		const bool& IsDirectory() const { return m_IsDirectory; }
 		const float& GetTimeSinceLastClickMilliseconds() const { return static_cast<float>(m_TimeSinceLastClick.count()); }
 
@@ -280,16 +245,22 @@ namespace Prism
 		void SetCallbackOnItemDoubleClicked(const std::function<void(const std::string&)>& callback) { m_CallbackOnItemDoubleClicked = callback; }
 
 	private:
-		void ShowTop(bool* isVisible); 
-		void ShowMiddle();
-		void ShowBottom(bool* isVisible);
+		/*Our file dialog window will be made up of 3 sections.
+		
+		Top Portion - Renders Directory Navigation Buttons, Icon Size Sliders and Filter Searches.
+		Middle Portion - Renders our content itself, consisting of file icons and thier respective names.
+		Bottom Portion - Renders the the amount of items we have of the currently open directly in text form. */
+
+		void RenderTopPortion(bool* isVisible); 
+		void RenderMiddlePortion();
+		void RenderBottomPortion(bool* isVisible);
 			
 		//Item Functionality Handling
 		void ItemDrag(FileDialogItem* item) const;
 		void ItemClick(FileDialogItem* item) const;
 		void ItemContextMenu(FileDialogItem* item) const;
 
-		//Misc
+		//Gets all items from directory.
 		bool DialogUpdateFromDirectory(const std::string& path);
 		void EmptyAreaContextMenu();
 

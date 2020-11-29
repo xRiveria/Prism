@@ -5,6 +5,8 @@
 #include <vector>
 #include "imgui/imgui.h"
 #include "Widgets/ConsoleWidget.h"
+#include "Widgets/AssetsWidget.h"
+#include "Widgets/FileDialog.h"
 
 
 namespace Prism
@@ -51,5 +53,6 @@ namespace Prism
 		//Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ConsoleWidget m_ConsoleWidget;
+		AssetsWidget m_AssetsWidget;
 	};
 }

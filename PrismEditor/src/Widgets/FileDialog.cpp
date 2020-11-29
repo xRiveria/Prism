@@ -1,11 +1,11 @@
 #include "FileDialog.h"
+#include "imgui/imgui_stdlib.h"
 
 namespace Prism
 {
 
 #define OPERATION_NAME (m_DialogOperation == FileDialogOperation_Open) ? "Open" : (m_DialogOperation == FileDialogOperation_Load) ? "Load" : (m_DialogOperation == FileDialogOperation_Save) ? "Save" : "View"
-#define FILTER_NAME
-
+#define FILTER_NAME    (m_DialogFilter == FileDialogFilter_All) ? "All (*.*)"  : (m_DialogFilter == FileDialogFilter_Model) ? "Model(*.*)" : "World (*.world)"
 
 	FileDialog::FileDialog(bool standaloneWindow, FileDialogType dialogType, FileDialogOperation dialogOperation, FileDialogFilter dialogFilter)
 	{
@@ -20,7 +20,9 @@ namespace Prism
 		m_SelectionMade = false;
 		m_CallbackOnItemClicked = nullptr;
 		m_CallbackOnItemDoubleClicked = nullptr;
+
 		//Navigate Call
+		m_Navigation.Navigate(WindowsFileSystem::GetProjectDirectory());
 	}
 
 	void FileDialog::SetOperation(const FileDialogOperation& operation)
@@ -32,7 +34,7 @@ namespace Prism
 	//Shows the dialog and returns true if a selection was made.
 	bool FileDialog::Show(bool* isVisible, std::string* directory /*= nullptr*/, std::string* filePath /*= nullptr*/)
 	{
-		if (!(isVisible))
+		if (!(*isVisible))
 		{
 			m_IsDirty = true; //Set as dirty as things can change until the next time.
 			return false;
@@ -42,11 +44,16 @@ namespace Prism
 		m_IsHoveringItem = false;
 		m_IsHoveringWindow = false;
 
-		ShowTop(isVisible); //Top Menu
-		ShowMiddle(); //Contents of the current directory.
-		ShowBottom(isVisible); //Bottom Menu
+		RenderTopPortion(isVisible); //Top Menu
+		RenderMiddlePortion(); //Contents of the current directory.
+		RenderBottomPortion(isVisible); //Bottom Menu
 
 		if (m_IsWindow)
+		{
+			ImGui::End();
+		}
+
+		if (m_IsDirty)
 		{
 			DialogUpdateFromDirectory(m_Navigation.m_CurrentPath);
 			m_IsDirty = false;
@@ -70,7 +77,7 @@ namespace Prism
 		return m_SelectionMade;
 	}
 
-	void FileDialog::ShowTop(bool* isVisible)
+	void FileDialog::RenderTopPortion(bool* isVisible)
 	{
 		if (m_IsWindow)
 		{
@@ -113,7 +120,7 @@ namespace Prism
 		ImGui::PushItemWidth(sliderWidth);
 		
 		const float previousWidth = m_ItemSize.x;
-		ImGui::SliderFloat("FileDialogSlider", &m_ItemSize.x, m_MinimumItemSize, m_MaximumItemSize);
+		ImGui::SliderFloat("##FileDialogSlider", &m_ItemSize.x, m_MinimumItemSize, m_MaximumItemSize); //Use ## to ignore text after the aforementioned tokens.
 		m_ItemSize.y += m_ItemSize.x - previousWidth;
 		ImGui::PopItemWidth();
 
@@ -124,7 +131,7 @@ namespace Prism
 		ImGui::Separator();
 	}
 
-	void FileDialog::ShowMiddle()
+	void FileDialog::RenderMiddlePortion()
 	{
 		//Compute Some Useful Stuff
 		const ImGuiWindow* window = ImGui::GetCurrentWindowRead();
@@ -180,14 +187,14 @@ namespace Prism
 
 				m_DisplayedItemCount++;
 
-				//Start new line.
+				//Start new line?
 				if (newLine)
 				{
 					ImGui::BeginGroup();
 					newLine = false;
 				}
 
-				ImGui::BeginGroup();
+				ImGui::BeginGroup(); //The look of each file.
 				{
 					//Compute rectanges for elements that make up an item.
 					{
@@ -230,6 +237,7 @@ namespace Prism
 							{
 								//Updated Input Box
 								m_InputBox = item.GetLabel();
+
 								//Callback
 								if (m_CallbackOnItemClicked)
 								{
@@ -246,7 +254,7 @@ namespace Prism
 								{
 									if (!item.IsDirectory())
 									{
-										OpenDirectoryWindow(item.GetPath());
+										WindowsFileSystem::OpenDirectoryWindow(item.GetPath());
 									}
 								}
 
@@ -273,8 +281,11 @@ namespace Prism
 						}
 
 						ImGui::SetCursorScreenPos(ImVec2(rectButton.Min.x + style.FramePadding.x, rectButton.Min.y + style.FramePadding.y));
-						ImGui::Image((void*)item.GetTexture()->GetTextureID(), ImVec2(rectButton.Max.x - rectButton.Min.x - style.FramePadding.x * 2.0f,
+
+						ImGui::Image((void*)item.GetTexture()->GetTextureID(), 
+							ImVec2(rectButton.Max.x - rectButton.Min.x - style.FramePadding.x * 2.0f,
 							rectButton.Max.y - rectButton.Min.y - style.FramePadding.y - labelHeight - 5.0f));
+
 						ImGui::PopStyleColor(2);
 						ImGui::PopID();
 					}
@@ -328,7 +339,7 @@ namespace Prism
 		ImGui::PopStyleVar();
 	}
 
-	void FileDialog::ShowBottom(bool* isVisible)
+	void FileDialog::RenderBottomPortion(bool* isVisible)
 	{
 		if (m_DialogType == FileDialogType_Browser)
 		{
@@ -336,36 +347,108 @@ namespace Prism
 			m_BottomOffset = 20.0f;
 			ImGui::SetCursorPosY(ImGui::GetWindowSize().y - m_BottomOffset);
 
-			const char* text = (m_DisplayedItemCount == 1) ? "%d item" : "%d items";
+			const char* text = (m_DisplayedItemCount == 1) ? "%d Item" : "%d Items"; //If there's only one item, have no 's', else we use it.
 			ImGui::Text(text, m_DisplayedItemCount);
 		}
 		else
 		{
 			//Move to the bottom of the window.
+
 			m_BottomOffset = 35.0f;
 			ImGui::SetCursorPosY(ImGui::GetWindowSize().y - m_BottomOffset);
+
+			ImGui::PushItemWidth(ImGui::GetWindowSize().x - 235);
+			ImGui::InputText("##InputBox", &m_InputBox);
+			ImGui::PopItemWidth();
+
+			ImGui::SameLine();
+
+			ImGui::Text(FILTER_NAME);
+			ImGui::SameLine();
+
+			if (ImGui::Button(OPERATION_NAME))
+			{
+				m_SelectionMade = true;
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel"))
+			{
+				m_SelectionMade = false;
+				(*isVisible) = false;
+			}
 		}
 	}
 
 	void FileDialog::ItemDrag(FileDialogItem* item) const
 	{
+		//To Be Implemented.
 	}
 
 	void FileDialog::ItemClick(FileDialogItem* item) const
 	{
+		//To Be Implemented.
 	}
 
 	void FileDialog::ItemContextMenu(FileDialogItem* item) const
 	{
+		//To Be Implemented.
 	}
 
-	bool FileDialog::DialogUpdateFromDirectory(const std::string& path)
+	bool FileDialog::DialogUpdateFromDirectory(const std::string& path)  
 	{
-		return false;
+		if (!WindowsFileSystem::IsDirectoryValid(path))
+		{
+			PRISM_CLIENT_ASSERT(false, "Directory Invalid!");
+			return false;
+		}
+
+		m_Items.clear();
+		m_Items.shrink_to_fit();
+
+		//Get Directories
+		std::vector<std::string> childDirectories = WindowsFileSystem::GetDirectoriesInDirectory(path);
+		for (const auto& childDirectory : childDirectories)
+		{
+			m_Items.emplace_back(childDirectory, GetIconTexture());
+		}
+
+		//Get Files (Based on Filter)
+		std::vector<std::string> childFiles;
+		if (m_DialogFilter == FileDialogFilter_All)
+		{
+			childFiles = WindowsFileSystem::GetFilesInDirectory(path);
+			for (const auto& childFile : childFiles)
+			{
+				//Add filters here.
+				m_Items.emplace_back(childFile, GetIconTexture());
+			}
+		}
+
+		else if (m_DialogFilter == FileDialogFilter_Scene)
+		{
+			childFiles = WindowsFileSystem::GetSupportedSceneFilesInDirectory(path);
+			for (const auto& childFile : childFiles)
+			{
+				m_Items.emplace_back(childFile, GetIconTexture());
+			}
+		}
+		
+		else if (m_DialogFilter == FileDialogFilter_Model)
+		{
+			childFiles = WindowsFileSystem::GetSupportedModelFilesInDirectory(path);
+			for (const auto& childFile : childFiles)
+			{
+				m_Items.emplace_back(childFile, GetIconTexture());
+			}
+		}
+
+		return true;
 	}
 
 	void FileDialog::EmptyAreaContextMenu()
 	{
+		//To Be Implemented.
 	}
 
 }

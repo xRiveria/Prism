@@ -12,6 +12,7 @@
     </ClInclude>
     <ClInclude Include="src\Widgets\ConsoleWidget.h" />
     <ClInclude Include="src\Widgets\FileDialog.h" />
+    <ClInclude Include="src\Widgets\AssetsWidget.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EditorLayer.cpp" />
@@ -21,5 +22,6 @@
     <ClCompile Include="src\PrismEditorApp.cpp" />
     <ClCompile Include="src\Widgets\ConsoleWidget.cpp" />
     <ClCompile Include="src\Widgets\FileDialog.cpp" />
+    <ClCompile Include="src\Widgets\AssetsWidget.cpp" />
   </ItemGroup>
 </Project>

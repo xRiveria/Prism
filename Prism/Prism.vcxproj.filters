@@ -1431,6 +1431,7 @@
     <ClInclude Include="src\Prism\Core\ILogInterface.h">
       <Filter>src\Prism\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsFileSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1532,5 +1533,6 @@
     <ClCompile Include="src\Prism\Scene\SceneSerializer.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtilities.cpp" />
     <ClCompile Include="src\Prism\Utilities\Version.cpp" />
+    <ClCompile Include="src\Platform\Windows\WindowsFileSystem.cpp" />
   </ItemGroup>
 </Project>
