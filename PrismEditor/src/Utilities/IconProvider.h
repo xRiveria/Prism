@@ -20,6 +20,7 @@ namespace Prism
 		Thumbnail_File_Material,
 		Thumbnail_File_Shader,
 		Thumbnail_File_Xml,
+		Thumbnail_File_Dll,
 		Thumbnail_File_Txt,
 		Thumbnail_File_Ini,
 		Thumbnail_File_Exe,
@@ -52,6 +53,9 @@ namespace Prism
 			return iconProviderInstance;
 		}
 
+		IconProvider();
+		~IconProvider();
+
 		void Initialize();
 
 		//Ways to obtain icon texture. 
@@ -60,10 +64,6 @@ namespace Prism
 		Reference<Texture2D> GetTextureByThumbnail(const Thumbnail& thumbnail);
 
 		const Thumbnail& LoadThumbnail(const std::string& filePath, IconType iconType = IconType::Thumbnail_Custom, int size = 100);
-
-	private:
-		IconProvider();
-		~IconProvider();
 
 	private:
 		const Thumbnail& GetThumbnailByType(IconType iconType);

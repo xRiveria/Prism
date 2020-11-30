@@ -5,6 +5,7 @@
 #include <imgui/imgui_internal.h>
 #include <functional>
 #include <variant>
+#include "../Utilities/IconProvider.h"
 
 namespace Prism
 {
@@ -52,14 +53,24 @@ namespace Prism
 		}
 
 		DragPayloadType m_Type;
-		DataVariant m_Data;
-		
+		DataVariant m_Data;	
 	};
 
-	inline static Reference<Texture2D> GetIconTexture() 
+	inline void CreateDragPayload(const DragDropPayload& payload)
 	{
-		static Reference<Texture2D> m_FolderIcon = Texture2D::CreateTexture("assets/icons/file.png");
-		return m_FolderIcon;
+		ImGui::SetDragDropPayload(reinterpret_cast<const char*>(&payload.m_Type), reinterpret_cast<const void*>(&payload), sizeof(payload), ImGuiCond_Once);
+	}
+
+	inline void Image(Reference<Texture2D> texture, const float size)
+	{
+		ImGui::Image(
+			(void*)texture->GetTextureID(),
+			ImVec2(size, size),
+			ImVec2(0, 0),
+			ImVec2(1, 1),
+			ImVec4(255, 255, 255, 255),            // tint
+			ImColor(0, 0, 0, 0)        // border
+		);
 	}
 
 	static uint32_t g_GlobalID = 0;
@@ -192,7 +203,7 @@ namespace Prism
 	class FileDialogItem
 	{
 	public:
-		FileDialogItem(const std::string& path, const Reference<Texture2D> thumbnail)
+		FileDialogItem(const std::string& path, const Thumbnail& thumbnail)
 		{
 			m_Path = path;
 			m_Thumbnail = thumbnail;
@@ -204,8 +215,8 @@ namespace Prism
 		const std::string& GetPath() const { return m_Path; }
 		const std::string& GetLabel() const { return m_Label; }
 		const unsigned int& GetID() const { return m_ID; }
-		const Reference<Texture2D> GetTexture() const { return GetIconTexture(); }
-		const bool& IsDirectory() const { return m_IsDirectory; }
+		const Reference<Texture2D> GetTexture() const { return IconProvider::GetInstance().GetTextureByThumbnail(m_Thumbnail); }
+		const bool& IsDirectoryValid() const { return m_IsDirectory; }
 		const float& GetTimeSinceLastClickMilliseconds() const { return static_cast<float>(m_TimeSinceLastClick.count()); }
 
 		void Clicked()
@@ -216,7 +227,7 @@ namespace Prism
 		}
 
 	private:
-		Reference<Texture2D> m_Thumbnail;
+		Thumbnail m_Thumbnail;
 		unsigned int m_ID;
 		std::string m_Path;
 		std::string m_Label;
@@ -258,7 +269,7 @@ namespace Prism
 		//Item Functionality Handling
 		void ItemDrag(FileDialogItem* item) const;
 		void ItemClick(FileDialogItem* item) const;
-		void ItemContextMenu(FileDialogItem* item) const;
+		void ItemContextMenu(FileDialogItem* item); //If we right click on an item.
 
 		//Gets all items from directory.
 		bool DialogUpdateFromDirectory(const std::string& path);

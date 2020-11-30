@@ -8,6 +8,7 @@
 #include <stb_image/stb_image.h>
 #include "Prism.h"
 #include <functional>
+#include "../Utilities/IconProvider.h"
 
 namespace Prism
 {
@@ -18,14 +19,7 @@ namespace Prism
 		std::string m_LogText;
 		unsigned int m_ErrorLevel = 0;
 	};
-	
-	//To Be Moved
-	enum Icon_Type
-	{
-		Icon_Console_Info,
-		Icon_Console_Warning,
-		Icon_Console_Error
-	};
+
 	
 	class EditorLogger : public ILogInterface
 	{
@@ -51,7 +45,7 @@ namespace Prism
 	{
 	public:
 		ConsoleWidget();
-		bool CreateImGuiImageButton(const Icon_Type& icon, const float& size);
+		bool CreateImGuiImageButton(const IconType& icon, const float& size);
 		void OnConsoleWidgetUpdate();
 		void AddLogPackage(const LogPackage& package);
 		void ClearAllLogs();
@@ -71,11 +65,6 @@ namespace Prism
 			ImVec4(0.70f, 0.75f, 0.20f, 1.0f),   //Warning
 			ImVec4(0.70f, 0.30f, 0.30f, 1.0f)   //Error
 		};
-
-		//Icon Types
-		Reference<Texture2D> m_LogInfoIcon;
-		Reference<Texture2D> m_LogWarningIcon;
-		Reference<Texture2D> m_LogErrorIcon;
 
 		//std::atomic<bool> m_IsReading = false;
 		ImGuiTextFilter m_LogTextFilter;

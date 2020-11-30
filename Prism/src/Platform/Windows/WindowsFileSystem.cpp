@@ -62,6 +62,24 @@ namespace Prism
 		return false;
 	}
 
+	bool WindowsFileSystem::Delete(const std::string& filePath)
+	{
+		try
+		{
+			if (std::filesystem::exists(filePath) && std::filesystem::remove_all(filePath)) 
+			{
+				return true;
+			}
+		}
+
+		catch (std::filesystem::filesystem_error& error)
+		{
+			PRISM_CLIENT_WARN("Failed to get extension of {0} {1}", error.what(), filePath.c_str());
+		}
+
+		return false;
+	}
+
 	std::string WindowsFileSystem::GetExtensionFromFilePath(const std::string& filePath)
 	{
 		std::string fileExtension;
@@ -159,9 +177,89 @@ namespace Prism
 		return false;
 	}
 
+	bool WindowsFileSystem::IsSupportedAudioFile(const std::string& filePath)
+	{
+		const std::string fileExtension = GetExtensionFromFilePath(filePath);
+
+		for (const auto& format : SupportedFormats_Audio)
+		{
+			if (fileExtension == format || fileExtension == ConvertStringToUppercase(format))
+			{
+				return true;
+			}
+		}
+
+		return false; 
+	}
+
+	bool WindowsFileSystem::IsSupportedShaderFile(const std::string& filePath)
+	{
+		const std::string fileExtension = GetExtensionFromFilePath(filePath);
+
+		for (const auto& format : SupportedFormats_Shader)
+		{
+			if (fileExtension == format || fileExtension == ConvertStringToUppercase(format))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	bool WindowsFileSystem::IsEngineSceneFile(const std::string& filePath)
 	{
 		return GetExtensionFromFilePath(filePath) == EXTENSION_SCENE;
+	}
+
+	bool WindowsFileSystem::IsEngineScriptFile(const std::string& filePath)
+	{
+		const std::string fileExtension = GetExtensionFromFilePath(filePath);
+
+		for (const auto& format : SupportedFormats_Scripts)
+		{
+			if (fileExtension == format || fileExtension == ConvertStringToUppercase(format))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	bool WindowsFileSystem::IsEngineTextureFile(const std::string& filePath)
+	{
+		return GetExtensionFromFilePath(filePath) == EXTENSION_TEXTURE;
+	}
+
+	bool WindowsFileSystem::IsEngineModelFile(const std::string& filePath)
+	{
+		return GetExtensionFromFilePath(filePath) == EXTENSION_MODEL;
+	}
+
+	bool WindowsFileSystem::IsEngineMaterialFile(const std::string& filePath)
+	{
+		return GetExtensionFromFilePath(filePath) == EXTENSION_MATERIAL;
+	}
+
+	bool WindowsFileSystem::IsSupportedFontFile(const std::string& filePath)
+	{
+		return GetExtensionFromFilePath(filePath) == EXTENSION_FONT;
+	}
+
+	bool WindowsFileSystem::IsSupportedImageFile(const std::string& filePath)
+	{
+		const std::string fileExtension = GetExtensionFromFilePath(filePath);
+
+		for (const auto& format : SupportedFormats_Image)
+		{
+			if (fileExtension == format || fileExtension == ConvertStringToUppercase(format))
+			{
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	std::vector<std::string> WindowsFileSystem::GetSupportedFilesInDirectory(const std::string& fileDirectory)

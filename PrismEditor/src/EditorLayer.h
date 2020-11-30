@@ -7,6 +7,7 @@
 #include "Widgets/ConsoleWidget.h"
 #include "Widgets/AssetsWidget.h"
 #include "Utilities/FileDialog.h"
+#include "Utilities/IconProvider.h"
 
 
 namespace Prism

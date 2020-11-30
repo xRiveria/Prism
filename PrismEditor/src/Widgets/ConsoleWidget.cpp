@@ -9,10 +9,6 @@ namespace Prism
 
 	ConsoleWidget::ConsoleWidget()
 	{
-		m_LogInfoIcon = Texture2D::CreateTexture("assets/icons/console_info.png");
-		m_LogWarningIcon = Texture2D::CreateTexture("assets/icons/console_warning.png");
-		m_LogErrorIcon = Texture2D::CreateTexture("assets/icons/console_error.png");
-		
 		m_EditorLogger = CreateReference<EditorLogger>();
 		m_EditorLogger->SetCallback([this](const LogPackage& package)
 		{
@@ -25,25 +21,9 @@ namespace Prism
 		PRISM_EDITOR_ERROR("Test Error");
 	}
 
-	bool ConsoleWidget::CreateImGuiImageButton(const Icon_Type& icon, const float& size)
+	bool ConsoleWidget::CreateImGuiImageButton(const IconType& icon, const float& size)
 	{
-		switch (icon)
-		{
-			case Icon_Type::Icon_Console_Info:
-			{
-				return ImGui::ImageButton((void*)ConsoleWidget::m_LogInfoIcon->GetTextureID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0));
-			};
-			case Icon_Type::Icon_Console_Warning:
-			{
-				return ImGui::ImageButton((void*)ConsoleWidget::m_LogWarningIcon->GetTextureID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0));
-			}
-			case Icon_Type::Icon_Console_Error:
-			{
-				return ImGui::ImageButton((void*)ConsoleWidget::m_LogErrorIcon->GetTextureID(), ImVec2(size, size), ImVec2(0, 1), ImVec2(1, 0));
-			}
-		}
-
-		return ImGui::ImageButton((void*)ConsoleWidget::m_LogInfoIcon->GetTextureID(), ImVec2(size, size), ImVec2(0, 1),ImVec2(1, 0));
+		return ImGui::ImageButton((void*)IconProvider::GetInstance().GetTextureByType(icon)->GetTextureID(), ImVec2(size, size), ImVec2(0, 1),ImVec2(1, 0));
 	}
 
 	void ConsoleWidget::OnConsoleWidgetUpdate()
@@ -57,7 +37,7 @@ namespace Prism
 		}
 		ImGui::SameLine();
 
-		const auto ButtonLogTypeVisibilityToggle = [this](const Icon_Type& icon, const uint32_t& index)
+		const auto ButtonLogTypeVisibilityToggle = [this](const IconType& icon, const uint32_t& index)
 		{
 			bool& visibility = m_LogTypeVisibility[index];
 			ImGui::PushStyleColor(ImGuiCol_Button, visibility ? ImGui::GetStyle().Colors[ImGuiCol_Button] : ImGui::GetStyle().Colors[ImGuiCol_FrameBg]);
@@ -74,9 +54,9 @@ namespace Prism
 		};
 
 		//Log Type Visibility Buttons
-		ButtonLogTypeVisibilityToggle(Icon_Console_Info, 0);
-		ButtonLogTypeVisibilityToggle(Icon_Console_Warning, 1);
-		ButtonLogTypeVisibilityToggle(Icon_Console_Error, 2);
+		ButtonLogTypeVisibilityToggle(IconType::Icon_Console_Info, 0);
+		ButtonLogTypeVisibilityToggle(IconType::Icon_Console_Warning, 1);
+		ButtonLogTypeVisibilityToggle(IconType::Icon_Console_Error, 2);
 
 		//Text Filter
 		const float label_width = 150.0f;
@@ -130,7 +110,16 @@ namespace Prism
 
 	void ConsoleWidget::ClearAllLogs()
 	{
+		m_Logs.clear();
+		m_Logs.shrink_to_fit();
 
+		m_LogTypeMaxWidth[0] = 0;
+		m_LogTypeMaxWidth[1] = 0;
+		m_LogTypeMaxWidth[2] = 0;
+
+		m_LogTypeCount[0] = 0;
+		m_LogTypeCount[1] = 0;
+		m_LogTypeCount[2] = 0;
 	}
 
 	void ConsoleWidget::AddLogPackage(const LogPackage& package)

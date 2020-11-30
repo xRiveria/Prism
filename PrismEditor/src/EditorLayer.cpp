@@ -14,7 +14,7 @@ namespace Prism
 	//To Do: ImGui feature that essentially when button is clicked on, profile the next 10 seconds or until stop is pressed, and outputs to a .json file.
 	EditorLayer::EditorLayer(ApplicationVersion& applicationVersion) : m_ApplicationVersion(&applicationVersion), Layer("Editor Layer"), m_CameraController(1280.0f / 720.0f)
 	{
-
+		IconProvider::GetInstance().Initialize();
 	}
 
 	void EditorLayer::OnAttach()

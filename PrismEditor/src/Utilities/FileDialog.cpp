@@ -247,12 +247,12 @@ namespace Prism
 							else //Is Double Click
 							{
 								m_IsDirty = m_Navigation.Navigate(item.GetPath());
-								m_SelectionMade = !item.IsDirectory();
+								m_SelectionMade = !item.IsDirectoryValid();
 
 								//When browsing files, open them on double click.
 								if (m_DialogType == FileDialogType_Browser)
 								{
-									if (!item.IsDirectory())
+									if (!item.IsDirectoryValid())
 									{
 										WindowsFileSystem::OpenDirectoryWindow(item.GetPath());
 									}
@@ -284,7 +284,7 @@ namespace Prism
 
 						ImGui::Image((void*)item.GetTexture()->GetTextureID(), 
 							ImVec2(rectButton.Max.x - rectButton.Min.x - style.FramePadding.x * 2.0f,
-							rectButton.Max.y - rectButton.Min.y - style.FramePadding.y - labelHeight - 5.0f));
+							rectButton.Max.y - rectButton.Min.y - style.FramePadding.y - labelHeight - 5.0f), ImVec2(0, 1), ImVec2(1, 0));
 
 						ImGui::PopStyleColor(2);
 						ImGui::PopID();
@@ -382,17 +382,75 @@ namespace Prism
 
 	void FileDialog::ItemDrag(FileDialogItem* item) const
 	{
-		//To Be Implemented.
+		if (!item || m_DialogType != FileDialogType_Browser)
+		{
+			return;
+		}
+
+		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+		{
+			const auto SetPayload = [this](const DragPayloadType type, const std::string& filePath)
+			{
+				m_DragDropPayload.m_Type = type;
+				m_DragDropPayload.m_Data = filePath.c_str();
+				CreateDragPayload(m_DragDropPayload);
+			};
+
+			if (WindowsFileSystem::IsSupportedModelFile(item->GetPath())) { SetPayload(DragPayload_Model, item->GetPath()); }
+			if (WindowsFileSystem::IsSupportedImageFile(item->GetPath())) { SetPayload(DragPayload_Texture, item->GetPath()); }
+			if (WindowsFileSystem::IsSupportedAudioFile(item->GetPath())) { SetPayload(DragPayload_Audio, item->GetPath()); }
+			if (WindowsFileSystem::IsEngineScriptFile(item->GetPath()))   { SetPayload(DragPayload_Script, item->GetPath()); }
+			if (WindowsFileSystem::IsEngineMaterialFile(item->GetPath())) { SetPayload(DragPayload_Material, item->GetPath()); }
+
+			// Preview
+			Image(item->GetTexture(), 50);
+
+			ImGui::EndDragDropSource();
+		}
 	}
 
 	void FileDialog::ItemClick(FileDialogItem* item) const
 	{
-		//To Be Implemented.
+		if (!item || !m_IsHoveringWindow)
+		{
+			return;
+		}
+
+		//Content Menu on Right Click
+		if (ImGui::IsItemClicked(1))
+		{
+			ImGui::OpenPopup("##FileDialogContextMenu");
+		}
 	}
 
-	void FileDialog::ItemContextMenu(FileDialogItem* item) const
+	void FileDialog::ItemContextMenu(FileDialogItem* item) 
 	{
-		//To Be Implemented.
+		if (!ImGui::BeginPopup("##FileDialogContextMenu"))
+		{
+			return;
+		}
+
+		if (ImGui::MenuItem("Delete"))
+		{
+			if (item->IsDirectoryValid())
+			{
+				WindowsFileSystem::Delete(item->GetPath());
+				m_IsDirty = true;
+			}
+			else
+			{
+				WindowsFileSystem::Delete(item->GetPath());
+				m_IsDirty = true;
+			}
+		}
+
+		ImGui::Separator();
+		if (ImGui::MenuItem("Open In File Explorer"))
+		{
+			WindowsFileSystem::OpenDirectoryWindow(item->GetPath());
+		}
+		
+		ImGui::EndPopup();
 	}
 
 	bool FileDialog::DialogUpdateFromDirectory(const std::string& path)  
@@ -408,38 +466,40 @@ namespace Prism
 
 		//Get Directories
 		std::vector<std::string> childDirectories = WindowsFileSystem::GetDirectoriesInDirectory(path);
-		for (const auto& childDirectory : childDirectories)
+		for (const auto& childDirectoryPath : childDirectories)
 		{
-			m_Items.emplace_back(childDirectory, GetIconTexture());
+			m_Items.emplace_back(childDirectoryPath, IconProvider::GetInstance().LoadThumbnail(childDirectoryPath, IconType::Thumbnail_Folder, static_cast<int>(m_ItemSize.x)));
 		}
 
 		//Get Files (Based on Filter)
-		std::vector<std::string> childFiles;
+		std::vector<std::string> childFilePaths;
 		if (m_DialogFilter == FileDialogFilter_All)
 		{
-			childFiles = WindowsFileSystem::GetFilesInDirectory(path);
-			for (const auto& childFile : childFiles)
+			childFilePaths = WindowsFileSystem::GetFilesInDirectory(path);
+			for (const auto& childFilePath : childFilePaths)
 			{
-				//Add filters here.
-				m_Items.emplace_back(childFile, GetIconTexture());
+				if (!WindowsFileSystem::IsEngineTextureFile(childFilePath) && !WindowsFileSystem::IsEngineModelFile(childFilePath))
+				{
+					m_Items.emplace_back(childFilePath, IconProvider::GetInstance().LoadThumbnail(childFilePath, Thumbnail_Custom, static_cast<int>(m_ItemSize.x)));
+				}
 			}
 		}
 
 		else if (m_DialogFilter == FileDialogFilter_Scene)
 		{
-			childFiles = WindowsFileSystem::GetSupportedSceneFilesInDirectory(path);
-			for (const auto& childFile : childFiles)
+			childFilePaths = WindowsFileSystem::GetSupportedSceneFilesInDirectory(path);
+			for (const auto& childFilePath : childFilePaths)
 			{
-				m_Items.emplace_back(childFile, GetIconTexture());
+				m_Items.emplace_back(childFilePath, IconProvider::GetInstance().LoadThumbnail(childFilePath, IconType::Thumbnail_File_Scene, static_cast<int>(m_ItemSize.x)));
 			}
 		}
 		
 		else if (m_DialogFilter == FileDialogFilter_Model)
 		{
-			childFiles = WindowsFileSystem::GetSupportedModelFilesInDirectory(path);
-			for (const auto& childFile : childFiles)
+			childFilePaths = WindowsFileSystem::GetSupportedModelFilesInDirectory(path);
+			for (const auto& childFilePath : childFilePaths)
 			{
-				m_Items.emplace_back(childFile, GetIconTexture());
+				m_Items.emplace_back(childFilePath, IconProvider::GetInstance().LoadThumbnail(childFilePath, IconType::Thumbnail_File_Model, static_cast<int>(m_ItemSize.x)));
 			}
 		}
 
