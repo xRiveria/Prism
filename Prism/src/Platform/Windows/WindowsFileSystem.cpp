@@ -11,6 +11,21 @@ namespace Prism
 
 	}
 
+	bool WindowsFileSystem::CreateFileDirectory(const std::string& directoryPath)
+	{
+		try
+		{
+			if (std::filesystem::create_directories(directoryPath))
+			{
+				return true;
+			}
+		}
+		catch (std::filesystem::filesystem_error& error)
+		{
+			PRISM_CLIENT_WARN("{0} {1}", error.what(), directoryPath.c_str());
+		}
+	}
+
 	std::string WindowsFileSystem::ConvertStringToUppercase(const std::string& lowercaseString)
 	{
 		const std::locale locale;

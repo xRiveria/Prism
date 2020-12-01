@@ -31,7 +31,7 @@ namespace Prism
 		m_Title = OPERATION_NAME;
 	}
 
-	//Shows the dialog and returns true if a selection was made.
+	//Master that renders our dialog as a whole and changes states respectively. Called per frame.
 	bool FileDialog::Show(bool* isVisible, std::string* directory /*= nullptr*/, std::string* filePath /*= nullptr*/)
 	{
 		if (!(*isVisible))
@@ -216,7 +216,7 @@ namespace Prism
 					//Drop shadow effect.
 					if (m_DropShadow)
 					{
-						static const float shadowThickness = 2.0f;
+						static const float shadowThickness = 10.0f;
 						ImVec4 color = ImGui::GetStyle().Colors[ImGuiCol_BorderShadow];
 						ImGui::GetWindowDrawList()->AddRectFilled(rectButton.Min, ImVec2(rectLabel.Max.x + shadowThickness, rectLabel.Max.y + shadowThickness), IM_COL32(color.x * 255, color.y * 255, color.z * 255, color.w * 255));
 					}
@@ -225,7 +225,7 @@ namespace Prism
 					{
 						ImGui::PushID(i);
 						ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0, 0, 0, 0));
-						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 1.0f, 0.25f));
+						ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 1.0f, 0.20f)); //Controls icon background color.
 
 						if (ImGui::Button("##Dummy", m_ItemSize))
 						{
@@ -299,7 +299,7 @@ namespace Prism
 						ImGui::GetWindowDrawList()->AddRectFilled(rectLabel.Min, rectLabel.Max, IM_COL32(51, 51, 51, 190));
 
 						//Draw Text
-						ImGui::SetCursorScreenPos(ImVec2(rectLabel.Min.x + textOffset, rectLabel.Min.y + textOffset));
+						ImGui::SetCursorScreenPos(ImVec2(rectLabel.Min.x + textOffset, rectLabel.Min.y + textOffset - 2.0f));
 						if (labelSize.x <= m_ItemSize.x && labelSize.y <= m_ItemSize.y)
 						{
 							ImGui::TextUnformatted(labelText);
@@ -423,36 +423,6 @@ namespace Prism
 		}
 	}
 
-	void FileDialog::ItemContextMenu(FileDialogItem* item) 
-	{
-		if (!ImGui::BeginPopup("##FileDialogContextMenu"))
-		{
-			return;
-		}
-
-		if (ImGui::MenuItem("Delete"))
-		{
-			if (item->IsDirectoryValid())
-			{
-				WindowsFileSystem::Delete(item->GetPath());
-				m_IsDirty = true;
-			}
-			else
-			{
-				WindowsFileSystem::Delete(item->GetPath());
-				m_IsDirty = true;
-			}
-		}
-
-		ImGui::Separator();
-		if (ImGui::MenuItem("Open In File Explorer"))
-		{
-			WindowsFileSystem::OpenDirectoryWindow(item->GetPath());
-		}
-		
-		ImGui::EndPopup();
-	}
-
 	bool FileDialog::DialogUpdateFromDirectory(const std::string& path)  
 	{
 		if (!WindowsFileSystem::IsDirectoryValid(path))
@@ -506,9 +476,77 @@ namespace Prism
 		return true;
 	}
 
+	void FileDialog::ItemContextMenu(FileDialogItem* item)
+	{
+		if (!ImGui::BeginPopup("##FileDialogContextMenu"))
+		{
+			return;
+		}
+
+		if (ImGui::MenuItem("Delete"))
+		{
+			if (item->IsDirectoryValid())
+			{
+				WindowsFileSystem::Delete(item->GetPath());
+				m_IsDirty = true;
+			}
+			else
+			{
+				WindowsFileSystem::Delete(item->GetPath());
+				m_IsDirty = true;
+			}
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::MenuItem("Open In File Explorer"))
+		{
+			WindowsFileSystem::OpenDirectoryWindow(item->GetPath());
+		}
+
+		ImGui::EndPopup();
+	}
+
 	void FileDialog::EmptyAreaContextMenu()
 	{
-		//To Be Implemented.
+		if (ImGui::IsMouseClicked(1) && m_IsHoveringWindow && !m_IsHoveringItem)
+		{
+			ImGui::OpenPopup("##Content_ContextMenu");
+		}
+
+		if (!ImGui::BeginPopup("##Content_ContextMenu"))
+		{
+			return;
+		}
+
+		if (ImGui::MenuItem("Create Folder"))
+		{
+			WindowsFileSystem::CreateFileDirectory(m_Navigation.m_CurrentPath + "/New Folder");
+			m_IsDirty = true;
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::MenuItem("Create Script"))
+		{
+			//To Be Implemented
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::MenuItem("Create Material"))
+		{
+			//To Be Implemented
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::MenuItem("Open Directory In Explorer"))
+		{
+			WindowsFileSystem::OpenDirectoryWindow(m_Navigation.m_CurrentPath);
+		}
+
+		ImGui::EndPopup();
 	}
 
 }

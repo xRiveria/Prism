@@ -45,15 +45,14 @@ namespace Prism
 
 	struct DragDropPayload
 	{
-		typedef std::variant<const char*, unsigned int> DataVariant;
-		DragDropPayload(const DragPayloadType type = DragPayloadType::DragPayload_Unknown, const DataVariant data = nullptr)
+		DragDropPayload(const DragPayloadType type = DragPayloadType::DragPayload_Unknown, const std::variant<const char*, unsigned int> data = nullptr)
 		{
 			this->m_Type = type;
 			this->m_Data = data;
 		}
 
 		DragPayloadType m_Type;
-		DataVariant m_Data;	
+		std::variant<const char*, unsigned int> m_Data;
 	};
 
 	inline void CreateDragPayload(const DragDropPayload& payload)

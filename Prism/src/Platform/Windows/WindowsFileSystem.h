@@ -9,6 +9,7 @@ namespace Prism
 	public:
 		//File Creation
 		static void CreateTextFile(const std::string& filePath, const std::string& text);
+		static bool CreateFileDirectory(const std::string& directoryPath);
 
 		//Strings
 		static std::string ConvertStringToUppercase(const std::string& lowercaseString);
