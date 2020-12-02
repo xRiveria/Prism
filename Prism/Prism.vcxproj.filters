@@ -1432,6 +1432,7 @@
       <Filter>src\Prism\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsFileSystem.h" />
+    <ClInclude Include="src\Prism\Threading\Threading.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1534,5 +1535,6 @@
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtilities.cpp" />
     <ClCompile Include="src\Prism\Utilities\Version.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsFileSystem.cpp" />
+    <ClCompile Include="src\Prism\Threading\Threading.cpp" />
   </ItemGroup>
 </Project>
