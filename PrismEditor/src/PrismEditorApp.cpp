@@ -249,6 +249,10 @@ namespace Prism
 		{
 			PRISM_CLIENT_WARN("Created Prism Editor");
 			GetApplicationVersion().SetApplicationVersion(1, 2);
+
+			//Systems
+			IconProvider::GetInstance().Initialize(this);
+
 			//PushLayer(new ExampleLayer());
 			PushLayer(new EditorLayer(GetApplicationVersion()));
 		}

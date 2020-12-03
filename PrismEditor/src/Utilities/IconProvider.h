@@ -56,7 +56,7 @@ namespace Prism
 		IconProvider();
 		~IconProvider();
 
-		void Initialize();
+		void Initialize(Application* application);
 
 		//Ways to obtain icon texture. 
 		Reference<Texture2D> GetTextureByType(IconType iconType);
@@ -66,6 +66,7 @@ namespace Prism
 		const Thumbnail& LoadThumbnail(const std::string& filePath, IconType iconType = IconType::Thumbnail_Custom, int size = 100);
 
 	private:
+		Application* m_Application = nullptr;
 		const Thumbnail& GetThumbnailByType(IconType iconType);
 		std::vector<Thumbnail> m_Thumbnails;
 	};

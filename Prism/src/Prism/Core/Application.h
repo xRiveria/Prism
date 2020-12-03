@@ -7,6 +7,7 @@
 #include "Prism/ImGui/ImGuiLayer.h"
 #include "Prism/Core/Timestep.h"
 #include "Prism/Utilities/Version.h"
+#include "Prism/Threading/Threading.h"
 
 //This class is meant to be inherited by all Prism applications.
 //In this case, our Sandbox application is the first to do this.
@@ -29,12 +30,14 @@ namespace Prism
 		static Application& GetApplication() { return *s_Instance; }
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 		ApplicationVersion& GetApplicationVersion() { return m_ApplicationVersion; }
+		Reference<Threading>& GetThreadingLibrary() { return m_ThreadingLibrary; }
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& closeEvent);
 		bool OnWindowResize(WindowResizeEvent& resizeEvent);
 
 	private:
+		Reference<Threading> m_ThreadingLibrary;
 		std::unique_ptr<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;

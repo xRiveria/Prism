@@ -18,7 +18,7 @@ namespace Prism
 			m_ThreadNames[m_Threads.back().get_id()] = "Worker_" + std::to_string(i);
 		}
 		
-		PRISM_ENGINE_INFO("%d threads have been created.", m_ThreadCount);
+		PRISM_ENGINE_INFO("{0} threads have been created.", m_ThreadCount);
 	}
 
 	Threading::~Threading()

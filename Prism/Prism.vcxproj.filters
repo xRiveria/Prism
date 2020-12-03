@@ -1433,6 +1433,7 @@
     </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsFileSystem.h" />
     <ClInclude Include="src\Prism\Threading\Threading.h" />
+    <ClInclude Include="src\Prism\Threading\ThreadTask.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">

@@ -194,6 +194,7 @@
     <ClInclude Include="src\Prism\Scene\ScriptableEntity.h" />
     <ClInclude Include="src\PrismPrecompiledHeader.h" />
     <ClInclude Include="src\Prism\Threading\Threading.h" />
+    <ClInclude Include="src\Prism\Threading\ThreadTask.h" />
     <ClInclude Include="src\Prism\Utilities\PlatformUtilities.h" />
     <ClInclude Include="src\Prism\Utilities\Version.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />

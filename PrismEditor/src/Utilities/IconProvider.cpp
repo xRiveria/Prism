@@ -6,7 +6,7 @@ namespace Prism
 
 	IconProvider::IconProvider()
 	{
-
+		m_Application = nullptr;
 	}
 
 	IconProvider::~IconProvider()
@@ -14,8 +14,9 @@ namespace Prism
 		m_Thumbnails.clear();
 	}
 
-	void Prism::IconProvider::Initialize()
+	void Prism::IconProvider::Initialize(Application* application)
 	{
+		m_Application = application;
 		const std::string dataDirectory = WindowsFileSystem::GetProjectDirectory();
 
 		//Load Standard Icons
@@ -121,8 +122,13 @@ namespace Prism
 		//Texture
 		if (WindowsFileSystem::IsSupportedImageFile(filePath) || WindowsFileSystem::IsEngineTextureFile(filePath))
 		{
-			//Make a cheap texture.
+			//Make a cheap texture and load it asynchronously.
 			Reference<Texture2D> texture = Texture2D::CreateTexture(filePath);
+
+			m_Application->GetThreadingLibrary()->AddTask([&]()
+			{
+				std::cout << filePath;
+			});
 
 			m_Thumbnails.emplace_back(iconType, texture, filePath);
 
