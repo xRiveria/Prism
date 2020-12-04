@@ -91,7 +91,7 @@ namespace Prism
 			}
 
 			//Else, we get next task in the queue.
-			task = std::move(m_Tasks.front());
+			task = m_Tasks.front();
 
 			//Remove it from the queue.
 			m_Tasks.pop_front();

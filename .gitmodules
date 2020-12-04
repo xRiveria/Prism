@@ -13,3 +13,6 @@
 [submodule "Prism/vendor/yaml-cpp"]
 	path = Prism/vendor/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
+[submodule "Prism/vendor/ImGuizmo"]
+	path = Prism/vendor/ImGuizmo
+	url = https://github.com/thecherno/ImGuizmo

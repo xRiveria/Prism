@@ -3,6 +3,8 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "Prism/Scene/SceneSerializer.h"
 #include "Prism/Utilities/PlatformUtilities.h"
+#include "ImGuizmo.h"
+#include "Prism/Math/Math.h"
 
 //Sandbox is going to become our runtime application.
 //We create a game in PrismEditor, which will create a whole bunch of game data in which Sandbox will load that information in.
@@ -204,16 +206,65 @@ namespace Prism
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
-		if (m_ViewportFocused)
-		{
-			Application::GetApplication().GetImGuiLayer()->DoBlockEvents(!m_ViewportFocused || !m_ViewportHovered); //Allow or block events depending on which window is being hovered over or focused on.
-		}
+
+		Application::GetApplication().GetImGuiLayer()->DoBlockEvents(!m_ViewportFocused && !m_ViewportHovered); //Allow or block events depending on which window is being hovered over or focused on.
+		
 
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
 		uint32_t textureID = m_Framebuffer->GetColorAttachmentID();
 		ImGui::Image((void*)textureID, { m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 }); //0,0 in ImGui might be at the top, while for OpenGL it might be at the bottom.
+		
+		//Gizmos
+		Entity selectedEntity = m_SceneHierarchyPanel.GetSelectedEntity();
+		if (selectedEntity && m_GizmoType != -1)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+
+			float windowWidth = (float)ImGui::GetWindowWidth();
+			float windowHeight = (float)ImGui::GetWindowHeight();
+
+			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight); //Set to viewport and window size to adjust rect sizes.
+
+			//Camera
+			auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+			const auto& cameraComponent = cameraEntity.GetComponent<CameraComponent>().m_Camera;
+			const glm::mat4& cameraProjection = cameraComponent.GetProjection();
+			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+			//Entity Transform
+			auto& transformComponent = selectedEntity.GetComponent<TransformComponent>();
+			glm::mat4 transform = transformComponent.GetTransform();
+
+			//Snapping
+			bool snap = Input::IsKeyPressed(PRISM_KEY_LEFT_CONTROL);
+			float snapValue = 0.5f; //Snap to 0.5m for translation or scale.
+
+			//Snap to 45 degrees for rotation.
+			if (m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+			{
+				snapValue = 45.0f;
+			}
+
+			float snapValues[3] = { snapValue, snapValue, snapValue };
+
+			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), (ImGuizmo::OPERATION)m_GizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform), nullptr, snap ? snapValues : nullptr);
+			
+			if (ImGuizmo::IsUsing())
+			{
+				glm::vec3 translation, rotation, scale;
+				Prism::Math::DecomposeTransform(transform, translation, rotation, scale);
+				
+				glm::vec3 deltaRotation = rotation - transformComponent.m_Rotation;
+				
+				transformComponent.m_Translation = translation;
+				transformComponent.m_Rotation += deltaRotation;
+				transformComponent.m_Scale = scale;
+			}
+		}
+
 		ImGui::End();
 		ImGui::PopStyleVar(); //Pops the pushed style so other windows beyond this won't have the style's properties.
 
@@ -321,6 +372,23 @@ namespace Prism
 				if (controlPressed && shiftPressed) { SaveSceneAs(); }
 				break;
 			}
+
+			//Gizmos
+			case PRISM_KEY_Q:
+				m_GizmoType = -1;
+				break;
+
+			case PRISM_KEY_W:
+				m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				break;
+
+			case PRISM_KEY_E:
+				m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				break;
+
+			case PRISM_KEY_R:
+				m_GizmoType = ImGuizmo::OPERATION::SCALE;
+				break;
 		}
 	}
 

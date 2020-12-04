@@ -1,6 +1,8 @@
 #pragma once
+#include <iostream>
 #include <utility>
 #include <functional>
+#include <thread>
 
 class Task
 {
@@ -12,6 +14,7 @@ public:
 
 	void Execute()
 	{
+		std::cout << "Executing on Thread ID: " << std::this_thread::get_id() << "\n";
 		m_IsTaskExecuting = true;
 		m_Function();
 		m_IsTaskExecuting = false;

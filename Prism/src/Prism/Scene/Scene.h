@@ -19,6 +19,8 @@ namespace Prism
 		void OnUpdate(Timestep deltaTime);
 		void OnViewportResize(uint32_t newWidth, uint32_t newHeight);
 
+		Entity GetPrimaryCameraEntity();
+
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);

@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>PRISM_PLATFORM_WINDOWS;PRISM_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Prism\vendor\spdlog\include;..\Prism\src;..\Prism\vendor;..\Prism\vendor\glm;..\Prism\vendor\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Prism\vendor\spdlog\include;..\Prism\src;..\Prism\vendor;..\Prism\vendor\glm;..\Prism\vendor\entt\include;..\Prism\vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <MinimalRebuild>false</MinimalRebuild>
@@ -97,7 +97,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>PRISM_PLATFORM_WINDOWS;PRISM_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Prism\vendor\spdlog\include;..\Prism\src;..\Prism\vendor;..\Prism\vendor\glm;..\Prism\vendor\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Prism\vendor\spdlog\include;..\Prism\src;..\Prism\vendor;..\Prism\vendor\glm;..\Prism\vendor\entt\include;..\Prism\vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -118,7 +118,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>PRISM_PLATFORM_WINDOWS;PRISM_DIST;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Prism\vendor\spdlog\include;..\Prism\src;..\Prism\vendor;..\Prism\vendor\glm;..\Prism\vendor\entt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Prism\vendor\spdlog\include;..\Prism\src;..\Prism\vendor;..\Prism\vendor\glm;..\Prism\vendor\entt\include;..\Prism\vendor\ImGuizmo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -137,19 +137,19 @@
   <ItemGroup>
     <ClInclude Include="src\EditorLayer.h" />
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h" />
+    <ClInclude Include="src\Utilities\FileDialog.h" />
     <ClInclude Include="src\Utilities\IconProvider.h" />
     <ClInclude Include="src\Widgets\AssetsWidget.h" />
     <ClInclude Include="src\Widgets\ConsoleWidget.h" />
-    <ClInclude Include="src\Utilities\FileDialog.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EditorLayer.cpp" />
     <ClCompile Include="src\Panels\SceneHierarchyPanel.cpp" />
     <ClCompile Include="src\PrismEditorApp.cpp" />
+    <ClCompile Include="src\Utilities\FileDialog.cpp" />
     <ClCompile Include="src\Utilities\IconProvider.cpp" />
     <ClCompile Include="src\Widgets\AssetsWidget.cpp" />
     <ClCompile Include="src\Widgets\ConsoleWidget.cpp" />
-    <ClCompile Include="src\Utilities\FileDialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Prism\Prism.vcxproj">

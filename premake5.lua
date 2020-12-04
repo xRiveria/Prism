@@ -25,6 +25,7 @@ IncludeDir["glm"] = "Prism/vendor/glm"
 IncludeDir["stb_image"] = "Prism/vendor/stb_image"
 IncludeDir["entt"] = "Prism/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "Prism/vendor/yaml-cpp/include"
+IncludeDir["ImGuizmo"] = "Prism/vendor/ImGuizmo"
 
 group "Dependencies"
 	include "Prism/vendor/GLFW"
@@ -54,6 +55,8 @@ project "Prism"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.h",
+		"%{prj.name}/vendor/ImGuizmo/ImGuizmo.cpp"
 	}
 
 	defines
@@ -71,7 +74,8 @@ project "Prism"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.yaml_cpp}"
+		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links 
@@ -92,6 +96,9 @@ project "Prism"
 			"PRISM_BUILD_DLL",
 			"GLFW_INCLUDE_NONE"
 		}
+
+	filter "files:vendor/ImGuizmo/**.cpp"
+		flags { "NoPCH" }
 
 	filter "configurations:Debug"
 		defines "PRISM_DEBUG"
@@ -130,7 +137,7 @@ project "Sandbox"
 		"Prism/src",
 		"Prism/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
 	}
 
 	links
@@ -184,7 +191,8 @@ project "PrismEditor"
 		"Prism/src",
 		"Prism/vendor",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.entt}"
+		"%{IncludeDir.entt}",
+		"%{IncludeDir.ImGuizmo}"
 	}
 
 	links

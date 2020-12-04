@@ -13,6 +13,8 @@
 #include "Platform/Windows/WindowsWindow.h"
 #include "Prism/Core/Core.h"
 
+#include "ImGuizmo.h"
+
 namespace Prism
 {
 	ImGuiLayer::ImGuiLayer() : Layer("ImGui Layer")
@@ -87,6 +89,7 @@ namespace Prism
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
 	}
 
 	void ImGuiLayer::OnImGuiRender()

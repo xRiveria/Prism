@@ -4,16 +4,30 @@
     <Filter Include="Panels">
       <UniqueIdentifier>{A80D95C9-94AF-BF9F-7D6A-D3F369AB46F0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{010A8043-6D74-34BA-B6B2-E55F225C120F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Widgets">
+      <UniqueIdentifier>{7CB70329-E896-82C4-F1AE-0D9B5D0DE925}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\EditorLayer.h" />
     <ClInclude Include="src\Panels\SceneHierarchyPanel.h">
       <Filter>Panels</Filter>
     </ClInclude>
-    <ClInclude Include="src\Widgets\ConsoleWidget.h" />
-    <ClInclude Include="src\Widgets\AssetsWidget.h" />
-    <ClInclude Include="src\Utilities\FileDialog.h" />
-    <ClInclude Include="src\Utilities\IconProvider.h" />
+    <ClInclude Include="src\Utilities\FileDialog.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utilities\IconProvider.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Widgets\AssetsWidget.h">
+      <Filter>Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Widgets\ConsoleWidget.h">
+      <Filter>Widgets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EditorLayer.cpp" />
@@ -21,9 +35,17 @@
       <Filter>Panels</Filter>
     </ClCompile>
     <ClCompile Include="src\PrismEditorApp.cpp" />
-    <ClCompile Include="src\Widgets\ConsoleWidget.cpp" />
-    <ClCompile Include="src\Widgets\AssetsWidget.cpp" />
-    <ClCompile Include="src\Utilities\FileDialog.cpp" />
-    <ClCompile Include="src\Utilities\IconProvider.cpp" />
+    <ClCompile Include="src\Utilities\FileDialog.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utilities\IconProvider.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\AssetsWidget.cpp">
+      <Filter>Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Widgets\ConsoleWidget.cpp">
+      <Filter>Widgets</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

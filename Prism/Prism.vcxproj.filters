@@ -34,8 +34,17 @@
     <Filter Include="src\Prism\Scene">
       <UniqueIdentifier>{4486D29F-B011-4064-B922-C358252D9C64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Prism\Threading">
+      <UniqueIdentifier>{EC8AE09B-58EC-BDA9-E159-045C4DBAF468}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Prism\Utilities">
+      <UniqueIdentifier>{1279947F-7EDA-718D-0748-B83F73A8A84C}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="vendor\ImGuizmo">
+      <UniqueIdentifier>{73BF7F4C-DF4A-ED10-E85B-700554664911}</UniqueIdentifier>
     </Filter>
     <Filter Include="vendor\glm">
       <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
@@ -81,6 +90,9 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Windows\WindowsFileSystem.h">
+      <Filter>src\Platform\Windows</Filter>
+    </ClInclude>
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
@@ -94,6 +106,9 @@
       <Filter>src\Prism\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Prism\Core\EntryPoint.h">
+      <Filter>src\Prism\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Prism\Core\ILogInterface.h">
       <Filter>src\Prism\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Prism\Core\Input.h">
@@ -192,11 +207,29 @@
     <ClInclude Include="src\Prism\Scene\SceneCamera.h">
       <Filter>src\Prism\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Prism\Scene\SceneSerializer.h">
+      <Filter>src\Prism\Scene</Filter>
+    </ClInclude>
     <ClInclude Include="src\Prism\Scene\ScriptableEntity.h">
       <Filter>src\Prism\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="src\Prism\Threading\ThreadTask.h">
+      <Filter>src\Prism\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Prism\Threading\Threading.h">
+      <Filter>src\Prism\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Prism\Utilities\PlatformUtilities.h">
+      <Filter>src\Prism\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Prism\Utilities\Version.h">
+      <Filter>src\Prism\Utilities</Filter>
+    </ClInclude>
     <ClInclude Include="src\PrismPrecompiledHeader.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\ImGuizmo\ImGuizmo.h">
+      <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
@@ -1425,15 +1458,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Prism\Scene\SceneSerializer.h" />
-    <ClInclude Include="src\Prism\Utilities\PlatformUtilities.h" />
-    <ClInclude Include="src\Prism\Utilities\Version.h" />
-    <ClInclude Include="src\Prism\Core\ILogInterface.h">
-      <Filter>src\Prism\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Platform\Windows\WindowsFileSystem.h" />
-    <ClInclude Include="src\Prism\Threading\Threading.h" />
-    <ClInclude Include="src\Prism\Threading\ThreadTask.h" />
+    <ClInclude Include="src\Prism\Math\Math.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1457,7 +1482,13 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsFileSystem.cpp">
+      <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
+      <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtilities.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
@@ -1526,16 +1557,24 @@
     <ClCompile Include="src\Prism\Scene\SceneCamera.cpp">
       <Filter>src\Prism\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\Prism\Scene\SceneSerializer.cpp">
+      <Filter>src\Prism\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Prism\Threading\Threading.cpp">
+      <Filter>src\Prism\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Prism\Utilities\Version.cpp">
+      <Filter>src\Prism\Utilities</Filter>
+    </ClCompile>
     <ClCompile Include="src\PrismPrecompiledHeader.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
+      <Filter>vendor\ImGuizmo</Filter>
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Prism\Scene\SceneSerializer.cpp" />
-    <ClCompile Include="src\Platform\Windows\WindowsPlatformUtilities.cpp" />
-    <ClCompile Include="src\Prism\Utilities\Version.cpp" />
-    <ClCompile Include="src\Platform\Windows\WindowsFileSystem.cpp" />
-    <ClCompile Include="src\Prism\Threading\Threading.cpp" />
+    <ClCompile Include="src\Prism\Math\Math.cpp" />
   </ItemGroup>
 </Project>
