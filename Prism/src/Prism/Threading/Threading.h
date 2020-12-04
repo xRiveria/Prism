@@ -8,6 +8,16 @@
 #include <vector>
 #include <memory>
 
+/* Threading System Summary
+
+- All threads the hardware supports are created and put to sleep on initialization.
+- If the threading instance is destroyed, all tasks are destroyed, m_Stopping is set to true, all threads are woken up and executions ended and all threads are destroyed.
+- We can use m_Stopping = true to halt all thread executions or resume them.
+- FlushTasks allows us to either forcibly remove all tasks or make our main thread sleep until all sub threads complete task execution.
+- When each thread instance is created, they are put to sleep immediately and only activated when condition_variable is notified and tasks are found to be in the queue, in which execution will proceed.
+
+*/
+
 namespace Prism
 {
 	class Threading
@@ -16,9 +26,9 @@ namespace Prism
 		Threading();
 		~Threading();
 
-		//Add a task.
+		//Add a task. Takes in a function object.
 		template<typename Function>
-		void AddTask(Function&& function)
+		void AddTask(Function&& function) 
 		{
 			if (m_Threads.empty()) //If no threads are avaliable.
 			{
@@ -33,11 +43,11 @@ namespace Prism
 			//Save the task.
 			m_Tasks.push_back(CreateReference<Task>(std::bind(std::forward<Function>(function))));
 
-			//Unlock the task.
+			//Unlock the task mutex.
 			taskLocker.unlock();
 
 			//Wake up a thread to handle the task.
-			m_ThreadCondition.notify_one(); //Notify a thread to wake up and handle the task.
+			m_ThreadCondition.notify_one(); 
 		}
 
 		//Adds a task which is a loop and executes chunks of it in parallel.
@@ -45,7 +55,7 @@ namespace Prism
 		void AddTaskLoop(Function&& function, uint32_t loopRange)
 		{
 			uint32_t avaliableThreads = GetThreadsAvaliable();
-			std::vector<bool> tasksCompleted = std::vector<bool>(avaliableThreads, false);
+			std::vector<bool> tasksCompleted = std::vector<bool>(avaliableThreads, false); //Create a bool vector with size of all currently avaliable threads and initialize their values to false.
 			const uint32_t taskCount = avaliableThreads + 1; //Plus one for the current thread.
 
 			uint32_t start = 0;
@@ -79,19 +89,22 @@ namespace Prism
 			}
 		}
 
-		//Get the number of threads currently used.
+		//Get the threads avaliable for us to use. This does not include the main thread.
 		uint32_t GetThreadCount() const { return m_ThreadCount; }
 
 		//Get the maximum number of threads the hardware support.
-		uint32_t GetSupportedThreadCount() const { return m_SupportedThreadCount; } //Get the maximum number of threads the hardware supports.
+		uint32_t GetSupportedThreadCount() const { return m_SupportedThreadCount; } 
 
 		//Get the number of threads which are not doing any work.
 		uint32_t GetThreadsAvaliable() const;
 
 		//Returns true if at least one task is running.
-		bool AreTasksRunning() const { return GetThreadsAvaliable() != GetThreadCount(); } //The not- equal - to operator ( != ) returns true if the operands don't have the same value; otherwise, it returns false .
+		bool AreTasksRunning() const 
+		{ 
+			return GetThreadsAvaliable() != GetThreadCount(); //Returns true if both aren't equal, else returns false.
+		} 
 		
-		//Wait for all executing (and queued if requested) tasks to finish. 
+		//Clear all leftover tasks whether through force removal or wait.
 		void FlushTasks(bool removeQueue = false);
 
 	private:
@@ -101,8 +114,8 @@ namespace Prism
 		uint32_t m_ThreadCount;
 		uint32_t m_SupportedThreadCount;
 
-		std::vector<std::thread> m_Threads;
-		std::unordered_map<std::thread::id, std::string> m_ThreadNames;
+		std::vector<std::thread> m_Threads; //Create our threads.
+		std::unordered_map<std::thread::id, std::string> m_ThreadNames; //Map our threads to names.
 		std::deque<Reference<Task>> m_Tasks; //Tasks we have to run.
 
 		std::mutex m_TaskMutex;
