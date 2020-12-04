@@ -175,6 +175,17 @@ namespace Prism
 				if (ImGui::MenuItem("Editor")) { }
 				ImGui::EndMenu();
 			}
+
+			if (ImGui::MenuItem("Default"))
+			{
+				m_ActiveScene = CreateReference<Scene>();
+				m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
+				m_SceneHierarchyPanel.SetHierachyContext(m_ActiveScene);
+
+				SceneSerializer serializer(m_ActiveScene);
+				serializer.DeserializeFromYAML("assets/scenes/WhiteCube.prism");
+			}
+
 			ImGui::EndMenuBar();
 		}
 
