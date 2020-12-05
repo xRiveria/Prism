@@ -18,6 +18,16 @@ namespace Prism
 		m_Window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));		
 		m_Window->SetVSync(true); //Lock monitor refresh rate.
 		m_ThreadingLibrary = CreateReference<Threading>();
+
+		m_ThirdPartyLibrary.RegisterThirdPartyLibrary("ImGui", "1.79", "https://github.com/ocornut/imgui");
+		m_ThirdPartyLibrary.RegisterThirdPartyLibrary("ImGuizmo", "1.53", "https://glad.dav1d.de/");
+		m_ThirdPartyLibrary.RegisterThirdPartyLibrary("Glad", "0.1.34", "https://glad.dav1d.de/");
+		m_ThirdPartyLibrary.RegisterThirdPartyLibrary("GLFW", "3.3.2", "https://www.glfw.org/");
+		m_ThirdPartyLibrary.RegisterThirdPartyLibrary("entt", "3.5.2", "https://github.com/skypjack/entt");
+		m_ThirdPartyLibrary.RegisterThirdPartyLibrary("spdlog", "1.8.1", "https://github.com/gabime/spdlog");
+		m_ThirdPartyLibrary.RegisterThirdPartyLibrary("stb_image", "2.26", "https://github.com/nothings/stb/blob/master/stb_image.h");
+		m_ThirdPartyLibrary.RegisterThirdPartyLibrary("yaml-cpp", "0.6.3", "https://github.com/jbeder/yaml-cpp");
+
 		Renderer::InitializeRenderer();
 
 		m_ImGuiLayer = new ImGuiLayer();

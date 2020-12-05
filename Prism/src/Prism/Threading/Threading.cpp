@@ -25,14 +25,13 @@ namespace Prism
 	{
 		FlushTasks(true); //If our threading instance is going to be destroyed, we flush and forcibly remove all queued tasks.
 
-		//Put a unique lock on our task mutex.
-		std::unique_lock<std::mutex> taskLock(m_TaskMutex);
+		{
+			//Put a unique lock on our task mutex.
+			std::unique_lock<std::mutex> taskLock(m_TaskMutex);
 
-		//Set termination flag to true.
-		m_Stopping = true;
-
-		//Unlock the mutex.
-		taskLock.unlock();
+			//Set termination flag to true.
+			m_Stopping = true;
+		}	//Implictly destruct the lock on scope exit.
 
 		//Alert all threats. They will return as our termination flag is true.
 		m_ThreadCondition.notify_all(); 
@@ -79,26 +78,25 @@ namespace Prism
 
 		while (true) //Check every frame.
 		{
-			//Put a lock here to prevent data racing. 
-			std::unique_lock<std::mutex> taskLock(m_TaskMutex);
-
-			//Thread is put to sleep until the condition below returns true. 
-			m_ThreadCondition.wait(taskLock, [this] { return !m_Tasks.empty() || m_Stopping; }); //If there are tasks to be run, or if the threading system is stopped, return true to execute our tasks.
-
-			//If our threading system is halted or if tasks are empty, return from our loop.
-			if (m_Stopping && m_Tasks.empty())
 			{
-				return;
-			}
+				//Put a lock here to prevent data racing. 
+				std::unique_lock<std::mutex> taskLock(m_TaskMutex);
 
-			//Alrighty, we have a task and execution is ready. Retrieve the task.
-			task = m_Tasks.front();
+				//Thread is put to sleep until the condition below returns true. 
+				m_ThreadCondition.wait(taskLock, [this] { return !m_Tasks.empty() || m_Stopping; }); //If there are tasks to be run, or if the threading system is stopped, return true to execute our tasks.
 
-			//Remove it from the queue.
-			m_Tasks.pop_front();
+				//If our threading system is halted or if tasks are empty, return from our loop.
+				if (m_Stopping && m_Tasks.empty())
+				{
+					return;
+				}
 
-			//Unlock our lock so another thread can check for further tasks.
-			taskLock.unlock();
+				//Alrighty, we have a task and execution is ready. Retrieve the task.
+				task = m_Tasks.front();
+
+				//Remove it from the queue.
+				m_Tasks.pop_front();	
+			}  //Implictly unlock our lock so another thread can check for further tasks.
 
 			//Execute the retrieved task.
 			task->Execute();

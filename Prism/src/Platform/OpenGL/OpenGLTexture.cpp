@@ -21,7 +21,7 @@ namespace Prism
 		glTextureParameteri(m_TextureID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::string filePath) : m_FilePath(filePath)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& filePath) : m_FilePath(filePath)
 	{
 		PRISM_PROFILE_FUNCTION();
 

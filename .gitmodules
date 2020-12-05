@@ -16,3 +16,6 @@
 [submodule "Prism/vendor/ImGuizmo"]
 	path = Prism/vendor/ImGuizmo
 	url = https://github.com/thecherno/ImGuizmo
+[submodule "Prism/vendor/assimp"]
+	path = Prism/vendor/assimp
+	url = https://github.com/assimp/assimp

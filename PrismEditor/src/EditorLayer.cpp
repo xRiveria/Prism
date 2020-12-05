@@ -11,10 +11,13 @@
 //We will create our tools and game in PrismEditor itself.
 //Remember that we do not want to have any 3rd party code in here other than Glm. The rest should all be Prism Code.
 
+static float col_a = 220.0f;
+static float col_b = 340.0f;
+
 namespace Prism
 {
 	//To Do: ImGui feature that essentially when button is clicked on, profile the next 10 seconds or until stop is pressed, and outputs to a .json file.
-	EditorLayer::EditorLayer(ApplicationVersion& applicationVersion) : m_ApplicationVersion(&applicationVersion), Layer("Editor Layer"), m_CameraController(1280.0f / 720.0f)
+	EditorLayer::EditorLayer(ApplicationVersion& applicationVersion, ThirdPartyLibrary& thirdPartyLibraries) : m_ApplicationVersion(&applicationVersion), m_ThirdPartyLibrary(&thirdPartyLibraries), Layer("Editor Layer"), m_CameraController(1280.0f / 720.0f)
 	{
 
 	}
@@ -176,6 +179,15 @@ namespace Prism
 				ImGui::EndMenu();
 			}
 
+			if (ImGui::BeginMenu("Help"))
+			{
+				if (ImGui::MenuItem("About Prism"))
+				{
+					m_ShowPrismAboutWindow = true;
+				}
+				ImGui::EndMenu();
+			}
+
 			if (ImGui::MenuItem("Default"))
 			{
 				m_ActiveScene = CreateReference<Scene>();
@@ -192,6 +204,7 @@ namespace Prism
 		m_SceneHierarchyPanel.OnImGuiRender();
 		m_ConsoleWidget.OnConsoleWidgetUpdate();
 		m_AssetsWidget.OnAssetsWidgetUpdate();
+		ShowAboutWindow();
 
 		ImGui::Begin("Prism Version");
 		ImGui::Text(m_ApplicationVersion->RetrieveApplicationVersion().c_str());
@@ -279,6 +292,84 @@ namespace Prism
 		ImGui::End();
 		ImGui::PopStyleVar(); //Pops the pushed style so other windows beyond this won't have the style's properties.
 
+		ImGui::End();
+	}
+
+	void EditorLayer::ShowAboutWindow()
+	{
+		if (!m_ShowPrismAboutWindow)
+		{
+			return;
+		}
+
+		ImGui::SetNextWindowFocus();
+		ImGui::Begin("About Prism", &m_ShowPrismAboutWindow, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking);
+
+		ImGui::Text(m_ApplicationVersion->RetrieveApplicationVersion().c_str());
+		ImGui::Text("Author: Ryan Tan");
+		ImGui::SameLine(ImGui::GetWindowContentRegionWidth());
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 55);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5);
+		if (ImGui::Button("GitHub"))
+		{
+			WindowsFileSystem::OpenDirectoryWindow("https://github.com/xRiveria/Prism-Engine-Reforged");
+		}
+
+		ImGui::Separator();
+
+		ImGui::BeginChildFrame(ImGui::GetID("about_license"), ImVec2(0, ImGui::GetTextLineHeightWithSpacing() * 15.5f), ImGuiWindowFlags_NoMove);
+		ImGui::Text("MIT License");
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Text("Permission is hereby granted, free of charge, to any person obtaining a copy");
+		ImGui::Text("of this software and associated documentation files(the \"Software\"),");
+		ImGui::Text("to deal in the Software without restriction, including without limitation");
+		ImGui::Text("the rights to use, copy, modify, merge, publish, distribute, sublicense,");
+		ImGui::Text("and / or sell copies of the Software, and to permit persons to whom the");
+		ImGui::Text("Software is furnished to do so, subject to the following conditions:");
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Text("The above copyright notice and this permission notice shall be included in");
+		ImGui::Text("all copies or substantial portions of the Software.");
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Text("THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR");
+		ImGui::Text("IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,");
+		ImGui::Text("FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL");
+		ImGui::Text("THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR");
+		ImGui::Text("OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,");
+		ImGui::Text("ARISING FROM, OUT OF OR INCONNECTION WITH THE SOFTWARE OR THE USE OR");
+		ImGui::Text("OTHER DEALINGS IN THE SOFTWARE.");
+		ImGui::EndChildFrame();
+
+		ImGui::Separator();
+
+		ImGui::Text("Third Party Libraries");
+		{
+			ImGui::Spacing();
+			ImGui::Text("Name");
+			ImGui::SameLine(col_a); ImGui::Text("Version");
+			ImGui::SameLine(col_b); ImGui::Text("URL");
+			ImGui::Spacing();
+			for (const Library& library : m_ThirdPartyLibrary->GetThirdPartyLibraries())
+			{
+				ImGui::BulletText(library.libraryName.c_str());
+				ImGui::SameLine(col_a); 
+				ImGui::Text(library.libraryVersion.c_str());
+				ImGui::SameLine(col_b); 
+				ImGui::PushID(library.libraryURL.c_str());
+
+				if (ImGui::Button(library.libraryURL.c_str()))
+				{
+					WindowsFileSystem::OpenDirectoryWindow(library.libraryURL);
+				}
+
+				ImGui::PopID();
+			}			
+		}
 		ImGui::End();
 	}
 

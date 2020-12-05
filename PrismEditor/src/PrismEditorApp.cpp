@@ -254,7 +254,7 @@ namespace Prism
 			IconProvider::GetInstance().Initialize(this);
 
 			//PushLayer(new ExampleLayer());
-			PushLayer(new EditorLayer(GetApplicationVersion()));
+			PushLayer(new EditorLayer(GetApplicationVersion(), GetThirdPartyLibraries()));
 		}
 
 		~PrismEditor()

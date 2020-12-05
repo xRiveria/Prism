@@ -8,15 +8,15 @@ namespace Prism
 	{
 	public:
 		OpenGLTexture2D(uint32_t textureWidth, uint32_t textureHeight);
-		OpenGLTexture2D(const std::string filePath);
+		OpenGLTexture2D(const std::string& filePath);
 		virtual ~OpenGLTexture2D();
+
 
 		virtual uint32_t GetTextureWidth() const override { return m_TextureWidth; }
 		virtual uint32_t GetTextureHeight() const override { return m_TextureHeight; }
 		virtual uint32_t GetTextureID() const override { return m_TextureID; }
 
 		virtual void SetTextureData(void* textureData, uint32_t size);
-
 		virtual void BindTexture(uint32_t textureSlot = 0) const override;
 
 		virtual bool operator==(const Texture& otherTexture) const override

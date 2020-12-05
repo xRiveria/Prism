@@ -124,10 +124,10 @@ namespace Prism
 		{
 			//Make a cheap texture and load it asynchronously.
 			Reference<Texture2D> texture = Texture2D::CreateTexture(filePath);
-			m_Application->GetThreadingLibrary()->AddTask([texture, filePath]()
-			{	   	
-				std::cout << texture->GetTextureID() << "\n";
-			});
+			//m_Application->GetThreadingLibrary()->AddTask([texture]()
+			//{	   	
+			//	 
+			//});
 
 			m_Thumbnails.emplace_back(iconType, texture, filePath);
 

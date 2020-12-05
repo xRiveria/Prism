@@ -28,6 +28,9 @@
     <Filter Include="src\Prism\ImGui">
       <UniqueIdentifier>{518E229F-BD19-9063-C62A-13583235EC63}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Prism\Math">
+      <UniqueIdentifier>{2075960C-0C43-8A12-F5D6-FA38E1436677}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Prism\Renderer">
       <UniqueIdentifier>{6D1F3072-5903-F1C7-C263-EB1AAE66DB49}</UniqueIdentifier>
     </Filter>
@@ -153,6 +156,9 @@
     <ClInclude Include="src\Prism\ImGui\ImGuiLayer.h">
       <Filter>src\Prism\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Prism\Math\Math.h">
+      <Filter>src\Prism\Math</Filter>
+    </ClInclude>
     <ClInclude Include="src\Prism\Renderer\Buffer.h">
       <Filter>src\Prism\Renderer</Filter>
     </ClInclude>
@@ -220,6 +226,9 @@
       <Filter>src\Prism\Threading</Filter>
     </ClInclude>
     <ClInclude Include="src\Prism\Utilities\PlatformUtilities.h">
+      <Filter>src\Prism\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Prism\Utilities\ThirdPartyLibrary.h">
       <Filter>src\Prism\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="src\Prism\Utilities\Version.h">
@@ -1458,7 +1467,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Prism\Math\Math.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
@@ -1512,6 +1520,9 @@
     <ClCompile Include="src\Prism\ImGui\ImGuiLayer.cpp">
       <Filter>src\Prism\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Prism\Math\Math.cpp">
+      <Filter>src\Prism\Math</Filter>
+    </ClCompile>
     <ClCompile Include="src\Prism\Renderer\Buffer.cpp">
       <Filter>src\Prism\Renderer</Filter>
     </ClCompile>
@@ -1563,6 +1574,9 @@
     <ClCompile Include="src\Prism\Threading\Threading.cpp">
       <Filter>src\Prism\Threading</Filter>
     </ClCompile>
+    <ClCompile Include="src\Prism\Utilities\ThirdPartyLibrary.cpp">
+      <Filter>src\Prism\Utilities</Filter>
+    </ClCompile>
     <ClCompile Include="src\Prism\Utilities\Version.cpp">
       <Filter>src\Prism\Utilities</Filter>
     </ClCompile>
@@ -1575,6 +1589,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Prism\Math\Math.cpp" />
   </ItemGroup>
 </Project>

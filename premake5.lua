@@ -26,6 +26,7 @@ IncludeDir["stb_image"] = "Prism/vendor/stb_image"
 IncludeDir["entt"] = "Prism/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "Prism/vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "Prism/vendor/ImGuizmo"
+IncludeDir["assimp"] = "Prism/vendor/assimp"
 
 group "Dependencies"
 	include "Prism/vendor/GLFW"
@@ -75,7 +76,8 @@ project "Prism"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
-		"%{IncludeDir.ImGuizmo}"
+		"%{IncludeDir.ImGuizmo}",
+		"%{prj.name}/vendor/assimp/include",
 	}
 
 	links 

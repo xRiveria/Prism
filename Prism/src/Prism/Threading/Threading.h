@@ -37,14 +37,16 @@ namespace Prism
 				return;
 			}
 
-			//Lock task mutex.
-			std::unique_lock<std::mutex> taskLocker(m_TaskMutex);
+			{
+				//Lock task mutex.
+				std::unique_lock<std::mutex> taskLocker(m_TaskMutex);
 
-			//Save the task.
-			m_Tasks.push_back(CreateReference<Task>(std::bind(std::forward<Function>(function))));
+				//Save the task.
+				m_Tasks.push_back(CreateReference<Task>(std::bind(std::forward<Function>(function))));
 
-			//Unlock the task mutex.
-			taskLocker.unlock();
+				//Unlock the task mutex.
+				taskLocker.unlock();
+			}
 
 			//Wake up a thread to handle the task.
 			m_ThreadCondition.notify_one(); 

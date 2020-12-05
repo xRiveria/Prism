@@ -12,6 +12,7 @@
 #include "Prism/Core/MouseButtonCodes.h"
 #include "Prism/Core/KeyCodes.h"
 #include "Prism/Utilities/Version.h"
+#include "Prism/Utilities/ThirdPartyLibrary.h"
 #include "Prism/Threading/Threading.h"
 
 //----- Scenes & Entities -----

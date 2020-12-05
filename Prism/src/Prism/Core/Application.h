@@ -8,6 +8,7 @@
 #include "Prism/Core/Timestep.h"
 #include "Prism/Utilities/Version.h"
 #include "Prism/Threading/Threading.h"
+#include "Prism/Utilities/ThirdPartyLibrary.h"
 
 //This class is meant to be inherited by all Prism applications.
 //In this case, our Sandbox application is the first to do this.
@@ -29,6 +30,8 @@ namespace Prism
 		void CloseApplication();
 		static Application& GetApplication() { return *s_Instance; }
 		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
+
+		ThirdPartyLibrary& GetThirdPartyLibraries() { return m_ThirdPartyLibrary; }
 		ApplicationVersion& GetApplicationVersion() { return m_ApplicationVersion; }
 		Reference<Threading>& GetThreadingLibrary() { return m_ThreadingLibrary; }
 
@@ -45,6 +48,7 @@ namespace Prism
 		LayerStack m_LayerStack;
 		Timestep m_Timestep;
 		ApplicationVersion m_ApplicationVersion = { 0, 0 };
+		ThirdPartyLibrary m_ThirdPartyLibrary;
 		float m_LastFrameTime = 0.0f;
 
 	private:

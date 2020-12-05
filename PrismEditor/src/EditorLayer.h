@@ -9,13 +9,12 @@
 #include "Utilities/FileDialog.h"
 #include "Utilities/IconProvider.h"
 
-
 namespace Prism
 {
 	class EditorLayer : public Layer
 	{
 	public:
-		EditorLayer(ApplicationVersion& applicationVersion);
+		EditorLayer(ApplicationVersion& applicationVersion, ThirdPartyLibrary& thirdPartyLibraries);
 		virtual ~EditorLayer() = default;
 
 		virtual void OnAttach() override;
@@ -24,6 +23,7 @@ namespace Prism
 		virtual void OnUpdate(Timestep timeStep) override;
 		virtual void OnImGuiRender() override;
 		void EditorImGuiRenderContent();
+		void ShowAboutWindow();
 		virtual void OnEvent(Event& event) override;
 
 		
@@ -47,11 +47,13 @@ namespace Prism
 		bool m_PrimaryCamera = true;
 		bool m_ViewportFocused = false;
 		bool m_ViewportHovered = false;
+		bool m_ShowPrismAboutWindow = false;
 		glm::vec2 m_ViewportSize = { 0, 0 };
 
 		int m_GizmoType = -1;
 
 		ApplicationVersion* m_ApplicationVersion;
+		ThirdPartyLibrary* m_ThirdPartyLibrary;
 
 		//Panels
 		SceneHierarchyPanel m_SceneHierarchyPanel;
