@@ -13,7 +13,7 @@ namespace Prism
 
 	void Model::LoadModel(const std::string& filePath) 
 	{
-		//Declares the importer from Assimp.
+		//Declares the importer from Assimp
 		Assimp::Importer importer; 
 
 		//ReadFile() expects a path and several post-processing options as its second argument. These options allow us to specify several options that forces Assimp to do extra calculations
