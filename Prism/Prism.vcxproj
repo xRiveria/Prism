@@ -154,6 +154,8 @@
     <ClInclude Include="src\Platform\Windows\WindowsFileSystem.h" />
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h" />
     <ClInclude Include="src\Prism.h" />
+    <ClInclude Include="src\Prism\3D\Mesh.h" />
+    <ClInclude Include="src\Prism\3D\Model.h" />
     <ClInclude Include="src\Prism\Core\Application.h" />
     <ClInclude Include="src\Prism\Core\Core.h" />
     <ClInclude Include="src\Prism\Core\EntryPoint.h" />
@@ -622,6 +624,8 @@
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtilities.cpp" />
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="src\Prism\3D\Mesh.cpp" />
+    <ClCompile Include="src\Prism\3D\Model.cpp" />
     <ClCompile Include="src\Prism\Core\Application.cpp" />
     <ClCompile Include="src\Prism\Core\Layer.cpp" />
     <ClCompile Include="src\Prism\Core\LayerStack.cpp" />
@@ -651,7 +655,9 @@
     <ClCompile Include="src\PrismPrecompiledHeader.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="vendor\ImGuizmo\ImGuizmo.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>

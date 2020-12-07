@@ -26,7 +26,7 @@ IncludeDir["stb_image"] = "Prism/vendor/stb_image"
 IncludeDir["entt"] = "Prism/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "Prism/vendor/yaml-cpp/include"
 IncludeDir["ImGuizmo"] = "Prism/vendor/ImGuizmo"
-IncludeDir["assimp"] = "Prism/vendor/assimp"
+IncludeDir["assimp"] = "Prism/vendor/assimp/include"
 
 group "Dependencies"
 	include "Prism/vendor/GLFW"
@@ -77,7 +77,7 @@ project "Prism"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.ImGuizmo}",
-		"%{prj.name}/vendor/assimp/include",
+		"%{prj.name}/vendor/assimp/include"
 	}
 
 	links 
@@ -99,9 +99,6 @@ project "Prism"
 			"GLFW_INCLUDE_NONE"
 		}
 
-	filter "files:vendor/ImGuizmo/**.cpp"
-		flags { "NoPCH" }
-
 	filter "configurations:Debug"
 		defines "PRISM_DEBUG"
 		runtime "Debug"
@@ -117,6 +114,10 @@ project "Prism"
 		runtime "Release"
 		optimize "on"
 
+	filter "files:Prism/vendor/ImGuizmo/**.cpp"
+		flags { "NoPCH" }
+
+--[[
 project "Sandbox"
 	location "Sandbox"
 	kind "ConsoleApp"
@@ -169,7 +170,7 @@ project "Sandbox"
 		defines "PRISM_DIST"
 		runtime "Release"
 		optimize "on"
-
+--]]
 
 project "PrismEditor"
 	location "PrismEditor"
@@ -183,13 +184,16 @@ project "PrismEditor"
 
 	files
 	{
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.h", 
+		"%{prj.name}/src/**.c", 
+		"%{prj.name}/src/**.hpp", 
+		"%{prj.name}/src/**.cpp" 
 	}
 
 	includedirs
 	{
 		"Prism/vendor/spdlog/include",
+		"Prism/vendor/assimp/include",
 		"Prism/src",
 		"Prism/vendor",
 		"%{IncludeDir.glm}",
@@ -215,6 +219,16 @@ project "PrismEditor"
 		runtime "Debug"
 		symbols "on"
 
+		links
+		{
+			"Prism/vendor/assimp/lib/assimp-vc142-mtd.lib"
+		}
+
+		postbuildcommands 
+		{
+			'{COPY} "../Prism/vendor/assimp/lib/assimp-vc142-mtd.dll" "%{cfg.targetdir}"'
+		}
+
 	filter "configurations:Release"
 		defines "PRISM_RELEASE"
 		runtime "Release"
@@ -224,3 +238,9 @@ project "PrismEditor"
 		defines "PRISM_DIST"
 		runtime "Release"
 		optimize "on"
+
+	
+	filter "files:Prism/vendor/ImGuizmo/**.cpp"
+		flags { "NoPCH" }
+
+

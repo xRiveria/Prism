@@ -34,7 +34,7 @@ namespace Prism
 
 	void Scene::OnUpdate(Timestep deltaTime)
 	{
-		//Update Scripts
+		//Update Scripts	
 		{
 			m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nativeScriptComponent)
 				{

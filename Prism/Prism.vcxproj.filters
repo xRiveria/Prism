@@ -16,6 +16,9 @@
     <Filter Include="src\Prism">
       <UniqueIdentifier>{E707A4B3-5372-582A-9CB0-09D0085A367F}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Prism\3D">
+      <UniqueIdentifier>{4D217AC5-3984-096A-E209-4220CE4BD5EC}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Prism\Core">
       <UniqueIdentifier>{9F34910C-8B02-8512-7496-F53860036177}</UniqueIdentifier>
     </Filter>
@@ -101,6 +104,12 @@
     </ClInclude>
     <ClInclude Include="src\Prism.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Prism\3D\Mesh.h">
+      <Filter>src\Prism\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Prism\3D\Model.h">
+      <Filter>src\Prism\3D</Filter>
     </ClInclude>
     <ClInclude Include="src\Prism\Core\Application.h">
       <Filter>src\Prism\Core</Filter>
@@ -1501,6 +1510,12 @@
     </ClCompile>
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>src\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Prism\3D\Mesh.cpp">
+      <Filter>src\Prism\3D</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Prism\3D\Model.cpp">
+      <Filter>src\Prism\3D</Filter>
     </ClCompile>
     <ClCompile Include="src\Prism\Core\Application.cpp">
       <Filter>src\Prism\Core</Filter>

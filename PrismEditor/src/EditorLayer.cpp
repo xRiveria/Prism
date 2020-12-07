@@ -25,7 +25,6 @@ namespace Prism
 	void EditorLayer::OnAttach()
 	{
 		PRISM_PROFILE_FUNCTION();
-
 		m_CheckboardTexture = Texture2D::CreateTexture("assets/textures/Checkerboard.png");
 	
 		FramebufferSpecification framebufferSpecification;
@@ -94,6 +93,8 @@ namespace Prism
 		m_SecondCamera.AddComponent<NativeScriptComponent>().BindClass<CameraController>();
 #endif
 		m_SceneHierarchyPanel.SetHierachyContext(m_ActiveScene);	
+		//m_ModelShader = Shader::CreateShader("assets/shaders/Texture.glsl");
+		//ourObject.LoadModel("assets/models/backpack.obj");
 	}
 
 	void EditorLayer::OnDetach()
@@ -205,6 +206,8 @@ namespace Prism
 		m_ConsoleWidget.OnConsoleWidgetUpdate();
 		m_AssetsWidget.OnAssetsWidgetUpdate();
 		ShowAboutWindow();
+
+		//ourObject.Draw(m_ModelShader);
 
 		ImGui::Begin("Prism Version");
 		ImGui::Text(m_ApplicationVersion->RetrieveApplicationVersion().c_str());

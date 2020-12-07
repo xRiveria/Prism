@@ -47,5 +47,6 @@
 //----- To Be Abstracted -----
 
 #include "Platform/Windows/WindowsFileSystem.h"
+#include "Prism/3D/Model.h"
 
 

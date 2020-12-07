@@ -59,5 +59,8 @@ namespace Prism
 		SceneHierarchyPanel m_SceneHierarchyPanel;
 		ConsoleWidget m_ConsoleWidget;
 		AssetsWidget m_AssetsWidget;
+
+		//Model ourObject;
+		//Reference<Shader> m_ModelShader;
 	};
 }
