@@ -2,6 +2,7 @@
 #include "entt.hpp"
 #include "Prism/Core/Timestep.h"
 #include "glm/glm.hpp"
+#include "Prism/Renderer/EditorCamera.h"
 
 namespace Prism
 {
@@ -12,11 +13,14 @@ namespace Prism
 	public:
 		Scene();
 		~Scene();
-
+		 
 		Entity CreateEntity(const std::string& entityName = std::string());
 		void DestroyEntity(Entity entity);
 
-		void OnUpdate(Timestep deltaTime);
+		void OnUpdateRuntime(Timestep deltaTime);
+		
+		void OnUpdateEditor(Timestep deltaTime, EditorCamera& camera); 
+
 		void OnViewportResize(uint32_t newWidth, uint32_t newHeight);
 
 		Entity GetPrimaryCameraEntity();

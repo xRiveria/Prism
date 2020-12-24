@@ -31,7 +31,7 @@ IncludeDir["assimp"] = "Prism/vendor/assimp/include"
 group "Dependencies"
 	include "Prism/vendor/GLFW"
 	include "Prism/vendor/Glad"
-	include "Prism/vendor/imgui"
+	include "Prism/vendor/imgui"e
 	include "Prism/vendor/yaml-cpp"
 group ""
 

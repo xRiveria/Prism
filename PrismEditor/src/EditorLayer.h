@@ -38,6 +38,7 @@ namespace Prism
 		Reference<Framebuffer> m_Framebuffer;
 		Reference<Texture2D> m_CheckboardTexture;
 		OrthographicCameraController m_CameraController;
+		EditorCamera m_EditorCamera;
 
 		Reference<Scene> m_ActiveScene;
 		Entity m_SquareEntity;

@@ -32,7 +32,7 @@ namespace Prism
 		m_Registry.destroy(entity);
 	}
 
-	void Scene::OnUpdate(Timestep deltaTime)
+	void Scene::OnUpdateRuntime(Timestep deltaTime)
 	{
 		//Update Scripts	
 		{
@@ -81,6 +81,20 @@ namespace Prism
 
 			Renderer2D::EndScene();
 		}
+	}
+
+	void Scene::OnUpdateEditor(Timestep deltaTime, EditorCamera& camera)
+	{
+		Renderer2D::BeginScene(camera);
+
+		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+		for (auto entity : group)
+		{
+			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			Renderer2D::DrawQuad(transform.GetTransform(), sprite.m_Color);
+		}
+
+		Renderer2D::EndScene();
 	}
 
 	void Scene::OnViewportResize(uint32_t newWidth, uint32_t newHeight)

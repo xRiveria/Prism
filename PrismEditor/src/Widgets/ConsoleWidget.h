@@ -19,7 +19,6 @@ namespace Prism
 		std::string m_LogText;
 		unsigned int m_ErrorLevel = 0;
 	};
-
 	
 	class EditorLogger : public ILogInterface
 	{

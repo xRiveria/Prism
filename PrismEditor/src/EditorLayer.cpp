@@ -34,6 +34,7 @@ namespace Prism
 		
 		//Entity
 		m_ActiveScene = CreateReference<Scene>();
+		m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 
 #if 0
 		auto square = m_ActiveScene->CreateEntity("Square");
@@ -111,7 +112,7 @@ namespace Prism
 		{
 			m_Framebuffer->ResizeFramebuffer((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 			m_CameraController.OnViewportResize(m_ViewportSize.x, m_ViewportSize.y);
-
+			m_EditorCamera.SetViewportSize(m_ViewportSize.x, m_ViewportSize.y);
 			m_ActiveScene->OnViewportResize((uint32_t)m_ViewportSize.x, (uint32_t)m_ViewportSize.y);
 		}
 
@@ -119,6 +120,7 @@ namespace Prism
 		if (m_ViewportFocused)
 		{
 			m_CameraController.OnUpdate(timeStep);
+			m_EditorCamera.OnUpdate(timeStep);
 		}
 
 		//Render
@@ -130,7 +132,7 @@ namespace Prism
 		RenderCommand::Clear();
 
 		//Update Scene
-		m_ActiveScene->OnUpdate(timeStep);	
+		m_ActiveScene->OnUpdateEditor(timeStep, m_EditorCamera);	
 
 		m_Framebuffer->UnbindFramebuffer();
 	}
@@ -236,7 +238,6 @@ namespace Prism
 
 		Application::GetApplication().GetImGuiLayer()->DoBlockEvents(!m_ViewportFocused && !m_ViewportHovered); //Allow or block events depending on which window is being hovered over or focused on.
 		
-
 		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 
@@ -256,10 +257,15 @@ namespace Prism
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight); //Set to viewport and window size to adjust rect sizes.
 
 			//Camera
-			auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
-			const auto& cameraComponent = cameraEntity.GetComponent<CameraComponent>().m_Camera;
-			const glm::mat4& cameraProjection = cameraComponent.GetProjection();
-			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+			//Runtime camera from Entity.
+			//auto cameraEntity = m_ActiveScene->GetPrimaryCameraEntity();
+			//const auto& cameraComponent = cameraEntity.GetComponent<CameraComponent>().m_Camera;
+			//const glm::mat4& cameraProjection = cameraComponent.GetProjection();
+			//glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+
+			//Editor Camera
+			const glm::mat4& cameraProjection = m_EditorCamera.GetProjection();
+			glm::mat4 cameraView = m_EditorCamera.GetViewMatrix();
 
 			//Entity Transform
 			auto& transformComponent = selectedEntity.GetComponent<TransformComponent>();
@@ -443,6 +449,7 @@ namespace Prism
 	void EditorLayer::OnEvent(Event& event)
 	{
 		m_CameraController.OnEvent(event);
+		m_EditorCamera.OnEvent(event);
 
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<KeyPressedEvent>(PRISM_BIND_EVENT_FUNCTION(EditorLayer::OnKeyPressed));

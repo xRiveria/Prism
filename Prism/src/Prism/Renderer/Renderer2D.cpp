@@ -140,6 +140,21 @@ namespace Prism
 		s_Data.m_QuadVertexBufferPointer = s_Data.m_QuadVertexBufferBase;
 	}
 
+	void Renderer2D::BeginScene(const EditorCamera& camera)
+	{
+		PRISM_PROFILE_FUNCTION();
+
+		glm::mat4 viewProjection = camera.GetViewProjectionMatrix();
+
+		s_Data.m_TextureShader->BindShader();
+		s_Data.m_TextureShader->SetShaderMat4("u_ViewProjection", viewProjection);
+
+		s_Data.m_QuadIndexCount = 0; //Reset amount of indexes currently drawn.
+		s_Data.m_CurrentTextureSlotIndex = 1;
+
+		s_Data.m_QuadVertexBufferPointer = s_Data.m_QuadVertexBufferBase;
+	}
+
 	void Renderer2D::EndScene()
 	{
 		PRISM_PROFILE_FUNCTION();

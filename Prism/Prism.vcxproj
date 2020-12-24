@@ -177,6 +177,7 @@
     <ClInclude Include="src\Prism\Math\Math.h" />
     <ClInclude Include="src\Prism\Renderer\Buffer.h" />
     <ClInclude Include="src\Prism\Renderer\Camera.h" />
+    <ClInclude Include="src\Prism\Renderer\EditorCamera.h" />
     <ClInclude Include="src\Prism\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Prism\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Prism\Renderer\OrthographicCamera.h" />
@@ -634,6 +635,7 @@
     <ClCompile Include="src\Prism\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Prism\Math\Math.cpp" />
     <ClCompile Include="src\Prism\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Prism\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Prism\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\Prism\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Prism\Renderer\OrthographicCameraController.cpp" />
